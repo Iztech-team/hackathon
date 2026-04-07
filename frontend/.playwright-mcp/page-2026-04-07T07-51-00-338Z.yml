@@ -1,0 +1,43 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]: CH
+      - generic [ref=e8]:
+        - heading "كود فور الخليل" [level=1] [ref=e9]
+        - paragraph [ref=e10]: هاكاثون 2026
+  - navigation [ref=e11]:
+    - generic [ref=e12]:
+      - link [ref=e13] [cursor=pointer]:
+        - /url: /
+        - img [ref=e16]
+      - link [ref=e18] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e21]
+      - link "تسجيل الدخول" [ref=e23] [cursor=pointer]:
+        - /url: /login
+        - generic [ref=e24]:
+          - img [ref=e26]
+          - generic [ref=e28]: تسجيل الدخول
+      - button "EN" [ref=e29] [cursor=pointer]
+  - main [ref=e30]:
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - heading "أهلاً بك" [level=3] [ref=e35]
+        - paragraph [ref=e36]: سجّل الدخول أو أنشئ حساب فريق جديد
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - button "دخول" [ref=e39] [cursor=pointer]
+          - button "تسجيل" [ref=e40] [cursor=pointer]
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - button "فريق" [ref=e43] [cursor=pointer]
+            - button "محكّم" [ref=e44] [cursor=pointer]
+            - button "مسؤول" [ref=e45] [cursor=pointer]
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - text: اسم الفريق
+              - textbox "أدخل اسم فريقك" [ref=e48]
+            - generic [ref=e49]:
+              - text: كلمة المرور
+              - textbox "أدخل كلمة مرور الفريق" [ref=e50]
+            - button "دخول" [ref=e51] [cursor=pointer]

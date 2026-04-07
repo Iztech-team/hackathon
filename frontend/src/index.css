@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --primary: 224 93% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 4%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 6%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 6%;
+    --accent-foreground: 0 0% 98%;
+    --card: 0 0% 2%;
+    --card-foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+    --input: 0 0% 6%;
+    --ring: 224 93% 57%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --radius: 0.75rem;
+    --primary-hex: #2b58f7;
+    --gold-hex: #d4b069;
+    --gold-soft-hex: #e8c98a;
+    --gold-deep-hex: #a8842d;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html, body, #root {
+    min-height: 100vh;
+    background: #000000;
+  }
+
+  body {
+    color: hsl(var(--foreground));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  html[lang="ar"] body,
+  html[dir="rtl"] body {
+    font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+/* Squares pattern background - applied to root */
+#root {
+  position: relative;
+  background-color: #000000;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Subtle pulsing radial glow at top — like a slow heartbeat */
+@keyframes heartbeat-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, 0) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, 0) scale(1.08);
+  }
+}
+
+#root::before {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(43, 88, 247, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: heartbeat-glow 4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root::before {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@layer utilities {
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Glass card effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .smooth-transition {
+    transition: all 0.2s ease;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 30px -5px rgba(43, 88, 247, 0.5);
+  }
+
+  .glow-primary-strong {
+    box-shadow: 0 0 40px 0px rgba(43, 88, 247, 0.4), 0 0 80px 0px rgba(43, 88, 247, 0.2);
+  }
+
+  .btn-glow {
+    position: relative;
+  }
+
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: #d4b069;
+    border-radius: inherit;
+    filter: blur(15px);
+    opacity: 0.55;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-glow:hover::before {
+    opacity: 0.75;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Thin scrollbar for pickers */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Form inputs */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(43, 88, 247, 0.5) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(43, 88, 247, 0.1) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Buttons */
+button {
+  transition: all 0.2s ease;
+}

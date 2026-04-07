@@ -1,0 +1,41 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]: CH
+      - generic [ref=e8]:
+        - heading "Code For Hebron" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Hackathon 2026
+  - navigation [ref=e11]:
+    - generic [ref=e12]:
+      - link [ref=e13] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e16]
+      - link [ref=e18] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e21]
+      - link "Judges" [ref=e23] [cursor=pointer]:
+        - /url: /admin/judges
+        - generic [ref=e24]:
+          - img [ref=e26]
+          - generic [ref=e28]: Judges
+      - link [ref=e29] [cursor=pointer]:
+        - /url: /admin/export
+        - img [ref=e32]
+      - button [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+  - main [ref=e37]:
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - heading "Judges" [level=1] [ref=e41]
+        - button "Add Judge" [ref=e42] [cursor=pointer]:
+          - img [ref=e43]
+          - generic [ref=e45]: Add Judge
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - heading "All Judges" [level=2] [ref=e48]
+          - generic [ref=e49]: 0 registered
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: No judges created yet
+          - button "Create First Judge" [ref=e52] [cursor=pointer]:
+            - img [ref=e53]
+            - generic [ref=e55]: Create First Judge

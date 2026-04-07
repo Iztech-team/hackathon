@@ -1,0 +1,190 @@
+import { config } from './config';
+
+const API_BASE = `${config.apiEndpoint}/api`;
+
+class ApiClient {
+  constructor() {
+    this.token = localStorage.getItem('hackathon-token') || null;
+  }
+
+  setToken(token) {
+    this.token = token;
+    if (token) {
+      localStorage.setItem('hackathon-token', token);
+    } else {
+      localStorage.removeItem('hackathon-token');
+    }
+  }
+
+  getToken() {
+    return this.token;
+  }
+
+  async request(endpoint, options = {}) {
+    const url = `${API_BASE}${endpoint}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Request failed' }));
+      throw new Error(error.detail || 'Request failed');
+    }
+
+    // Handle empty responses (204 No Content)
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // Auth endpoints
+  async login(username, password) {
+    const data = await this.request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+    this.setToken(data.access_token);
+    return data;
+  }
+
+  async registerTeam(teamData) {
+    const data = await this.request('/auth/register/team', {
+      method: 'POST',
+      body: JSON.stringify(teamData),
+    });
+    this.setToken(data.access_token);
+    return data;
+  }
+
+  async getMe() {
+    return this.request('/auth/me');
+  }
+
+  logout() {
+    this.setToken(null);
+  }
+
+  // Teams endpoints
+  async getTeams() {
+    return this.request('/teams');
+  }
+
+  async getTeam(teamId) {
+    return this.request(`/teams/${teamId}`);
+  }
+
+  async updateTeam(teamId, data) {
+    return this.request(`/teams/${teamId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getTeamMembers(teamId) {
+    return this.request(`/teams/${teamId}/members`);
+  }
+
+  async addTeamMember(teamId, memberData) {
+    return this.request(`/teams/${teamId}/members`, {
+      method: 'POST',
+      body: JSON.stringify(memberData),
+    });
+  }
+
+  async updateTeamMember(teamId, memberId, data) {
+    return this.request(`/teams/${teamId}/members/${memberId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteTeamMember(teamId, memberId) {
+    return this.request(`/teams/${teamId}/members/${memberId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Scores endpoints
+  async setScore(teamId, categoryId, points) {
+    return this.request(`/scores/${teamId}/${categoryId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ points }),
+    });
+  }
+
+  async getTeamScores(teamId) {
+    return this.request(`/scores/${teamId}`);
+  }
+
+  // Leaderboard endpoint
+  async getLeaderboard(category = null) {
+    const query = category ? `?category=${category}` : '';
+    return this.request(`/leaderboard${query}`);
+  }
+
+  // Judges endpoints (admin only)
+  async getJudges() {
+    return this.request('/judges');
+  }
+
+  async createJudge(judgeData) {
+    return this.request('/judges', {
+      method: 'POST',
+      body: JSON.stringify(judgeData),
+    });
+  }
+
+  async getJudge(judgeId) {
+    return this.request(`/judges/${judgeId}`);
+  }
+
+  async updateJudge(judgeId, data) {
+    return this.request(`/judges/${judgeId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteJudge(judgeId) {
+    return this.request(`/judges/${judgeId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Admin endpoints
+  async getStats() {
+    return this.request('/admin/stats');
+  }
+
+  async exportTeamsCsv() {
+    const response = await fetch(`${API_BASE}/admin/export/teams`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return response.blob();
+  }
+
+  async exportJudgesCsv() {
+    const response = await fetch(`${API_BASE}/admin/export/judges`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return response.blob();
+  }
+
+  async exportRankingsCsv() {
+    const response = await fetch(`${API_BASE}/admin/export/rankings`, {
+      headers: { Authorization: `Bearer ${this.token}` },
+    });
+    return response.blob();
+  }
+}
+
+export const api = new ApiClient();

@@ -1,0 +1,112 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - paragraph [ref=e11]: "2026"
+      - button "EN" [ref=e12] [cursor=pointer]
+  - navigation [ref=e13]:
+    - generic [ref=e14]:
+      - link "الرئيسية" [ref=e15] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e16]:
+          - img [ref=e19]
+          - generic [ref=e21]: الرئيسية
+      - link [ref=e22] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e26]
+      - link [ref=e28] [cursor=pointer]:
+        - /url: /login
+        - img [ref=e32]
+  - main [ref=e34]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - generic [ref=e38]: احجز مقعدك
+        - heading "هاكاثون الخليل للبرمجة2026" [level=1] [ref=e40]
+        - paragraph [ref=e41]: انضم إلى هاكاثون الخليل للبرمجة وكن جزءاً من بناء حلول ذكية لمدينة الخليل.
+        - generic [ref=e42]:
+          - link "سجّل فريقك" [ref=e43] [cursor=pointer]:
+            - /url: /login?tab=register
+            - button "سجّل فريقك" [ref=e44]:
+              - generic [ref=e45]: سجّل فريقك
+              - img [ref=e46]
+          - link "تسجيل الدخول" [ref=e48] [cursor=pointer]:
+            - /url: /login
+            - button "تسجيل الدخول" [ref=e49]
+      - generic [ref=e51]:
+        - paragraph [ref=e52]: العد التنازلي للهاكاثون
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e56]: "32"
+            - generic [ref=e57]: ثانية
+          - generic [ref=e58]:
+            - generic [ref=e60]: "13"
+            - generic [ref=e61]: دقيقة
+          - generic [ref=e62]:
+            - generic [ref=e64]: "21"
+            - generic [ref=e65]: ساعة
+          - generic [ref=e66]:
+            - generic [ref=e68]: "11"
+            - generic [ref=e69]: يوم
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - img [ref=e75]
+          - heading "موضوع الهاكاثون" [level=2] [ref=e77]
+        - paragraph [ref=e78]: نطمح إلى بناء مواقع وتطبيقات تخدم مدينة الخليل وتحلّ مشكلاتها اليومية. يمكن أن يكون مشروعك حلاً لمشاكل الكهرباء أو المياه أو النفايات، أو نظام إبلاغ مجتمعي، أو تحسين الشوارع، أو أي فكرة أخرى تخدم أهالي المدينة.
+        - generic [ref=e79]:
+          - generic [ref=e80]: الكهرباء
+          - generic [ref=e81]: المياه
+          - generic [ref=e82]: النفايات
+          - generic [ref=e83]: إبلاغ مجتمعي
+          - generic [ref=e84]: الشوارع
+          - generic [ref=e85]: الخدمات العامة
+      - generic [ref=e88]:
+        - generic [ref=e89]:
+          - heading "جدول اليوم" [level=2] [ref=e90]
+          - paragraph [ref=e91]: برنامج اليوم الكامل للهاكاثون
+        - generic [ref=e94]:
+          - generic [ref=e97]:
+            - paragraph [ref=e98]: 9:00
+            - paragraph [ref=e99]: حفل الافتتاح
+          - generic [ref=e104]:
+            - paragraph [ref=e105]: 9:30
+            - paragraph [ref=e106]: بدء الهاكاثون
+          - generic [ref=e111]:
+            - paragraph [ref=e112]: 12:00
+            - paragraph [ref=e113]: استراحة
+          - generic [ref=e118]:
+            - paragraph [ref=e119]: 2:00
+            - paragraph [ref=e120]: استراحة
+          - generic [ref=e125]:
+            - paragraph [ref=e126]: 4:00
+            - paragraph [ref=e127]: نهاية الهاكاثون
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: 4:30
+            - paragraph [ref=e134]: توزيع الجوائز والختام
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - generic [ref=e141]: "0"
+          - generic [ref=e142]: فِرَق مسجلة
+        - generic [ref=e144]:
+          - generic [ref=e145]: "0"
+          - generic [ref=e146]: مشاركون
+        - generic [ref=e148]:
+          - generic [ref=e149]: "5"
+          - generic [ref=e150]: فئات تحكيم
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - paragraph [ref=e155]: بدعم من
+          - heading "شركاؤنا" [level=2] [ref=e156]
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e160]: I
+            - paragraph [ref=e161]: Iztech Valley
+            - paragraph [ref=e162]: شركة برمجيات
+          - generic [ref=e163]:
+            - generic [ref=e165]: ش
+            - paragraph [ref=e166]: شركة ازدهار
+          - generic [ref=e167]:
+            - generic [ref=e169]: ك
+            - paragraph [ref=e170]: كتلة الصمود والعطاء

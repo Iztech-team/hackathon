@@ -1,0 +1,351 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { useTeams } from '../context/TeamContext';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import { Avatar, TeamLogo } from '../components/ui/Avatar';
+import { Badge, CategoryBadge } from '../components/ui/Badge';
+import { CATEGORY_LIST, calculateTotalScore } from '../data/categories';
+
+export default function Leaderboard() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { teams } = useTeams();
+  const [expandedTeam, setExpandedTeam] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // null = overall, or category id
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter and sort teams based on search and selected category
+  const sortedTeams = [...teams]
+    .map((team) => ({
+      ...team,
+      totalScore: calculateTotalScore(team.scores),
+      displayScore: selectedCategory
+        ? team.scores?.[selectedCategory] || 0
+        : calculateTotalScore(team.scores),
+    }))
+    .filter((team) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        team.teamName.toLowerCase().includes(query) ||
+        team.projectName.toLowerCase().includes(query) ||
+        team.members?.some((m) => m.name.toLowerCase().includes(query))
+      );
+    })
+    .sort((a, b) => b.displayScore - a.displayScore);
+
+  const selectedCategoryData = selectedCategory
+    ? CATEGORY_LIST.find((c) => c.id === selectedCategory)
+    : null;
+
+  const getRankStyle = (position) => {
+    if (position === 0) return 'border-[#d4b069]/40 bg-[#d4b069]/[0.05]';
+    if (position === 1) return 'border-zinc-400/20 bg-zinc-400/[0.04]';
+    if (position === 2) return 'border-amber-700/30 bg-amber-700/[0.04]';
+    return 'border-white/[0.06] bg-white/[0.02]';
+  };
+
+  // Rank badge — same shape and size for everyone, color/glow varies by rank
+  const getRankBadge = (position) => {
+    const isGold = position === 0;
+    const isSilver = position === 1;
+    const isBronze = position === 2;
+
+    let cardClasses = 'bg-white/[0.04] border-white/10 text-white/60';
+    if (isGold) cardClasses = 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] border-[#d4b069]/60 shadow-lg shadow-[#d4b069]/40';
+    else if (isSilver) cardClasses = 'bg-gradient-to-br from-zinc-400 to-zinc-600 text-black border-zinc-400/40 shadow-lg shadow-zinc-400/20';
+    else if (isBronze) cardClasses = 'bg-gradient-to-br from-amber-600 to-amber-800 text-black border-amber-700/40 shadow-lg shadow-amber-700/20';
+
+    return (
+      <div className="relative flex-shrink-0">
+        {(isGold || isSilver || isBronze) && (
+          <div className={`absolute -inset-0.5 rounded-2xl blur-md opacity-50 ${
+            isGold ? 'bg-[#d4b069]' : isSilver ? 'bg-zinc-400' : 'bg-amber-700'
+          }`} />
+        )}
+        <div className={`relative w-12 h-12 rounded-2xl border-2 flex items-center justify-center font-extrabold text-base tabular-nums ${cardClasses}`}>
+          {position + 1}
+        </div>
+      </div>
+    );
+  };
+
+  if (sortedTeams.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <Card>
+          <CardContent className="py-16">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-[#d4b069]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-[#d4b069]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">{t('leaderboard.noTeams')}</h2>
+              <p className="text-white/40">{t('home.tagline')}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl">{t('leaderboard.title')}</CardTitle>
+              <CardDescription>
+                {t('leaderboard.subtitle')}
+              </CardDescription>
+            </div>
+            <div className="w-12 h-12 bg-[#d4b069]/10 rounded-xl flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-[#d4b069]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                />
+              </svg>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {/* Search Bar */}
+          <div className="relative mb-4">
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('common.search')}
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#d4b069]/50 focus:border-transparent transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Category Filters */}
+          <div className="mb-6 pb-6 border-b border-white/[0.06] -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap scrollbar-hide">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                  selectedCategory === null
+                    ? 'bg-[#d4b069] text-[#1a1306] shadow-lg shadow-[#d4b069]/30'
+                    : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.08] hover:text-white'
+                }`}
+              >
+                {t('leaderboard.overall')}
+              </button>
+              {CATEGORY_LIST.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                    selectedCategory === category.id
+                      ? 'text-white shadow-lg'
+                      : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.08] hover:text-white'
+                  }`}
+                  style={
+                    selectedCategory === category.id
+                      ? { backgroundColor: category.color, boxShadow: `0 10px 20px -10px ${category.color}50` }
+                      : {}
+                  }
+                >
+                  {t(`categories.${category.id}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {sortedTeams.map((team, index) => {
+              const isExpanded = expandedTeam === team.id;
+              const maxScore = Math.max(
+                ...Object.values(team.scores || {}),
+                1
+              );
+
+              return (
+                <div
+                  key={team.id}
+                  className={`rounded-2xl border transition-all duration-300 ${getRankStyle(index)} ${
+                    isExpanded ? 'ring-1 ring-[#d4b069]/40' : ''
+                  }`}
+                >
+                  {/* Main Row — first click expands, second click on the same team navigates to its page */}
+                  <div
+                    className="p-4 sm:p-5 cursor-pointer hover:bg-white/[0.03] transition-colors"
+                    onClick={() => {
+                      if (isExpanded) {
+                        navigate(`/teams/${team.id}`);
+                      } else {
+                        setExpandedTeam(team.id);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Rank badge */}
+                      {getRankBadge(index)}
+
+                      {/* Team name + project (centered vertically) */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-white text-base sm:text-lg leading-tight truncate">
+                          {team.teamName}
+                        </h3>
+                        {team.projectName && (
+                          <p className="text-xs sm:text-sm text-white/40 mt-1 truncate">
+                            {team.projectName}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Score pill */}
+                      <div className="flex-shrink-0 flex flex-col items-center justify-center min-w-[64px] sm:min-w-[80px] px-3 py-2 rounded-xl bg-black/30 border border-white/[0.08]">
+                        <div
+                          className="text-xl sm:text-2xl font-extrabold tabular-nums leading-none"
+                          style={{ color: selectedCategoryData?.color || '#d4b069' }}
+                        >
+                          {team.displayScore}
+                        </div>
+                        <div className="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-wider mt-1">
+                          {selectedCategoryData ? t(`categories.${selectedCategoryData.id}`) : t('common.total')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expanded Details */}
+                  {isExpanded && (
+                    <div className="px-4 sm:px-5 pb-4 pt-2 border-t border-white/[0.04]">
+                      {/* Category Scores */}
+                      <div className="space-y-3 mb-4">
+                        <p className="text-xs text-white/40 uppercase tracking-wider">
+                          {t('team.scoreBreakdown')}
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                          {CATEGORY_LIST.map((category, catIndex) => {
+                            const score = team.scores?.[category.id] || 0;
+                            const percentage = (score / maxScore) * 100;
+                            return (
+                              <motion.div
+                                key={category.id}
+                                className="space-y-1.5"
+                                initial={{ opacity: 0, x: -15 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: catIndex * 0.08, duration: 0.3 }}
+                              >
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="font-medium text-white">
+                                    {t(`categories.${category.id}`)}
+                                  </span>
+                                  <span className="font-semibold" style={{ color: category.color }}>
+                                    {score} {t('common.points')}
+                                  </span>
+                                </div>
+                                <div className="h-2 bg-white/[0.05] rounded-full overflow-hidden">
+                                  <motion.div
+                                    className="h-full rounded-full"
+                                    style={{
+                                      background: `linear-gradient(90deg, ${category.color}90 0%, ${category.color} 50%, ${category.color}dd 100%)`,
+                                      boxShadow: `0 0 10px ${category.color}40`
+                                    }}
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${percentage}%` }}
+                                    transition={{
+                                      delay: catIndex * 0.08 + 0.15,
+                                      duration: 0.5,
+                                      ease: [0.25, 0.1, 0.25, 1]
+                                    }}
+                                  />
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Team Members */}
+                      {team.members && team.members.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.4 }}
+                        >
+                          <p className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                            {t('team.teamMembers')}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {team.members.map((member, idx) => (
+                              <motion.div
+                                key={idx}
+                                className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.45 + idx * 0.05 }}
+                              >
+                                <Avatar seed={member.avatarSeed} size="xs" />
+                                <span className="text-xs sm:text-sm text-white/70">
+                                  {member.name}
+                                </span>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-white/[0.06]">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/40">
+                {selectedCategoryData ? t(`categories.${selectedCategoryData.id}`) : t('leaderboard.totalTeams')}
+              </span>
+              <span className="font-semibold text-white">{sortedTeams.length}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

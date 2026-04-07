@@ -1,0 +1,30 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]: CH
+      - generic [ref=e8]:
+        - heading "Code For Hebron" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Hackathon 2026
+  - navigation [ref=e11]:
+    - generic [ref=e12]:
+      - link [ref=e13] [cursor=pointer]:
+        - /url: /
+        - img [ref=e16]
+      - link "Leaderboard" [ref=e18] [cursor=pointer]:
+        - /url: /leaderboard
+        - generic [ref=e19]:
+          - img [ref=e21]
+          - generic [ref=e23]: Leaderboard
+      - link [ref=e24] [cursor=pointer]:
+        - /url: /scan
+        - img [ref=e27]
+      - link [ref=e29] [cursor=pointer]:
+        - /url: /judge/profile
+        - img [ref=e32]
+      - button [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+  - main [ref=e37]:
+    - generic [ref=e42]:
+      - img [ref=e44]
+      - heading "No Teams Yet" [level=2] [ref=e46]
+      - paragraph [ref=e47]: Teams will appear here once they register for the hackathon.

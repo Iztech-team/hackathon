@@ -1,0 +1,37 @@
+{
+  "name": "code-for-hebron-app",
+  "version": "1.0.0",
+  "description": "Code For Hebron Hackathon Management App",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.3",
+    "@radix-ui/react-toast": "^1.2.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "html5-qrcode": "^2.3.8",
+    "i18next": "^26.0.3",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "qrcode.react": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^17.0.2",
+    "react-router-dom": "^6.22.0",
+    "tailwind-merge": "^2.5.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.1.0"
+  }
+}

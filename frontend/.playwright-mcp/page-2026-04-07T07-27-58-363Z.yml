@@ -1,0 +1,57 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e7]: CH
+      - generic [ref=e8]:
+        - heading "Code For Hebron" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Hackathon 2026
+  - navigation [ref=e11]:
+    - generic [ref=e12]:
+      - link [ref=e13] [cursor=pointer]:
+        - /url: /
+        - img [ref=e16]
+      - link [ref=e18] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e21]
+      - link "Scan" [ref=e23] [cursor=pointer]:
+        - /url: /scan
+        - generic [ref=e24]:
+          - img [ref=e26]
+          - generic [ref=e28]: Scan
+      - link [ref=e29] [cursor=pointer]:
+        - /url: /judge/profile
+        - img [ref=e32]
+      - button [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+  - main [ref=e37]:
+    - generic [ref=e39]:
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - img "Avatar" [ref=e44]
+          - generic [ref=e45]:
+            - paragraph [ref=e46]: Sarah Tester
+            - paragraph [ref=e47]: Judge
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: Judging Category
+          - generic [ref=e50]: Frontend
+      - generic [ref=e51]:
+        - generic [ref=e53]:
+          - img [ref=e55]
+          - generic [ref=e57]:
+            - heading "Search Team" [level=3] [ref=e58]
+            - paragraph [ref=e59]: Find a team to award Frontend points
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - img [ref=e62]
+            - textbox "Search team name or project..." [ref=e64]
+          - paragraph [ref=e66]: No teams found
+      - generic [ref=e67]:
+        - generic [ref=e69]:
+          - img [ref=e71]
+          - generic [ref=e73]:
+            - heading "Scan QR Code" [level=3] [ref=e74]
+            - paragraph [ref=e75]: Scan a team's badge to award points
+        - generic [ref=e77]:
+          - img [ref=e79]
+          - paragraph [ref=e82]: Use camera to scan team QR codes
+          - button "Start Camera" [ref=e83] [cursor=pointer]

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code For Hebron - Badge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Badge card */
+        .badge {
+            width: 320px;
+            height: 560px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Lanyard hole */
+        .lanyard {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        .lanyard::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+        }
+
+        /* Background patterns */
+        .pattern-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Diagonal lines pattern */
+        .diagonal-lines {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 50%;
+            height: 40%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 3px,
+                rgba(0, 0, 0, 0.15) 3px,
+                rgba(0, 0, 0, 0.15) 6px
+            );
+        }
+
+        /* Triangle pattern */
+        .triangles {
+            position: absolute;
+            right: 20px;
+            bottom: 80px;
+            display: grid;
+            grid-template-columns: repeat(4, 20px);
+            gap: 8px;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 17px solid rgba(0, 0, 0, 0.2);
+        }
+
+        /* Circle pattern */
+        .circles {
+            position: absolute;
+            top: 80px;
+            right: 25px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sunburst icon */
+        .sunburst {
+            position: absolute;
+            top: 30px;
+            left: 25px;
+            width: 35px;
+            height: 35px;
+        }
+
+        .sunburst-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+        }
+
+        .sunburst-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            transform-origin: center;
+        }
+
+        /* Content */
+        .badge-content {
+            position: relative;
+            z-index: 5;
+            padding: 70px 25px 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .event-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* QR Section */
+        .qr-section {
+            margin-top: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        #qrcode {
+            width: 140px;
+            height: 140px;
+        }
+
+        #qrcode canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Developer info */
+        .developer-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .developer-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: -0.3px;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Role badge */
+        .role-container {
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            padding: 10px 24px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .role-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Date footer */
+        .date-footer {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Color themes */
+        .badge.red {
+            background: linear-gradient(135deg, #FF3838 0%, #FF1744 100%);
+        }
+
+        .badge.blue {
+            background: linear-gradient(135deg, #2962FF 0%, #0D47A1 100%);
+        }
+
+        .badge.lime {
+            background: linear-gradient(135deg, #CDDC39 0%, #AFB42B 100%);
+        }
+
+        .badge.purple {
+            background: linear-gradient(135deg, #7C4DFF 0%, #5E35B1 100%);
+        }
+
+        .badge.orange {
+            background: linear-gradient(135deg, #FF6D00 0%, #E65100 100%);
+        }
+
+        .badge.teal {
+            background: linear-gradient(135deg, #00BFA5 0%, #00897B 100%);
+        }
+
+        /* Form */
+        .form-container {
+            background: #0a0a0a;
+            padding: 35px;
+            border-radius: 12px;
+            width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-title {
+            color: #ffffff;
+            font-size: 22px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00BFA5;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #00BFA5;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #00897B;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .color-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .color-option.red { background: linear-gradient(135deg, #FF3838 0%, #FF1744 100%); }
+        .color-option.blue { background: linear-gradient(135deg, #2962FF 0%, #0D47A1 100%); }
+        .color-option.lime { background: linear-gradient(135deg, #CDDC39 0%, #AFB42B 100%); }
+        .color-option.purple { background: linear-gradient(135deg, #7C4DFF 0%, #5E35B1 100%); }
+        .color-option.orange { background: linear-gradient(135deg, #FF6D00 0%, #E65100 100%); }
+        .color-option.teal { background: linear-gradient(135deg, #00BFA5 0%, #00897B 100%); }
+
+        /* Backside Badge */
+        .badge-back {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        .back-content {
+            position: relative;
+            z-index: 5;
+            padding: 70px 25px 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #00BFA5;
+            text-align: center;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: white;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-time {
+            font-size: 12px;
+            color: #00BFA5;
+            font-weight: 700;
+        }
+
+        .schedule-event {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .wifi-box {
+            background: rgba(0, 191, 165, 0.1);
+            border: 1px solid rgba(0, 191, 165, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .wifi-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .wifi-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .wifi-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .wifi-value {
+            font-size: 12px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: auto;
+            padding-bottom: 15px;
+        }
+
+        .social-item {
+            text-align: center;
+        }
+
+        .social-icon {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .social-handle {
+            font-size: 12px;
+            color: #00BFA5;
+            font-weight: 700;
+        }
+
+        .back-footer {
+            text-align: center;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .form-container {
+                display: none;
+            }
+            .container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge red" id="badge">
+            <!-- Lanyard hole -->
+            <div class="lanyard"></div>
+
+            <!-- Patterns -->
+            <div class="pattern-container">
+                <!-- Sunburst -->
+                <div class="sunburst" id="sunburst1">
+                    <div class="sunburst-center"></div>
+                </div>
+
+                <!-- Circles -->
+                <div class="circles">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+
+                <!-- Diagonal lines -->
+                <div class="diagonal-lines"></div>
+
+                <!-- Triangles -->
+                <div class="triangles" id="trianglePattern">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="badge-content">
+                <div>
+                    <div class="event-name">CODE FOR<br>HEBRON</div>
+                    <div class="event-subtitle">Hackathon 2026</div>
+                </div>
+
+                <div class="qr-section">
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
+
+                <div class="developer-info">
+                    <div class="developer-name" id="developerName">DEVELOPER</div>
+                    <div class="team-name" id="teamName">TEAM NAME</div>
+                </div>
+
+                <div class="role-container">
+                    <div class="role-text" id="roleText">PARTICIPANT</div>
+                </div>
+
+                <div class="date-footer">April 2026 • Hebron</div>
+            </div>
+        </div>
+
+        <!-- Badge Backside -->
+        <div class="badge badge-back">
+            <!-- Lanyard hole -->
+            <div class="lanyard"></div>
+
+            <!-- Patterns -->
+            <div class="pattern-container">
+                <!-- Sunburst -->
+                <div class="sunburst" id="sunburst2">
+                    <div class="sunburst-center"></div>
+                </div>
+
+                <!-- Circles -->
+                <div class="circles">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+
+                <!-- Diagonal lines -->
+                <div class="diagonal-lines"></div>
+
+                <!-- Triangles -->
+                <div class="triangles" id="trianglePattern2">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Back Content -->
+            <div class="back-content">
+                <div class="back-title">Event Information</div>
+
+                <!-- Schedule -->
+                <div class="info-section">
+                    <div class="info-label">Event Schedule</div>
+                    <div class="schedule-item">
+                        <span class="schedule-time">09:00</span>
+                        <span class="schedule-event">Registration</span>
+                    </div>
+                    <div class="schedule-item">
+                        <span class="schedule-time">10:00</span>
+                        <span class="schedule-event">Opening Ceremony</span>
+                    </div>
+                    <div class="schedule-item">
+                        <span class="schedule-time">11:00</span>
+                        <span class="schedule-event">Hacking Begins</span>
+                    </div>
+                    <div class="schedule-item">
+                        <span class="schedule-time">18:00</span>
+                        <span class="schedule-event">Submissions Close</span>
+                    </div>
+                </div>
+
+                <!-- WiFi -->
+                <div class="wifi-box">
+                    <div class="wifi-item">
+                        <span class="wifi-label">Network</span>
+                        <span class="wifi-value">CodeForHebron</span>
+                    </div>
+                    <div class="wifi-item">
+                        <span class="wifi-label">Password</span>
+                        <span class="wifi-value">Hackathon2026</span>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="info-section">
+                    <div class="info-label">Emergency Contact</div>
+                    <div class="info-value">+970 XXX XXXX</div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="social-links">
+                    <div class="social-item">
+                        <div class="social-icon">Twitter</div>
+                        <div class="social-handle">@CodeHebron</div>
+                    </div>
+                    <div class="social-item">
+                        <div class="social-icon">Instagram</div>
+                        <div class="social-handle">@CodeHebron</div>
+                    </div>
+                </div>
+
+                <div class="back-footer">
+                    Code For Hebron • April 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <div class="form-title">Badge Generator</div>
+
+            <div class="form-group">
+                <label>Developer Name</label>
+                <input type="text" id="nameInput" placeholder="Enter full name">
+            </div>
+
+            <div class="form-group">
+                <label>Team Name</label>
+                <input type="text" id="teamInput" placeholder="Enter team name">
+            </div>
+
+            <div class="form-group">
+                <label>Role</label>
+                <select id="roleInput">
+                    <option value="PARTICIPANT">Participant</option>
+                    <option value="MENTOR">Mentor</option>
+                    <option value="JUDGE">Judge</option>
+                    <option value="STAFF">Staff</option>
+                    <option value="ORGANIZER">Organizer</option>
+                    <option value="VOLUNTEER">Volunteer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>QR Code Data</label>
+                <input type="text" id="qrInput" placeholder="URL or text for QR code">
+            </div>
+
+            <div class="form-group">
+                <label>Badge Color</label>
+                <div class="color-options">
+                    <div class="color-option red active" onclick="changeColor('red')"></div>
+                    <div class="color-option blue" onclick="changeColor('blue')"></div>
+                    <div class="color-option lime" onclick="changeColor('lime')"></div>
+                    <div class="color-option purple" onclick="changeColor('purple')"></div>
+                    <div class="color-option orange" onclick="changeColor('orange')"></div>
+                    <div class="color-option teal" onclick="changeColor('teal')"></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateBadge()">Generate Badge</button>
+            <button class="btn btn-secondary" onclick="window.print()">Print Badge</button>
+        </div>
+    </div>
+
+    <script>
+        // Generate triangle pattern
+        function generateTriangles() {
+            const container = document.getElementById('trianglePattern');
+            for (let i = 0; i < 12; i++) {
+                const triangle = document.createElement('div');
+                triangle.className = 'triangle';
+                container.appendChild(triangle);
+            }
+        }
+
+        // Generate sunburst rays
+        function generateSunburst(id) {
+            const sunburst = document.getElementById(id);
+            if (!sunburst) return;
+            for (let i = 0; i < 8; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'sunburst-ray';
+                ray.style.transform = `translate(-50%, -50%) rotate(${i * 45}deg)`;
+                sunburst.appendChild(ray);
+            }
+        }
+
+        // Generate QR code
+        function generateQR(text) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+
+            const qrText = text && text.trim() !== '' ? text : 'https://codeforhebron.com/hackathon-2026';
+
+            try {
+                const canvas = document.createElement('canvas');
+                QRCode.toCanvas(canvas, qrText, {
+                    width: 140,
+                    margin: 1,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
+                    },
+                    errorCorrectionLevel: 'M'
+                }, function(error) {
+                    if (error) {
+                        console.error('QR Code Error:', error);
+                        return;
+                    }
+                    qrContainer.appendChild(canvas);
+                });
+            } catch (error) {
+                console.error('QR Generation failed:', error);
+            }
+        }
+
+        // Change badge color
+        function changeColor(color) {
+            const badge = document.getElementById('badge');
+            badge.className = 'badge ' + color;
+
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            document.querySelector('.color-option.' + color).classList.add('active');
+        }
+
+        // Generate badge with form data
+        function generateBadge() {
+            const name = document.getElementById('nameInput').value || 'DEVELOPER';
+            const team = document.getElementById('teamInput').value || 'TEAM NAME';
+            const role = document.getElementById('roleInput').value || 'PARTICIPANT';
+            const qrData = document.getElementById('qrInput').value || 'https://codeforhebron.com';
+
+            document.getElementById('developerName').textContent = name.toUpperCase();
+            document.getElementById('teamName').textContent = team.toUpperCase();
+            document.getElementById('roleText').textContent = role.toUpperCase();
+
+            generateQR(qrData);
+        }
+
+        // Generate triangles for backside
+        function generateTriangles2() {
+            const container = document.getElementById('trianglePattern2');
+            for (let i = 0; i < 12; i++) {
+                const triangle = document.createElement('div');
+                triangle.className = 'triangle';
+                container.appendChild(triangle);
+            }
+        }
+
+        // Initialize
+        generateTriangles();
+        generateTriangles2();
+        generateSunburst('sunburst1');
+        generateSunburst('sunburst2');
+
+        // Generate default QR code on page load
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                generateQR('https://codeforhebron.com/hackathon-2026');
+            }, 100);
+        });
+    </script>
+</body>
+</html>

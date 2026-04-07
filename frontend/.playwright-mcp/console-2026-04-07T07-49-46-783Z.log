@@ -1,0 +1,35 @@
+[     359ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-EJTTOCY5.js?v=53efd364:21550
+[     445ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[     446ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[     541ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favicon.ico:0
+[   17002ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-EJTTOCY5.js?v=53efd364:21550
+[   17070ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   17070ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   20111ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-EJTTOCY5.js?v=53efd364:21550
+[   20194ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   20195ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   55819ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-EJTTOCY5.js?v=53efd364:21550
+[   55842ms] [WARNING] You should call navigate() in a React.useEffect(), not when your component is first rendered. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:213
+[   55842ms] [WARNING] You should call navigate() in a React.useEffect(), not when your component is first rendered. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:213
+[   55855ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   55855ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4435
+[   55865ms] [ERROR] Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s BrowserRouter Login Login 
+    at Login (http://localhost:3000/src/pages/Login.jsx?t=1775547758760:39:20)
+    at div
+    at MotionDOMComponent (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=53efd364:8882:40)
+    at LoginTransition (http://localhost:3000/src/components/layout/PageTransition.jsx:58:35)
+    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4131:5)
+    at Routes (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4601:5)
+    at PopChildMeasure (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=53efd364:8021:23)
+    at PopChild (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=53efd364:8048:21)
+    at PresenceChild (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=53efd364:8098:24)
+    at AnimatePresence (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=53efd364:8175:26)
+    at AnimatedRoutes (http://localhost:3000/src/App.jsx?t=1775548182848:47:20)
+    at main
+    at div
+    at Router (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:4544:15)
+    at BrowserRouter (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=53efd364:5290:5)
+    at JudgeProvider (http://localhost:3000/src/context/JudgeContext.jsx:39:33)
+    at TeamProvider (http://localhost:3000/src/context/TeamContext.jsx:72:32)
+    at AuthProvider (http://localhost:3000/src/context/AuthContext.jsx:38:32)
+    at App @ http://localhost:3000/node_modules/.vite/deps/chunk-EJTTOCY5.js?v=53efd364:520

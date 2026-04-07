@@ -1,0 +1,32 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "Hebron Coding Hackathon" [level=1] [ref=e10]
+          - paragraph [ref=e11]: "2026"
+      - button "ع" [ref=e12] [cursor=pointer]
+  - navigation [ref=e13]:
+    - generic [ref=e14]:
+      - link [ref=e15] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e19]
+      - link "Leaderboard" [ref=e21] [cursor=pointer]:
+        - /url: /leaderboard
+        - generic [ref=e22]:
+          - img [ref=e25]
+          - generic [ref=e27]: Leaderboard
+      - link [ref=e28] [cursor=pointer]:
+        - /url: /admin/judges
+        - img [ref=e32]
+      - link [ref=e34] [cursor=pointer]:
+        - /url: /admin/export
+        - img [ref=e38]
+      - button [ref=e40] [cursor=pointer]:
+        - img [ref=e41]
+  - main [ref=e43]:
+    - generic [ref=e48]:
+      - img [ref=e50]
+      - heading "No teams yet" [level=2] [ref=e52]
+      - paragraph [ref=e53]: Join the Hebron Coding Hackathon and help build smart solutions for the city of Hebron.
