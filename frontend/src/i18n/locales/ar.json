@@ -6,6 +6,8 @@
   },
   "countdown": {
     "title": "العد التنازلي للهاكاثون",
+    "liveTitle": "ينتهي خلال",
+    "ended": "انتهى الهاكاثون",
     "days": "يوم",
     "hours": "ساعة",
     "minutes": "دقيقة",
@@ -49,6 +51,7 @@
   },
   "home": {
     "liveBadge": "احجز مقعدك",
+    "liveNow": "مباشر الآن",
     "tagline": "انضم إلى هاكاثون الخليل للبرمجة وكن جزءاً من بناء حلول ذكية لمدينة الخليل.",
     "registerYourTeam": "سجّل فريقك",
     "viewYourTeamProfile": "عرض ملف فريقك",
@@ -189,6 +192,13 @@
     "leaderboardTab": "المتصدرون",
     "exportTab": "تصدير",
     "resetData": "إعادة ضبط البيانات",
+    "startHackathon": "بدء الهاكاثون",
+    "endHackathon": "إنهاء الهاكاثون",
+    "resetHackathon": "إعادة للوضع التلقائي",
+    "durationHours": "المدة (بالساعات)",
+    "hackathonLive": "الهاكاثون مباشر",
+    "hackathonEnded": "الهاكاثون منتهي",
+    "hackathonAuto": "تلقائي",
     "judgesPage": {
       "title": "المحكّمون",
       "addJudge": "إضافة محكّم",

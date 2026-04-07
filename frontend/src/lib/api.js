@@ -185,6 +185,18 @@ class ApiClient {
     });
     return response.blob();
   }
+
+  // Hackathon state (public GET, admin PUT)
+  async getHackathonState() {
+    return this.request('/hackathon/state');
+  }
+
+  async updateHackathonState(payload) {
+    return this.request('/hackathon/state', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
 }
 
 export const api = new ApiClient();

@@ -6,6 +6,8 @@
   },
   "countdown": {
     "title": "Hackathon Countdown",
+    "liveTitle": "Ends in",
+    "ended": "Hackathon ended",
     "days": "Days",
     "hours": "Hours",
     "minutes": "Minutes",
@@ -49,6 +51,7 @@
   },
   "home": {
     "liveBadge": "Reserve Your Seat",
+    "liveNow": "Live Now",
     "tagline": "Join the Hebron Coding Hackathon and help build smart solutions for the city of Hebron.",
     "registerYourTeam": "Register Your Team",
     "viewYourTeamProfile": "View Your Team Profile",
@@ -189,6 +192,13 @@
     "leaderboardTab": "Leaderboard",
     "exportTab": "Export",
     "resetData": "Reset Data",
+    "startHackathon": "Start Hackathon",
+    "endHackathon": "End Hackathon",
+    "resetHackathon": "Back to Auto",
+    "durationHours": "Duration (hours)",
+    "hackathonLive": "Hackathon is LIVE",
+    "hackathonEnded": "Hackathon ended",
+    "hackathonAuto": "Auto (by schedule)",
     "judgesPage": {
       "title": "Judges",
       "addJudge": "Add Judge",

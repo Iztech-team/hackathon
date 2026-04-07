@@ -6,7 +6,7 @@ import { useAuth, USER_ROLES } from '../../context/AuthContext';
 import { useTeams } from '../../context/TeamContext';
 import { useJudges } from '../../context/JudgeContext';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
-import { HACKATHON_DATE } from '../ui/Countdown';
+import { useHackathonState } from '../../hooks/useHackathonState';
 import { calculateTotalScore, getCategoryById } from '../../data/categories';
 
 // Cycles through an array of {label, icon} objects every `interval` ms.
@@ -271,6 +271,7 @@ function useShortCountdown(target) {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+  if (!target) return null;
   const diff = target.getTime() - now;
   if (diff <= 0) return null;
   const d = Math.floor(diff / 86400000);
@@ -289,6 +290,7 @@ export function Navigation() {
   const { t } = useTranslation();
   const { teams } = useTeams();
   const { judges } = useJudges();
+  const { state: hackathonState, startAt, endAt } = useHackathonState();
 
   const handleLogout = () => {
     logout();
@@ -296,7 +298,9 @@ export function Navigation() {
   };
 
   // ---- Dynamic data for cycling labels ----
-  const countdown = useShortCountdown(HACKATHON_DATE);
+  // Use the same target the countdown component uses: start when upcoming, end when live
+  const countdownTarget = hackathonState === 'upcoming' ? startAt : hackathonState === 'live' ? endAt : null;
+  const countdown = useShortCountdown(countdownTarget);
 
   // Top team by total score
   const topTeam = useMemo(() => {

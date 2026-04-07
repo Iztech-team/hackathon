@@ -6,6 +6,7 @@ import { useTeams } from '../context/TeamContext';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Countdown } from '../components/ui/Countdown';
+import { useHackathonState } from '../hooks/useHackathonState';
 import { CATEGORY_LIST } from '../data/categories';
 
 // Reusable section that fades + slides up the first time it enters the viewport.
@@ -42,6 +43,7 @@ export default function Home() {
   const { isAuthenticated, role } = useAuth();
   const { teams } = useTeams();
   const { t } = useTranslation();
+  const { state: hackathonState } = useHackathonState();
 
   const totalTeams = teams.length;
   const totalParticipants = teams.reduce(
@@ -62,10 +64,20 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d4b069]/10 border border-[#d4b069]/30 text-[#e8c98a] text-sm font-medium mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#d4b069] animate-pulse" />
-          {t('home.liveBadge')}
-        </div>
+        {hackathonState === 'live' ? (
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/15 border border-red-500/40 text-red-300 text-sm font-semibold mb-6">
+            <span className="relative flex w-2 h-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
+              <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
+            </span>
+            {t('home.liveNow')}
+          </div>
+        ) : hackathonState !== 'ended' ? (
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d4b069]/10 border border-[#d4b069]/30 text-[#e8c98a] text-sm font-medium mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#d4b069] animate-pulse" />
+            {t('home.liveBadge')}
+          </div>
+        ) : null}
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           {t('app.title')}
           <span className="text-[#d4b069] ms-3">{t('app.subtitle')}</span>
