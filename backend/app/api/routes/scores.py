@@ -1,5 +1,8 @@
+import uuid
+from datetime import datetime
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import selectinload
 from app.api.deps import DbSession, CurrentJudge
 from app.schemas.score import ScoreCreate, ScoreResponse
@@ -54,29 +57,39 @@ async def set_score(
             detail="Judge profile not found",
         )
 
-    # Upsert score (find existing or create new)
+    # Atomic upsert — INSERT ... ON CONFLICT (team_id, category_id) DO UPDATE.
+    # This guarantees correctness even when two judges score the same team+category
+    # concurrently, and eliminates the check-then-act race that could previously
+    # produce 500s or violate the unique constraint.
+    #
+    # We generate the id and updated_at explicitly because SQLAlchemy's Python-level
+    # column defaults (the uuid lambda, datetime.utcnow) don't fire for raw insert
+    # statements — they're ORM-only.
+    now = datetime.utcnow()
+    stmt = sqlite_insert(Score).values(
+        id=str(uuid.uuid4()),
+        team_id=team_id,
+        category_id=category_id,
+        points=data.points,
+        judge_id=judge.id,
+        updated_at=now,
+    )
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["team_id", "category_id"],
+        set_={
+            "points": stmt.excluded.points,
+            "judge_id": stmt.excluded.judge_id,
+            "updated_at": now,
+        },
+    )
+    await db.execute(stmt)
+    await db.commit()
+
+    # Re-read the canonical row to return the stored values.
     result = await db.execute(
         select(Score).where(Score.team_id == team_id, Score.category_id == category_id)
     )
-    score = result.scalar_one_or_none()
-
-    if score is None:
-        # Create new score
-        score = Score(
-            team_id=team_id,
-            category_id=category_id,
-            points=data.points,
-            judge_id=judge.id,
-        )
-        db.add(score)
-    else:
-        # Update existing score
-        score.points = data.points
-        score.judge_id = judge.id
-
-    await db.commit()
-    await db.refresh(score)
-
+    score = result.scalar_one()
     return ScoreResponse.model_validate(score)
 
 

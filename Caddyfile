@@ -1,0 +1,44 @@
+# Hebron Coding Hackathon — Caddy reverse proxy
+#
+# Caddy handles TLS automatically via Let's Encrypt. Set HACKATHON_DOMAIN in
+# your .env to the public domain (e.g. hackathon.example.com) and it will
+# provision a cert on first boot.
+#
+# For local dev without a domain, leave HACKATHON_DOMAIN unset and Caddy
+# listens on :80 without TLS.
+
+{$HACKATHON_DOMAIN} {
+    encode gzip zstd
+
+    # Security headers
+    header {
+        # Prevent MIME sniffing
+        X-Content-Type-Options "nosniff"
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        # Basic referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Hide Caddy's identity
+        -Server
+    }
+
+    # Backend API — /api/* and /health go to the FastAPI container
+    @api {
+        path /api/*
+        path /health
+    }
+    handle @api {
+        reverse_proxy backend:8000
+    }
+
+    # Everything else → frontend (nginx serving the Vite build)
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    # Access log to stdout (captured by docker logs)
+    log {
+        output stdout
+        format console
+    }
+}

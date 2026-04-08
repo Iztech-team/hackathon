@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from typing import Optional
+from app.config import get_settings
 from app.models import User, UserRole, Judge, Team, TeamMember
 from app.schemas.auth import TeamRegisterRequest
 from app.utils.security import verify_password, get_password_hash, create_access_token
@@ -44,23 +46,28 @@ async def get_team_by_user_id(db: AsyncSession, user_id: str) -> Optional[Team]:
 
 
 async def register_team(db: AsyncSession, data: TeamRegisterRequest) -> tuple[Team, str]:
-    # Check if team name already exists (case-insensitive)
+    # Best-effort pre-check for nicer error messages (case-insensitive).
+    # The real guarantee comes from the unique constraint on User.username
+    # + the IntegrityError handler below — those protect against the TOCTOU
+    # race where two simultaneous registrations both pass this check.
     existing = await db.execute(
         select(User).where(func.lower(User.username) == func.lower(data.team_name))
     )
     if existing.scalar_one_or_none():
         raise ValueError("Team name already exists")
 
-    # Create user account for team
     user = User(
         username=data.team_name,
         password_hash=get_password_hash(data.password),
         role=UserRole.TEAM,
     )
     db.add(user)
-    await db.flush()
+    try:
+        await db.flush()
+    except IntegrityError:
+        await db.rollback()
+        raise ValueError("Team name already exists")
 
-    # Create team profile
     team = Team(
         user_id=user.id,
         team_name=data.team_name,
@@ -69,9 +76,12 @@ async def register_team(db: AsyncSession, data: TeamRegisterRequest) -> tuple[Te
         logo_seed=data.logo_seed,
     )
     db.add(team)
-    await db.flush()
+    try:
+        await db.flush()
+    except IntegrityError:
+        await db.rollback()
+        raise ValueError("Team name already exists")
 
-    # Add members
     for member_data in data.members:
         member = TeamMember(
             team_id=team.id,
@@ -81,21 +91,26 @@ async def register_team(db: AsyncSession, data: TeamRegisterRequest) -> tuple[Te
         )
         db.add(member)
 
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise ValueError("Team name already exists")
+
     await db.refresh(team)
 
-    # Create access token
     token = create_access_token(user_id=user.id, role=UserRole.TEAM)
 
     return team, token
 
 
-async def create_admin_if_not_exists(db: AsyncSession, username: str = "admin", password: str = "admin1232026"):
+async def create_admin_if_not_exists(db: AsyncSession, username: str = "admin", password: Optional[str] = None):
     result = await db.execute(select(User).where(User.username == username))
     if result.scalar_one_or_none() is None:
+        pwd = password or get_settings().ADMIN_PASSWORD
         admin = User(
             username=username,
-            password_hash=get_password_hash(password),
+            password_hash=get_password_hash(pwd),
             role=UserRole.ADMIN,
         )
         db.add(admin)
@@ -104,14 +119,15 @@ async def create_admin_if_not_exists(db: AsyncSession, username: str = "admin", 
     return False
 
 
-async def create_default_judge_if_not_exists(db: AsyncSession, username: str = "judge", password: str = "judge2026"):
+async def create_default_judge_if_not_exists(db: AsyncSession, username: str = "judge", password: Optional[str] = None):
     result = await db.execute(select(User).where(User.username == username))
     if result.scalar_one_or_none() is not None:
         return False
 
+    pwd = password or get_settings().JUDGE_PASSWORD
     user = User(
         username=username,
-        password_hash=get_password_hash(password),
+        password_hash=get_password_hash(pwd),
         role=UserRole.JUDGE,
     )
     db.add(user)
@@ -128,14 +144,15 @@ async def create_default_judge_if_not_exists(db: AsyncSession, username: str = "
     return True
 
 
-async def create_default_team_if_not_exists(db: AsyncSession, username: str = "team", password: str = "team2026"):
+async def create_default_team_if_not_exists(db: AsyncSession, username: str = "team", password: Optional[str] = None):
     result = await db.execute(select(User).where(User.username == username))
     if result.scalar_one_or_none() is not None:
         return False
 
+    pwd = password or get_settings().TEAM_PASSWORD
     user = User(
         username=username,
-        password_hash=get_password_hash(password),
+        password_hash=get_password_hash(pwd),
         role=UserRole.TEAM,
     )
     db.add(user)

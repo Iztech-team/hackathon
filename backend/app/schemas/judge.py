@@ -5,7 +5,7 @@ from typing import Optional
 class JudgeCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     username: str = Field(..., min_length=1, max_length=100)
-    password: str = Field(..., min_length=4)
+    password: str = Field(..., min_length=8, max_length=128)
     category_id: str = Field(..., pattern="^(ui_ux|frontend|backend|innovation|presentation)$")
     avatar_seed: Optional[str] = None
 

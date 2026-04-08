@@ -4,13 +4,24 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: hackathon-backend
-    ports:
-      - "8000:8000"
+    # No public port publish — Caddy reaches the backend over the compose network
+    # as `backend:8000`. For raw local dev without Caddy, temporarily re-add:
+    #   ports:
+    #     - "8000:8000"
+    expose:
+      - "8000"
     environment:
+      # REQUIRED in production — no fallback. Start the stack with:
+      #   ENV=production SECRET_KEY=... ADMIN_PASSWORD=... ... docker compose up
+      - ENV=${ENV:-development}
       - DATABASE_URL=sqlite+aiosqlite:///./data/hackathon.db
-      - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-change-in-production}
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY must be set — generate one with: python -c 'import secrets; print(secrets.token_urlsafe(32))'}
       - ALGORITHM=HS256
-      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - JUDGE_PASSWORD=${JUDGE_PASSWORD:-}
+      - TEAM_PASSWORD=${TEAM_PASSWORD:-}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
     volumes:
       - backend-data:/app/data
     restart: unless-stopped
@@ -26,15 +37,41 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_USE_MOCK_DATA=false
-        - VITE_API_ENDPOINT=http://localhost:8000
+        # Same-origin mode — the frontend will call /api/... which Caddy routes
+        # to the backend container. To run without Caddy in local dev, set this
+        # to http://localhost:8000 instead.
+        - VITE_USE_MOCK_DATA=${VITE_USE_MOCK_DATA:-false}
+        - VITE_API_ENDPOINT=${VITE_API_ENDPOINT:-}
     container_name: hackathon-frontend
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: hackathon-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      # The domain Caddy should serve. Defaults to :80 (no TLS) for local dev.
+      # Set HACKATHON_DOMAIN=hackathon.example.com in .env for production and
+      # Caddy will auto-provision a Let's Encrypt cert on first boot.
+      - HACKATHON_DOMAIN=${HACKATHON_DOMAIN:-:80}
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
 volumes:
   backend-data:
+  caddy-data:
+  caddy-config:

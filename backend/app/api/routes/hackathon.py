@@ -1,30 +1,19 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
-from zoneinfo import ZoneInfo
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from app.api.deps import DbSession, CurrentAdmin
 from app.models import HackathonSettings
+from app.utils.time import (
+    JERUSALEM_TZ,
+    to_naive_jerusalem as _to_naive_jerusalem,
+    aware_jerusalem as _aware_jerusalem,
+    jerusalem_now_naive as _jerusalem_now_naive,
+)
 
 
 router = APIRouter()
-
-# Store everything in Jerusalem local time (the hackathon's physical location).
-JERUSALEM_TZ = ZoneInfo("Asia/Jerusalem")
-
-
-def _to_naive_jerusalem(dt: datetime) -> datetime:
-    """Normalize an incoming datetime to a naive Jerusalem local datetime so it can be
-    stored in SQLite and compared against the current Jerusalem wall clock."""
-    if dt.tzinfo is None:
-        # Naive input from a client — assume it's already Jerusalem local.
-        return dt
-    return dt.astimezone(JERUSALEM_TZ).replace(tzinfo=None)
-
-
-def _jerusalem_now_naive() -> datetime:
-    return datetime.now(JERUSALEM_TZ).replace(tzinfo=None)
 
 
 class HackathonStateResponse(BaseModel):
@@ -75,14 +64,6 @@ async def _get_or_create_settings(db) -> HackathonSettings:
         await db.commit()
         await db.refresh(row)
     return row
-
-
-def _aware_jerusalem(dt: datetime) -> datetime:
-    """Tag a naive Jerusalem-local datetime with Jerusalem tzinfo so pydantic
-    serializes it with the correct offset (e.g. +03:00)."""
-    if dt.tzinfo is None:
-        return dt.replace(tzinfo=JERUSALEM_TZ)
-    return dt.astimezone(JERUSALEM_TZ)
 
 
 @router.get("/state", response_model=HackathonStateResponse)

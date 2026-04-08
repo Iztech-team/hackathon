@@ -11,6 +11,10 @@ from app.services.export import export_teams_to_csv, export_judges_to_csv, expor
 
 router = APIRouter()
 
+# Maximum API-keys CSV size. Uploads bigger than this are rejected before we
+# allocate memory. 2 MB holds ~40,000 keys which is way more than any hackathon.
+MAX_API_KEYS_CSV_BYTES = 2 * 1024 * 1024
+
 
 @router.get("/stats")
 async def get_stats(db: DbSession, current_admin: CurrentAdmin):
@@ -183,8 +187,34 @@ async def upload_api_keys(
     current_admin: CurrentAdmin,
     file: UploadFile = File(...),
 ):
-    raw = await file.read()
-    keys = _parse_keys_csv(raw)
+    # Validate content type (best-effort; clients can lie but most browsers set it)
+    if file.content_type and file.content_type not in {
+        "text/csv",
+        "application/csv",
+        "application/vnd.ms-excel",
+        "text/plain",
+        "application/octet-stream",
+    }:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail=f"Unsupported content type: {file.content_type}. Expected text/csv.",
+        )
+
+    # Stream-read with a hard byte cap so a malicious upload can't OOM us.
+    raw = bytearray()
+    chunk_size = 64 * 1024
+    while True:
+        chunk = await file.read(chunk_size)
+        if not chunk:
+            break
+        raw.extend(chunk)
+        if len(raw) > MAX_API_KEYS_CSV_BYTES:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"CSV file too large. Maximum size is {MAX_API_KEYS_CSV_BYTES // 1024} KB.",
+            )
+
+    keys = _parse_keys_csv(bytes(raw))
     if not keys:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

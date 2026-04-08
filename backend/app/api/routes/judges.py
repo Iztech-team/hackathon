@@ -64,6 +64,13 @@ async def get_judge(judge_id: str, db: DbSession, current_user: CurrentUser):
             detail="Judge not found",
         )
 
+    # Only admins or the judge themselves can read this record.
+    if current_user.role != UserRole.ADMIN and judge.user_id != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this judge",
+        )
+
     return JudgeResponse.model_validate(judge)
 
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../lib/api';
 
 // Fallback defaults if the backend is unreachable
@@ -46,11 +46,22 @@ export function useHackathonState() {
     }
   }, []);
 
+  // "Latest ref" pattern — the setInterval callback reads from the ref
+  // rather than closing over a specific fetchState, so it never goes stale
+  // even if fetchState is recreated or if someone later adds dependencies.
+  const fetchStateRef = useRef(fetchState);
   useEffect(() => {
-    fetchState();
-    const id = setInterval(fetchState, 15000);
-    return () => clearInterval(id);
+    fetchStateRef.current = fetchState;
   }, [fetchState]);
+
+  useEffect(() => {
+    // Initial fetch on mount
+    fetchStateRef.current();
+    const id = setInterval(() => {
+      fetchStateRef.current();
+    }, 15000);
+    return () => clearInterval(id);
+  }, []);
 
   const setOverride = useCallback(
     async (value) => {

@@ -29,7 +29,7 @@ class TeamRegisterRequest(BaseModel):
     team_name: str = Field(..., min_length=1, max_length=100)
     project_name: Optional[str] = Field(None, max_length=200)
     description: Optional[str] = None
-    password: str = Field(..., min_length=4)
+    password: str = Field(..., min_length=8, max_length=128)
     logo_seed: Optional[str] = None
     members: list[TeamMemberInput] = Field(default_factory=list)
 

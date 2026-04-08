@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 from sqlalchemy import select
 from app.api.deps import DbSession, CurrentUser
+from app.rate_limit import limiter
 from app.schemas.auth import Token, LoginRequest, TeamRegisterRequest, UserResponse
 from app.schemas.team import TeamResponse
 from app.schemas.judge import JudgeResponse
@@ -18,8 +19,10 @@ from app.models import HackathonSettings
 router = APIRouter()
 
 
+# Stop credential stuffing — max 10 login attempts per minute per client IP.
 @router.post("/login", response_model=Token)
-async def login(data: LoginRequest, db: DbSession):
+@limiter.limit("10/minute")
+async def login(request: Request, data: LoginRequest, db: DbSession):
     user = await authenticate_user(db, data.username, data.password)
 
     if user is None:
@@ -44,15 +47,20 @@ async def login(data: LoginRequest, db: DbSession):
 
 
 @router.post("/register/team", response_model=Token)
-async def register_team_endpoint(data: TeamRegisterRequest, db: DbSession):
+@limiter.limit("5/minute")
+async def register_team_endpoint(request: Request, data: TeamRegisterRequest, db: DbSession):
     try:
         team, token = await register_team(db, data)
         return Token(access_token=token)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e),
+        msg = str(e)
+        # Duplicate team name → 409 Conflict; everything else → 400
+        code = (
+            status.HTTP_409_CONFLICT
+            if "already exists" in msg.lower()
+            else status.HTTP_400_BAD_REQUEST
         )
+        raise HTTPException(status_code=code, detail=msg)
 
 
 @router.get("/me")
