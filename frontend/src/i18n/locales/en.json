@@ -50,7 +50,7 @@
     "language": "Language"
   },
   "home": {
-    "liveBadge": "Reserve Your Seat",
+    "liveBadge": "Reserve Your Seats",
     "liveNow": "Live Now",
     "tagline": "Join the Hebron Coding Hackathon and help build smart solutions for the city of Hebron.",
     "registerYourTeam": "Register Your Team",
@@ -161,7 +161,14 @@
     "teamMembers": "Team Members",
     "teamMembersDesc": "Click on a member to edit their details",
     "viewLeaderboard": "View Leaderboard",
-    "addMemberBtn": "Add Member"
+    "addMemberBtn": "Add Member",
+    "apiKey": {
+      "title": "Your Team API Key",
+      "hidden": "Your key will be revealed by the admin soon",
+      "notAssigned": "No API key has been assigned to your team yet",
+      "copy": "Copy",
+      "copied": "Copied!"
+    }
   },
   "judge": {
     "judgingCategory": "Judging Category",
@@ -199,6 +206,24 @@
     "hackathonLive": "Hackathon is LIVE",
     "hackathonEnded": "Hackathon ended",
     "hackathonAuto": "Auto (by schedule)",
+    "freezeLeaderboard": "Freeze Leaderboard",
+    "unfreezeLeaderboard": "Unfreeze Leaderboard",
+    "leaderboardFrozen": "Leaderboard is frozen",
+    "leaderboardLive": "Leaderboard is live",
+    "freezeDesc": "Lock the scoreboard so participants can't see new scores in the final minutes",
+    "apiKeys": {
+      "title": "API Keys",
+      "desc": "Upload a CSV file with the list of API keys — each team gets one key",
+      "uploadCsv": "Upload CSV",
+      "reveal": "Reveal Keys",
+      "hide": "Hide Keys",
+      "clear": "Clear All Keys",
+      "assigned": "{{assigned}} / {{total}} assigned",
+      "revealed": "Keys are visible to teams",
+      "hidden": "Keys are hidden from teams",
+      "uploadSuccess": "Keys uploaded and distributed",
+      "confirmClear": "Are you sure you want to clear all API keys?"
+    },
     "judgesPage": {
       "title": "Judges",
       "addJudge": "Add Judge",
@@ -265,6 +290,9 @@
     "subtitle": "Live rankings for Code For Hebron Hackathon 2026",
     "overall": "Overall",
     "totalTeams": "Total Teams",
-    "noTeams": "No teams yet"
+    "noTeams": "No teams yet",
+    "frozenTitle": "Leaderboard Frozen",
+    "frozenSubtitle": "The scoreboard is locked for the final stretch of the hackathon",
+    "frozenNote": "Judges are still scoring in the background. Final results will be revealed at the end."
   }
 }

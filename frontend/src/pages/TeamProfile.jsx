@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTeams } from '../context/TeamContext';
@@ -15,8 +15,45 @@ import { CATEGORY_LIST, calculateTotalScore } from '../data/categories';
 export default function TeamProfile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
   const { getTeamById, getSortedTeams, updateTeam, addTeamMember } = useTeams();
+
+  // Poll the backend so API key reveal state updates within ~15s of admin action
+  useEffect(() => {
+    if (!refreshUserData) return;
+    const id = setInterval(() => { refreshUserData(); }, 15000);
+    return () => clearInterval(id);
+  }, [refreshUserData]);
+
+  // API key state is on user.team (from /auth/me response)
+  const authTeam = user?.team || {};
+  const apiKey = authTeam.api_key || null;
+  const apiKeyAssigned = !!authTeam.api_key_assigned;
+  const apiKeysRevealed = !!authTeam.api_keys_revealed;
+
+  const [copied, setCopied] = useState(false);
+  const handleCopyApiKey = async () => {
+    if (!apiKey) return;
+    try {
+      await navigator.clipboard.writeText(apiKey);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // ignore
+    }
+  };
+
+  const [refreshingKey, setRefreshingKey] = useState(false);
+  const handleRefreshKey = async () => {
+    if (!refreshUserData || refreshingKey) return;
+    setRefreshingKey(true);
+    try {
+      await refreshUserData();
+    } finally {
+      // Keep the spin animation visible for at least ~400ms so it feels responsive
+      setTimeout(() => setRefreshingKey(false), 400);
+    }
+  };
 
   const team = getTeamById(user?.teamId);
   const sortedTeams = getSortedTeams();
@@ -115,7 +152,7 @@ export default function TeamProfile() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1e4fda]/20 via-[#2b58f7]/10 to-transparent border border-white/[0.08]">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#d4b069]/20 via-[#a8842d]/10 to-transparent border border-white/[0.08]">
         <div className="absolute inset-0 opacity-30" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '24px 24px'}} />
 
         <div className="relative p-6 md:p-8">
@@ -129,7 +166,7 @@ export default function TeamProfile() {
               >
                 {team.teamName}
               </motion.h1>
-              <p className="text-lg text-[#2b58f7] font-medium mb-2">{team.projectName}</p>
+              <p className="text-lg text-[#d4b069] font-medium mb-2">{team.projectName}</p>
               {team.description && (
                 <p className="text-sm text-white/50 max-w-md">{team.description}</p>
               )}
@@ -148,7 +185,7 @@ export default function TeamProfile() {
             {/* Right: Score & Rank */}
             <div className="flex flex-col items-center gap-3">
               <div className="text-center px-6 py-4 rounded-2xl bg-black/30 backdrop-blur-sm border border-white/[0.06]">
-                <div className="text-5xl font-bold text-[#2b58f7] mb-1">{totalScore}</div>
+                <div className="text-5xl font-bold text-[#d4b069] mb-1">{totalScore}</div>
                 <div className="text-xs text-white/40 uppercase tracking-wider">{t('team.totalPoints')}</div>
               </div>
               <Badge className="text-base px-4 py-1.5">{t('common.rank')} #{rank}</Badge>
@@ -223,6 +260,81 @@ export default function TeamProfile() {
         </CardContent>
       </Card>
 
+      {/* API Key */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+              </div>
+              <CardTitle>{t('team.apiKey.title')}</CardTitle>
+            </div>
+            <button
+              type="button"
+              onClick={handleRefreshKey}
+              disabled={refreshingKey}
+              className="p-2 rounded-xl text-white/50 hover:text-[#d4b069] hover:bg-[#d4b069]/10 transition-colors disabled:opacity-50"
+              title="Refresh"
+            >
+              <svg
+                className={`w-5 h-5 ${refreshingKey ? 'animate-spin' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <AnimatePresence mode="wait">
+            {apiKey && apiKeysRevealed ? (
+              <motion.div
+                key="revealed"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2"
+              >
+                <code
+                  dir="ltr"
+                  className="flex-1 min-w-0 truncate px-4 py-3 rounded-xl bg-black/40 border border-[#d4b069]/30 text-[#e8c98a] font-mono text-sm tracking-tight select-all"
+                >
+                  {apiKey}
+                </code>
+                <Button size="sm" onClick={handleCopyApiKey} glow>
+                  {copied ? t('team.apiKey.copied') : t('team.apiKey.copy')}
+                </Button>
+              </motion.div>
+            ) : apiKeyAssigned ? (
+              <motion.div
+                key="hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center gap-3 px-4 py-4 rounded-xl bg-black/30 border border-white/[0.08]"
+              >
+                <svg className="w-5 h-5 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <p className="text-sm text-white/60">{t('team.apiKey.hidden')}</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center gap-3 px-4 py-4 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+              >
+                <p className="text-sm text-white/40">{t('team.apiKey.notAssigned')}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
       {/* Category Scores */}
       <Card>
         <CardHeader>
@@ -279,7 +391,7 @@ export default function TeamProfile() {
             transition={{ delay: 0.6 }}
           >
             <span className="text-sm text-white/50">{t('team.totalScore')}</span>
-            <span className="text-xl font-bold text-[#2b58f7]">{totalScore} {t('common.points')}</span>
+            <span className="text-xl font-bold text-[#d4b069]">{totalScore} {t('common.points')}</span>
           </motion.div>
         </CardContent>
       </Card>
@@ -310,7 +422,7 @@ export default function TeamProfile() {
                 layout
                 className={`rounded-xl border transition-all ${
                   editingMember === idx
-                    ? 'bg-white/[0.05] border-[#2b58f7]/30 ring-1 ring-[#2b58f7]/20'
+                    ? 'bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20'
                     : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] cursor-pointer'
                 }`}
                 onClick={() => editingMember === null && handleEditMember(member, idx)}
@@ -379,7 +491,7 @@ export default function TeamProfile() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="rounded-xl border bg-white/[0.05] border-[#2b58f7]/30 ring-1 ring-[#2b58f7]/20 p-4 space-y-4"
+                className="rounded-xl border bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20 p-4 space-y-4"
               >
                 <div className="flex items-start gap-4">
                   <AvatarPicker

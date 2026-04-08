@@ -32,16 +32,22 @@ function useCycled(items, enabled = true, interval = 3500) {
   return filtered[idx % Math.max(filtered.length, 1)] || { label: '', icon: null };
 }
 
-function NavLink({ to, label, icon, iconKey }) {
+function NavLink({ to, label, icon, iconKey, theme = 'gold' }) {
   const location = useLocation();
   const isActive = location.pathname === to;
+
+  // Different active-pill theme (e.g., "frost" when the leaderboard is frozen)
+  const activeClasses =
+    theme === 'frost'
+      ? 'bg-gradient-to-r from-[#0ea5e9] via-[#38bdf8] to-[#bae6fd] text-[#0c4a6e] shadow-lg shadow-sky-400/40'
+      : 'bg-gradient-to-r from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-lg shadow-[#d4b069]/30';
 
   return (
     <Link to={to} className="relative">
       <div
         className={`relative px-3 py-2.5 rounded-xl text-sm font-medium flex items-center transition-[background-color,box-shadow,color] duration-300 ease-out ${
           isActive
-            ? 'bg-gradient-to-r from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-lg shadow-[#d4b069]/30'
+            ? activeClasses
             : 'text-white/60 hover:text-white hover:bg-white/10'
         }`}
       >
@@ -252,6 +258,18 @@ const ChartBarIcon = () => (
   </svg>
 );
 
+const SnowflakeIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
+
 const LogoutIcon = () => (
   <motion.svg
     className="w-5 h-5"
@@ -290,11 +308,11 @@ export function Navigation() {
   const { t } = useTranslation();
   const { teams } = useTeams();
   const { judges } = useJudges();
-  const { state: hackathonState, startAt, endAt } = useHackathonState();
+  const { state: hackathonState, startAt, endAt, leaderboardFrozen } = useHackathonState();
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   // ---- Dynamic data for cycling labels ----
@@ -336,16 +354,31 @@ export function Navigation() {
   const homeItem = useCycled([
     { key: 'home', label: t('nav.home'), icon: <HomeIcon isActive /> },
     countdown ? { key: 'countdown', label: countdown, icon: <ClockIcon /> } : null,
-    role === USER_ROLES.GUEST ? { key: 'reserve', label: t('home.liveBadge'), icon: <SparkleIcon /> } : null,
+    hackathonState === 'live'
+      ? { key: 'live', label: t('home.liveNow'), icon: <FlameIcon /> }
+      : role === USER_ROLES.GUEST && hackathonState === 'upcoming'
+      ? { key: 'reserve', label: t('home.liveBadge'), icon: <SparkleIcon /> }
+      : null,
   ], path === '/');
 
-  const leaderboardItem = useCycled([
-    { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
-    topTeam ? { key: 'top-team', label: topTeam.teamName, icon: <TrophyIcon /> } : null,
-    topTeam && topTeam.total > 0
-      ? { key: 'top-points', label: `${topTeam.total} ${t('common.points')}`, icon: <FlameIcon /> }
-      : null,
-  ], path === '/leaderboard');
+  // When the leaderboard is frozen we deliberately DON'T show top-team / score
+  // cycling — instead we cycle between "Leaderboard" and a frozen indicator.
+  const leaderboardItem = useCycled(
+    leaderboardFrozen
+      ? [
+          { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
+          { key: 'frozen', label: t('leaderboard.frozenTitle'), icon: <SnowflakeIcon /> },
+          { key: 'locked', label: t('admin.leaderboardFrozen'), icon: <LockIcon /> },
+        ]
+      : [
+          { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
+          topTeam ? { key: 'top-team', label: topTeam.teamName, icon: <TrophyIcon /> } : null,
+          topTeam && topTeam.total > 0
+            ? { key: 'top-points', label: `${topTeam.total} ${t('common.points')}`, icon: <FlameIcon /> }
+            : null,
+        ],
+    path === '/leaderboard'
+  );
 
   const teamItem = useCycled([
     { key: 'team', label: t('nav.team'), icon: <TeamIcon isActive /> },
@@ -376,52 +409,63 @@ export function Navigation() {
     { key: 'count', label: `${judges.length} ${t('admin.judgesPage.registered')}`, icon: <ChartBarIcon /> },
   ], path === '/admin/judges');
 
-  const adminLeaderboardItem = useCycled([
-    { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
-    topTeam ? { key: 'top', label: topTeam.teamName, icon: <TrophyIcon /> } : null,
-  ], path === '/leaderboard');
+  const adminLeaderboardItem = useCycled(
+    leaderboardFrozen
+      ? [
+          { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
+          { key: 'frozen', label: t('leaderboard.frozenTitle'), icon: <SnowflakeIcon /> },
+        ]
+      : [
+          { key: 'leaderboard', label: t('nav.leaderboard'), icon: <LeaderboardIcon isActive /> },
+          topTeam ? { key: 'top', label: topTeam.teamName, icon: <TrophyIcon /> } : null,
+        ],
+    path === '/leaderboard'
+  );
 
   // Helper: build a nav entry with cycled active item or static fallback
-  const make = (to, staticIcon, cycledItem) => ({
+  const make = (to, staticIcon, cycledItem, theme) => ({
     to,
     label: cycledItem.label,
     icon: cycledItem.icon || staticIcon,
     iconKey: cycledItem.key || 'static',
     staticIcon,
+    theme,
   });
+
+  const boardTheme = leaderboardFrozen ? 'frost' : undefined;
 
   const navItems = useMemo(() => {
     switch (role) {
       case USER_ROLES.GUEST:
         return [
           make('/', <HomeIcon isActive />, homeItem),
-          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem),
+          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem, boardTheme),
           { to: '/login', icon: <LoginIcon isActive />, label: t('nav.login'), iconKey: 'login' },
         ];
       case USER_ROLES.PARTICIPANT:
         return [
           make('/', <HomeIcon isActive />, homeItem),
-          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem),
+          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem, boardTheme),
           make('/team', <TeamIcon isActive />, teamItem),
         ];
       case USER_ROLES.JUDGE:
         return [
           make('/', <HomeIcon isActive />, homeItem),
-          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem),
+          make('/leaderboard', <LeaderboardIcon isActive />, leaderboardItem, boardTheme),
           make('/scan', <ScanIcon isActive />, scanItem),
           make('/judge/profile', <ProfileIcon isActive />, judgeProfileItem),
         ];
       case USER_ROLES.ADMIN:
         return [
           make('/admin', <DashboardIcon isActive />, adminDashItem),
-          make('/leaderboard', <LeaderboardIcon isActive />, adminLeaderboardItem),
+          make('/leaderboard', <LeaderboardIcon isActive />, adminLeaderboardItem, boardTheme),
           make('/admin/judges', <JudgesIcon isActive />, adminJudgesItem),
           { to: '/admin/export', icon: <ExportIcon isActive />, label: t('admin.exportTab'), iconKey: 'export' },
         ];
       default:
         return [];
     }
-  }, [role, t, homeItem, leaderboardItem, teamItem, scanItem, judgeProfileItem, adminDashItem, adminJudgesItem, adminLeaderboardItem]);
+  }, [role, t, homeItem, leaderboardItem, teamItem, scanItem, judgeProfileItem, adminDashItem, adminJudgesItem, adminLeaderboardItem, boardTheme]);
 
   return (
     <motion.nav
@@ -439,7 +483,7 @@ export function Navigation() {
           const icon = isActive ? item.icon : (item.staticIcon || item.icon);
           const iconKey = isActive ? item.iconKey : 'static';
           return (
-            <NavLink key={item.to} to={item.to} icon={icon} label={item.label} iconKey={iconKey} />
+            <NavLink key={item.to} to={item.to} icon={icon} label={item.label} iconKey={iconKey} theme={item.theme} />
           );
         })}
         {(role === USER_ROLES.ADMIN || role === USER_ROLES.PARTICIPANT || role === USER_ROLES.JUDGE) && (

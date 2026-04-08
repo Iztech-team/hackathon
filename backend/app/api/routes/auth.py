@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
+from sqlalchemy import select
 from app.api.deps import DbSession, CurrentUser
 from app.schemas.auth import Token, LoginRequest, TeamRegisterRequest, UserResponse
 from app.schemas.team import TeamResponse
@@ -12,6 +13,7 @@ from app.services.auth import (
 )
 from app.utils.security import create_access_token
 from app.models.user import UserRole
+from app.models import HackathonSettings
 
 router = APIRouter()
 
@@ -78,6 +80,11 @@ async def get_current_user_info(current_user: CurrentUser, db: DbSession):
         team = await get_team_by_user_id(db, user.id)
         if team:
             scores_dict = {s.category_id: s.points for s in team.scores}
+            # Only expose the team's api_key when admin has flipped the reveal switch
+            settings_row = (
+                await db.execute(select(HackathonSettings).where(HackathonSettings.id == 1))
+            ).scalar_one_or_none()
+            keys_revealed = bool(settings_row and settings_row.api_keys_revealed)
             response["team"] = {
                 "id": team.id,
                 "team_name": team.team_name,
@@ -96,6 +103,9 @@ async def get_current_user_info(current_user: CurrentUser, db: DbSession):
                 ],
                 "scores": scores_dict,
                 "total_score": sum(scores_dict.values()),
+                "api_key": team.api_key if keys_revealed else None,
+                "api_key_assigned": team.api_key is not None,
+                "api_keys_revealed": keys_revealed,
             }
 
     return response

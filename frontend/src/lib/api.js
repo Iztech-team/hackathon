@@ -197,6 +197,50 @@ class ApiClient {
       body: JSON.stringify(payload),
     });
   }
+
+  // API Keys (admin)
+  async getApiKeysStatus() {
+    return this.request('/admin/api-keys/status');
+  }
+
+  async uploadApiKeysCsv(file) {
+    const url = `${API_BASE}/admin/api-keys/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.token}` },
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: 'Upload failed' }));
+      throw new Error(err.detail || 'Upload failed');
+    }
+    return res.json();
+  }
+
+  async setApiKeysReveal(revealed) {
+    return this.request('/admin/api-keys/reveal', {
+      method: 'PUT',
+      body: JSON.stringify({ revealed }),
+    });
+  }
+
+  async clearApiKeys() {
+    return this.request('/admin/api-keys', { method: 'DELETE' });
+  }
+
+  // Leaderboard freeze (admin PUT, public snapshot GET)
+  async setLeaderboardFrozen(frozen) {
+    return this.request('/leaderboard/freeze', {
+      method: 'PUT',
+      body: JSON.stringify({ frozen }),
+    });
+  }
+
+  async getLeaderboardSnapshot() {
+    return this.request('/leaderboard/snapshot');
+  }
 }
 
 export const api = new ApiClient();

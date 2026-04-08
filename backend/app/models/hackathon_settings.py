@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text
 from app.database import Base
 
 
@@ -17,4 +17,7 @@ class HackathonSettings(Base):
     start_at = Column(DateTime, nullable=False)
     end_at = Column(DateTime, nullable=False)
     override = Column(String(16), nullable=True)
+    api_keys_revealed = Column(Boolean, nullable=False, default=False)
+    leaderboard_frozen = Column(Boolean, nullable=False, default=False)
+    leaderboard_snapshot = Column(Text, nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

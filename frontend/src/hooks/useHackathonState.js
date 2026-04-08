@@ -7,6 +7,7 @@ const FALLBACK = {
   end_at: '2026-04-14T15:00:00Z',
   override: null,
   state: 'upcoming',
+  leaderboard_frozen: false,
 };
 
 /**
@@ -23,6 +24,7 @@ export function useHackathonState() {
     startAt: new Date(FALLBACK.start_at),
     endAt: new Date(FALLBACK.end_at),
     override: null,
+    leaderboardFrozen: false,
     loading: true,
   }));
 
@@ -34,6 +36,7 @@ export function useHackathonState() {
         startAt: new Date(res.start_at),
         endAt: new Date(res.end_at),
         override: res.override,
+        leaderboardFrozen: !!res.leaderboard_frozen,
         loading: false,
       });
     } catch (err) {
@@ -57,5 +60,13 @@ export function useHackathonState() {
     [fetchState]
   );
 
-  return { ...data, refresh: fetchState, setOverride };
+  const setFreeze = useCallback(
+    async (frozen) => {
+      await api.setLeaderboardFrozen(frozen);
+      await fetchState();
+    },
+    [fetchState]
+  );
+
+  return { ...data, refresh: fetchState, setOverride, setFreeze };
 }

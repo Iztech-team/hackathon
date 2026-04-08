@@ -92,6 +92,130 @@
   }
 }
 
+/* -------------------------------------------------------------------
+ * Frozen Leaderboard theme — an icy overlay applied when the admin
+ * freezes the leaderboard. Cards tint cyan/sky, text picks up a slight
+ * frost glow, and gold accents inside get hue-rotated to a cool blue.
+ * ------------------------------------------------------------------- */
+.leaderboard-frozen {
+  --frost-1: rgba(186, 230, 253, 0.08);  /* sky-200 */
+  --frost-2: rgba(56, 189, 248, 0.18);   /* sky-400 */
+  --frost-border: rgba(125, 211, 252, 0.25);
+}
+
+/* Add a faint frost aura to every card in the frozen leaderboard */
+.leaderboard-frozen .rounded-2xl,
+.leaderboard-frozen .rounded-xl {
+  backdrop-filter: saturate(1.1) brightness(1.05);
+}
+
+/* Subtle tilted snow sparkle glow around the main card */
+.leaderboard-frozen > .rounded-2xl.border {
+  box-shadow:
+    0 0 0 1px rgba(125, 211, 252, 0.15),
+    0 30px 80px -40px rgba(56, 189, 248, 0.4),
+    inset 0 1px 0 rgba(186, 230, 253, 0.15);
+}
+
+/* Remap gold accents → sky blue inside the frozen area by overriding the
+ * exact hex colors used by the leaderboard cards and rank badges. */
+.leaderboard-frozen [style*="#d4b069"],
+.leaderboard-frozen [style*="rgb(212, 176, 105)"] {
+  color: #bae6fd !important;
+}
+
+.leaderboard-frozen .text-\[\#d4b069\] {
+  color: #bae6fd !important;
+}
+.leaderboard-frozen .border-\[\#d4b069\]\/40,
+.leaderboard-frozen .border-\[\#d4b069\]\/30 {
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+.leaderboard-frozen .bg-\[\#d4b069\]\/\[0\.05\],
+.leaderboard-frozen .bg-\[\#d4b069\]\/10 {
+  background-color: rgba(56, 189, 248, 0.08) !important;
+}
+.leaderboard-frozen .ring-\[\#d4b069\]\/40,
+.leaderboard-frozen .ring-\[\#d4b069\]\/30 {
+  --tw-ring-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+/* Gradient rank badge (1st place) — hue-shift the warm gradient into ice */
+.leaderboard-frozen .bg-gradient-to-br.from-\[\#a8842d\],
+.leaderboard-frozen .bg-gradient-to-br.via-\[\#d4b069\],
+.leaderboard-frozen .bg-gradient-to-br.to-\[\#e8c98a\] {
+  background-image: linear-gradient(135deg, #0ea5e9, #38bdf8, #bae6fd) !important;
+}
+.leaderboard-frozen .bg-gradient-to-br .text-\[\#1a1306\] {
+  color: #0c4a6e !important;
+}
+
+/* Category progress bars: fallback tint via a filter on inline backgrounds */
+.leaderboard-frozen .rounded-full {
+  filter: hue-rotate(180deg) saturate(1.1);
+}
+/* Don't hue-rotate user avatars/text — only apply to the score bars wrapper */
+.leaderboard-frozen img,
+.leaderboard-frozen .text-white,
+.leaderboard-frozen .text-white\/90,
+.leaderboard-frozen .text-white\/80,
+.leaderboard-frozen .text-white\/70,
+.leaderboard-frozen .text-white\/60,
+.leaderboard-frozen .text-white\/50,
+.leaderboard-frozen .text-white\/40,
+.leaderboard-frozen .text-white\/30 {
+  filter: none;
+}
+
+/* Animated falling snowflakes — used by the <Snowfall /> component */
+.snowfall-flake {
+  will-change: transform, opacity;
+  animation-name: snowfall-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  line-height: 1;
+}
+
+@keyframes snowfall-drift {
+  0% {
+    transform: translate3d(0, -10%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(var(--sway), 50vh, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 110vh, 0) rotate(360deg);
+  }
+}
+
+/* Category filter pills when frozen — active state becomes sky blue */
+.leaderboard-frozen button[class*="bg-[#d4b069]"] {
+  background-color: #38bdf8 !important;
+  color: #0c4a6e !important;
+  box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.5) !important;
+}
+/* Category-colored pills use inline `backgroundColor` from category.color
+ * which is #d4b069. Override both the bg and shadow. */
+.leaderboard-frozen button[style*="background-color: rgb(212, 176, 105)"],
+.leaderboard-frozen button[style*="backgroundColor: #d4b069"],
+.leaderboard-frozen button[style*="#d4b069"] {
+  background-color: #38bdf8 !important;
+  box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.5) !important;
+}
+
+/* Progress bar linear gradients use #d4b069 inline — swap them via a mask.
+ * Simpler: force the background image to a sky gradient when .rounded-full
+ * is nested inside .leaderboard-frozen and uses an inline background. */
+.leaderboard-frozen .h-full.rounded-full[style*="linear-gradient"] {
+  background: linear-gradient(90deg, #7dd3fc 0%, #38bdf8 50%, #0ea5e9 100%) !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5) !important;
+}
+
+/* First-place rank badge glow halo (absolute div with bg-[#d4b069]) */
+.leaderboard-frozen .absolute.bg-\[\#d4b069\] {
+  background-color: #38bdf8 !important;
+}
+
 @layer utilities {
   .content-wrapper {
     position: relative;

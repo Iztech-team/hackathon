@@ -33,6 +33,7 @@ class HackathonStateResponse(BaseModel):
     override: Optional[str] = None
     # Derived state computed on the server: "upcoming" | "live" | "ended"
     state: str
+    leaderboard_frozen: bool = False
 
 
 class HackathonStateUpdate(BaseModel):
@@ -92,6 +93,7 @@ async def get_state(db: DbSession):
         end_at=_aware_jerusalem(settings.end_at),
         override=settings.override,
         state=_derive_state(settings),
+        leaderboard_frozen=bool(settings.leaderboard_frozen),
     )
 
 
@@ -122,4 +124,5 @@ async def update_state(data: HackathonStateUpdate, db: DbSession, current_admin:
         end_at=_aware_jerusalem(settings.end_at),
         override=settings.override,
         state=_derive_state(settings),
+        leaderboard_frozen=bool(settings.leaderboard_frozen),
     )

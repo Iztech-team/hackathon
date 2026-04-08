@@ -13,7 +13,68 @@ import { config } from '../lib/config';
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const { teams, resetToMockData: resetTeams, fetchTeams } = useTeams();
-  const { state: hackathonState, override, refresh: refreshHackathon, setOverride } = useHackathonState();
+  const { state: hackathonState, override, leaderboardFrozen, refresh: refreshHackathon, setOverride, setFreeze } = useHackathonState();
+  const [keysStatus, setKeysStatus] = useState(null);
+  const [keysBusy, setKeysBusy] = useState(false);
+  const [keysMessage, setKeysMessage] = useState('');
+  const [keysError, setKeysError] = useState('');
+
+  const refreshKeysStatus = async () => {
+    try {
+      const s = await api.getApiKeysStatus();
+      setKeysStatus(s);
+    } catch (err) {
+      // ignore (e.g. not admin yet)
+    }
+  };
+
+  useEffect(() => {
+    refreshKeysStatus();
+  }, []);
+
+  const handleKeysUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setKeysBusy(true);
+    setKeysError('');
+    setKeysMessage('');
+    try {
+      const s = await api.uploadApiKeysCsv(file);
+      setKeysStatus(s);
+      setKeysMessage(t('admin.apiKeys.uploadSuccess'));
+      setTimeout(() => setKeysMessage(''), 3000);
+    } catch (err) {
+      setKeysError(err.message || 'Upload failed');
+    } finally {
+      setKeysBusy(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleKeysReveal = async (revealed) => {
+    setKeysBusy(true);
+    try {
+      const s = await api.setApiKeysReveal(revealed);
+      setKeysStatus(s);
+    } catch (err) {
+      setKeysError(err.message || 'Failed');
+    } finally {
+      setKeysBusy(false);
+    }
+  };
+
+  const handleKeysClear = async () => {
+    if (!window.confirm(t('admin.apiKeys.confirmClear'))) return;
+    setKeysBusy(true);
+    try {
+      const s = await api.clearApiKeys();
+      setKeysStatus(s);
+    } catch (err) {
+      setKeysError(err.message || 'Failed');
+    } finally {
+      setKeysBusy(false);
+    }
+  };
   const PRESET_HOURS = [1, 3, 6, 8, 12, 24];
   const [durationHours, setDurationHours] = useState(6);
   const [isCustom, setIsCustom] = useState(false);
@@ -35,6 +96,18 @@ export default function AdminDashboard() {
     } finally {
       setStartingHackathon(false);
     }
+  };
+
+  // "Back to Auto" — clear override AND reset schedule to the default
+  // hackathon date (April 14 2026, 09:00–15:00 Jerusalem time).
+  const handleResetHackathon = async () => {
+    await api.updateHackathonState({
+      override: null,
+      // Naive Jerusalem local strings; backend stores them as-is.
+      start_at: '2026-04-14T09:00:00',
+      end_at: '2026-04-14T15:00:00',
+    });
+    await refreshHackathon();
   };
 
   // Preview "ends at" time for the current duration choice — always shown in Jerusalem time
@@ -276,14 +349,139 @@ export default function AdminDashboard() {
 
           <Button
             variant="outline"
-            onClick={() => setOverride(null)}
-            disabled={override === null}
+            onClick={handleResetHackathon}
             className="w-full"
           >
             <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             {t('admin.resetHackathon')}
+          </Button>
+        </div>
+
+        {/* Leaderboard freeze toggle */}
+        <div className="pt-4 mt-2 border-t border-white/[0.06]">
+          <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wider font-semibold">
+                {leaderboardFrozen ? t('admin.leaderboardFrozen') : t('admin.leaderboardLive')}
+              </p>
+              <p className="text-[11px] text-white/40 mt-1">{t('admin.freezeDesc')}</p>
+            </div>
+            <span
+              className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
+                leaderboardFrozen
+                  ? 'bg-sky-400/15 text-sky-200 border border-sky-400/40'
+                  : 'bg-white/5 text-white/40 border border-white/10'
+              }`}
+            >
+              {leaderboardFrozen ? '❄ frozen' : 'live'}
+            </span>
+          </div>
+          <Button
+            onClick={() => setFreeze(!leaderboardFrozen)}
+            className="w-full"
+            style={
+              leaderboardFrozen
+                ? undefined
+                : {
+                    background: 'linear-gradient(to right, #0ea5e9, #38bdf8, #bae6fd)',
+                    color: '#0c4a6e',
+                  }
+            }
+            variant={leaderboardFrozen ? 'outline' : 'default'}
+          >
+            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" />
+            </svg>
+            {leaderboardFrozen ? t('admin.unfreezeLeaderboard') : t('admin.freezeLeaderboard')}
+          </Button>
+        </div>
+      </div>
+
+      {/* API Keys Management */}
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 space-y-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+              {t('admin.apiKeys.title')}
+            </h3>
+            <p className="text-xs text-white/40 mt-1">{t('admin.apiKeys.desc')}</p>
+          </div>
+          {keysStatus && (
+            <span
+              className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
+                keysStatus.revealed
+                  ? 'bg-[#d4b069]/15 text-[#e8c98a] border border-[#d4b069]/30'
+                  : 'bg-white/5 text-white/40 border border-white/10'
+              }`}
+            >
+              {keysStatus.revealed ? t('admin.apiKeys.revealed') : t('admin.apiKeys.hidden')}
+            </span>
+          )}
+        </div>
+
+        {keysStatus && (
+          <p className="text-sm text-white/60">
+            {t('admin.apiKeys.assigned', { assigned: keysStatus.assigned, total: keysStatus.total_teams })}
+          </p>
+        )}
+
+        {keysMessage && (
+          <div className="rounded-xl p-3 bg-[#d4b069]/10 border border-[#d4b069]/20">
+            <p className="text-[#e8c98a] text-sm font-medium">{keysMessage}</p>
+          </div>
+        )}
+        {keysError && (
+          <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/20">
+            <p className="text-red-400 text-sm">{keysError}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label className="relative">
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              onChange={handleKeysUpload}
+              disabled={keysBusy}
+              className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            />
+            <Button glow className="w-full pointer-events-none">
+              <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.9 5 5 0 019.9-1A5.002 5.002 0 0117 16M9 19v-6m0 0l-3 3m3-3l3 3" />
+              </svg>
+              {t('admin.apiKeys.uploadCsv')}
+            </Button>
+          </label>
+
+          <Button
+            variant={keysStatus?.revealed ? 'secondary' : 'default'}
+            glow={!keysStatus?.revealed}
+            onClick={() => handleKeysReveal(!keysStatus?.revealed)}
+            disabled={keysBusy || !keysStatus || keysStatus.assigned === 0}
+            className="w-full"
+          >
+            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {keysStatus?.revealed ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              )}
+            </svg>
+            {keysStatus?.revealed ? t('admin.apiKeys.hide') : t('admin.apiKeys.reveal')}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleKeysClear}
+            disabled={keysBusy || !keysStatus || keysStatus.assigned === 0}
+            className="w-full"
+          >
+            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {t('admin.apiKeys.clear')}
           </Button>
         </div>
       </div>

@@ -15,6 +15,7 @@ class Team(Base):
     project_name = Column(String(200), nullable=True)
     description = Column(Text, nullable=True)
     logo_seed = Column(String(100), nullable=True)
+    api_key = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", backref="team_profile", lazy="joined")
