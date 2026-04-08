@@ -11,15 +11,15 @@ services:
     expose:
       - "8000"
     environment:
-      # REQUIRED in production — no fallback. Start the stack with:
-      #   ENV=production SECRET_KEY=... ADMIN_PASSWORD=... ... docker compose up
-      - ENV=${ENV:-development}
-      - DATABASE_URL=sqlite+aiosqlite:///./data/hackathon.db
-      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY must be set — generate one with: python -c 'import secrets; print(secrets.token_urlsafe(32))'}
-      - ALGORITHM=HS256
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
-      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      # REQUIRED in production — see .env.example. Generate a SECRET_KEY with:
+      #   python -c "import secrets; print(secrets.token_urlsafe(32))"
+      ENV: ${ENV:-development}
+      DATABASE_URL: sqlite+aiosqlite:///./data/hackathon.db
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required. See .env.example.}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
     volumes:
       - backend-data:/app/data
     restart: unless-stopped
