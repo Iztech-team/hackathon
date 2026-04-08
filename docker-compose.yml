@@ -25,10 +25,12 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      # Give alembic upgrade + uvicorn startup enough breathing room on the
+      # first boot against a fresh volume.
+      start_period: 40s
 
   frontend:
     build:
