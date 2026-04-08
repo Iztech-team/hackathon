@@ -6,6 +6,7 @@ import { useAuth, USER_ROLES } from '../../context/AuthContext';
 import { useTeams } from '../../context/TeamContext';
 import { useJudges } from '../../context/JudgeContext';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
+import { HeaderCountdownChip } from '../ui/HeaderCountdownChip';
 import { useHackathonState } from '../../hooks/useHackathonState';
 import { calculateTotalScore, getCategoryById } from '../../data/categories';
 
@@ -503,20 +504,33 @@ export function Navigation() {
 
 export function Header() {
   const { t } = useTranslation();
+  const location = useLocation();
+  const { leaderboardFrozen } = useHackathonState();
+  // Only flip to the frost theme on the leaderboard page itself
+  const frost = leaderboardFrozen && location.pathname === '/leaderboard';
+
   return (
     <header className="pt-8 pb-4 px-6">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <motion.div
-            className="w-11 h-11 bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] rounded-xl flex items-center justify-center shadow-lg shadow-[#d4b069]/30"
+            className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500 ${
+              frost
+                ? 'bg-gradient-to-br from-[#0ea5e9] via-[#38bdf8] to-[#bae6fd] shadow-sky-400/40'
+                : 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] shadow-[#d4b069]/30'
+            }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="text-lg font-bold text-[#1a1306]">CH</span>
+            <span className={`text-lg font-bold ${frost ? 'text-[#0c4a6e]' : 'text-[#1a1306]'}`}>CH</span>
           </motion.div>
-          <div>
-            <h1 className="text-base font-bold text-white">{t('app.title')}</h1>
-            <p className="text-xs text-white/40">{t('app.subtitle')}</p>
+          <div className="min-w-0">
+            <h1 className="text-base font-bold text-white truncate">{t('app.title')}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-xs text-white/40">{t('app.subtitle')}</p>
+              <span className="text-white/20">•</span>
+              <HeaderCountdownChip frost={frost} />
+            </div>
           </div>
         </div>
         <LanguageSwitcher />

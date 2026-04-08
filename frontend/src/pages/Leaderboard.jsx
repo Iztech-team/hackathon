@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useTeams } from '../context/TeamContext';
 import { useHackathonState } from '../hooks/useHackathonState';
@@ -34,34 +34,55 @@ export default function Leaderboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { teams: liveTeams } = useTeams();
-  const { leaderboardFrozen } = useHackathonState();
+  const { leaderboardFrozen, loading: hackathonLoading } = useHackathonState();
   const [snapshotTeams, setSnapshotTeams] = useState([]);
+  const [snapshotLoaded, setSnapshotLoaded] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null); // null = overall, or category id
   const [searchQuery, setSearchQuery] = useState('');
 
   // When frozen, fetch the snapshot stored server-side at freeze time.
-  // When unfrozen, fall back to the live teams list.
   useEffect(() => {
     let cancelled = false;
     if (leaderboardFrozen) {
+      setSnapshotLoaded(false);
       api
         .getLeaderboardSnapshot()
         .then((res) => {
           if (cancelled) return;
           const list = Array.isArray(res?.leaderboard) ? res.leaderboard : [];
           setSnapshotTeams(list.map(normalizeSnapshotTeam));
+          setSnapshotLoaded(true);
         })
         .catch(() => {
-          if (!cancelled) setSnapshotTeams([]);
+          if (!cancelled) {
+            setSnapshotTeams([]);
+            setSnapshotLoaded(true);
+          }
         });
     } else {
       setSnapshotTeams([]);
+      setSnapshotLoaded(false);
     }
     return () => { cancelled = true; };
   }, [leaderboardFrozen]);
 
   const teams = leaderboardFrozen ? snapshotTeams : liveTeams;
+  const isBootstrapping =
+    hackathonLoading || (leaderboardFrozen && !snapshotLoaded);
+
+  // Delay showing the skeleton by 180ms — if the snapshot arrives quickly
+  // we never show it at all and go straight to the real leaderboard,
+  // which feels much smoother than a flash of loading state.
+  useEffect(() => {
+    if (!isBootstrapping) {
+      setShowSkeleton(false);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(true), 180);
+    return () => clearTimeout(id);
+  }, [isBootstrapping]);
 
   // Filter and sort teams based on search and selected category
   const sortedTeams = [...teams]
@@ -134,15 +155,53 @@ export default function Leaderboard() {
     );
   };
 
+  // While we're still waiting for the snapshot and 180ms has passed, show a
+  // faint skeleton — otherwise render nothing so a quick fetch is invisible.
+  if (isBootstrapping) {
+    return (
+      <div className={`max-w-6xl mx-auto ${leaderboardFrozen ? 'leaderboard-frozen relative' : ''}`}>
+        <AnimatePresence>
+          {showSkeleton && (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              {leaderboardFrozen && <Snowfall count={80} />}
+              <Card className={leaderboardFrozen ? 'ring-1 ring-sky-400/20' : ''}>
+                <CardContent className="py-16">
+                  <div className="flex flex-col items-center justify-center text-center gap-4">
+                    <div className={`w-12 h-12 rounded-2xl animate-pulse ${
+                      leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#d4b069]/10'
+                    }`} />
+                    <div className="space-y-2 w-full max-w-xs">
+                      <div className="h-3 rounded bg-white/[0.05] animate-pulse" />
+                      <div className="h-3 rounded bg-white/[0.05] animate-pulse w-3/4 mx-auto" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
   if (sortedTeams.length === 0) {
     return (
-      <div className="max-w-6xl mx-auto">
-        <Card>
+      <div className={`max-w-6xl mx-auto ${leaderboardFrozen ? 'leaderboard-frozen relative' : ''}`}>
+        {leaderboardFrozen && <Snowfall count={80} />}
+        <Card className={leaderboardFrozen ? 'ring-1 ring-sky-400/20' : ''}>
           <CardContent className="py-16">
             <div className="text-center">
-              <div className="w-16 h-16 bg-[#d4b069]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
+                leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#d4b069]/10'
+              }`}>
                 <svg
-                  className="w-8 h-8 text-[#d4b069]"
+                  className={`w-8 h-8 ${leaderboardFrozen ? 'text-sky-300' : 'text-[#d4b069]'}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -165,7 +224,13 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className={`max-w-6xl mx-auto relative ${leaderboardFrozen ? 'leaderboard-frozen' : ''}`}>
+    <motion.div
+      key="content"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`max-w-6xl mx-auto relative ${leaderboardFrozen ? 'leaderboard-frozen' : ''}`}
+    >
       {/* Heavy snowfall overlay on top of the whole leaderboard */}
       {leaderboardFrozen && <Snowfall count={80} />}
 
@@ -561,6 +626,6 @@ export default function Leaderboard() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

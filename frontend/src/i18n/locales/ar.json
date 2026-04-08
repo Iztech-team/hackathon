@@ -123,7 +123,54 @@
           "desc": "أداة سطر أوامر تدمج كلود مباشرة في الطرفية والمحرر لديكم. تقرأ مشروعكم، تعدّل الملفات، تشغّل الأوامر، وتبني الميزات بينما توجهونها."
         }
       },
-      "note": "لستم بحاجة لأن تكونوا خبراء في الذكاء الاصطناعي. صِفوا ما تريدون، أروا كلود الكود، دعوه يساعد — ثم كرروا. مهاراتكم التقنية + سرعة كلود = مشروع متكامل خلال ساعات."
+      "note": "لستم بحاجة لأن تكونوا خبراء في الذكاء الاصطناعي. صِفوا ما تريدون، أروا كلود الكود، دعوه يساعد — ثم كرروا. مهاراتكم التقنية + سرعة كلود = مشروع متكامل خلال ساعات.",
+      "usage": {
+        "title": "كيف تستخدم مفتاح API الخاص بك",
+        "subtitle": "خطوات سريعة — اختر نظام التشغيل الذي تستخدمه",
+        "osLabels": {
+          "windows": "Windows",
+          "macos": "macOS",
+          "linux": "Linux"
+        },
+        "steps": [
+          {
+            "title": "انسخ مفتاحك من تبويب الفريق",
+            "desc": "بعد أن يكشف المسؤول المفاتيح، افتح تبويب الفريق في هذا الموقع. سترى مفتاح API الخاص بفريقك داخل بطاقة ذهبية. اضغط زر النسخ.",
+            "code": {
+              "windows": "",
+              "macos": "",
+              "linux": ""
+            }
+          },
+          {
+            "title": "ثبّت Claude Code بشكل عام",
+            "desc": "Claude Code هو أداة سطر أوامر تدمج كلود في طرفيتك ومحررك. يتطلب Node.js نسخة 18 أو أحدث. افتح الطرفية ونفّذ:",
+            "code": {
+              "windows": "npm install -g @anthropic-ai/claude-code",
+              "macos": "npm install -g @anthropic-ai/claude-code",
+              "linux": "npm install -g @anthropic-ai/claude-code"
+            }
+          },
+          {
+            "title": "اضبط المفتاح كمتغير بيئة",
+            "desc": "ضع مفتاحك بعد علامة المساواة. هذا يجعل المفتاح متاحاً لـ Claude Code ليتصل بخدمة Anthropic.",
+            "code": {
+              "windows": "setx ANTHROPIC_API_KEY \"sk-ant-your-key-here\"",
+              "macos": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\"",
+              "linux": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\""
+            }
+          },
+          {
+            "title": "افتح مشروعك وشغّل كلود",
+            "desc": "في الطرفية، انتقل إلى مجلد مشروعك باستخدام cd (أو افتحه في VS Code أو Cursor) ثم نفّذ 'claude'. اكتب ما تريد — سيقرأ كلود ملفاتك، يعدّلها، ويشغّل الأوامر نيابة عنك.",
+            "code": {
+              "windows": "cd my-project && claude",
+              "macos": "cd my-project && claude",
+              "linux": "cd my-project && claude"
+            }
+          }
+        ]
+      }
     },
     "partners": {
       "title": "شركاؤنا",

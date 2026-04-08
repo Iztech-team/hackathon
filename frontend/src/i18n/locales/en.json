@@ -123,7 +123,54 @@
           "desc": "A CLI tool that plugs Claude directly into your terminal and editor. It reads your project, edits files, runs commands, and ships features while you guide it."
         }
       },
-      "note": "You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours."
+      "note": "You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours.",
+      "usage": {
+        "title": "How to use your API key",
+        "subtitle": "Quick setup — pick your operating system",
+        "osLabels": {
+          "windows": "Windows",
+          "macos": "macOS",
+          "linux": "Linux"
+        },
+        "steps": [
+          {
+            "title": "Copy your key from the Team tab",
+            "desc": "Once the admin reveals keys, open the Team tab on this site. You'll see your team's API key in a gold card. Tap the copy button.",
+            "code": {
+              "windows": "",
+              "macos": "",
+              "linux": ""
+            }
+          },
+          {
+            "title": "Install Claude Code globally",
+            "desc": "Claude Code is a CLI that plugs Claude into your terminal and editor. It needs Node.js 18 or higher. Open a terminal and run:",
+            "code": {
+              "windows": "npm install -g @anthropic-ai/claude-code",
+              "macos": "npm install -g @anthropic-ai/claude-code",
+              "linux": "npm install -g @anthropic-ai/claude-code"
+            }
+          },
+          {
+            "title": "Set your API key as an environment variable",
+            "desc": "Paste your key after the equals sign. This exposes the key to Claude Code so it can authenticate with Anthropic.",
+            "code": {
+              "windows": "setx ANTHROPIC_API_KEY \"sk-ant-your-key-here\"",
+              "macos": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\"",
+              "linux": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\""
+            }
+          },
+          {
+            "title": "Open your project and launch Claude",
+            "desc": "In the terminal, cd into your project folder (or open it in VS Code / Cursor) and run 'claude'. Describe what you want — Claude will read your files, edit them and run commands for you.",
+            "code": {
+              "windows": "cd my-project && claude",
+              "macos": "cd my-project && claude",
+              "linux": "cd my-project && claude"
+            }
+          }
+        ]
+      }
     },
     "partners": {
       "title": "Our Partners",

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +56,11 @@ export default function Home() {
   const timelineEvents = t('home.timeline.events', { returnObjects: true });
   const partnersList = t('home.partners.list', { returnObjects: true });
   const howItWorksCards = ['claude', 'apiKey', 'claudeCode'];
+
+  // OS selector for the Claude Code setup steps. Windows is the default
+  // since the majority of participants are on Windows.
+  const [selectedOs, setSelectedOs] = useState('windows');
+  const osOptions = ['windows', 'macos', 'linux'];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12">
@@ -185,6 +191,43 @@ export default function Home() {
 
       <Divider />
 
+      {/* Partners Section */}
+      <Section>
+        <Card>
+          <CardContent className="py-8">
+            <div className="text-center mb-8">
+              <p className="text-xs text-white/40 uppercase tracking-[0.2em] mb-2">{t('home.partners.subtitle')}</p>
+              <h2 className="text-xl font-bold text-white">{t('home.partners.title')}</h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 items-center">
+              {Array.isArray(partnersList) && partnersList.map((partner, i) => (
+                <motion.div
+                  key={partner.name}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  whileHover={{ y: -4 }}
+                  className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#d4b069]/30 transition-all"
+                >
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className="h-14 sm:h-16 w-auto max-w-full object-contain"
+                    loading="lazy"
+                  />
+                  <p className="text-xs sm:text-sm font-medium text-white/80 text-center">
+                    {partner.name}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </Section>
+
+      <Divider />
+
       {/* How It Works (Claude explainer) */}
       <Section>
         <Card>
@@ -225,47 +268,82 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Setup / Usage Guide */}
+            <div className="mt-8 mb-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6">
+              <div className="mb-4">
+                <h3 className="text-base font-bold text-white mb-1">
+                  {t('home.howItWorks.usage.title')}
+                </h3>
+                <p className="text-sm text-white/50">
+                  {t('home.howItWorks.usage.subtitle')}
+                </p>
+              </div>
+
+              {/* OS Toggle */}
+              <div className="flex justify-center mb-5">
+                <div
+                  className="inline-flex items-center gap-1 p-1 rounded-xl bg-black/30 border border-white/[0.08]"
+                  role="tablist"
+                >
+                {osOptions.map((os) => {
+                  const isActive = selectedOs === os;
+                  return (
+                    <button
+                      key={os}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setSelectedOs(os)}
+                      className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                        isActive
+                          ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-md shadow-[#d4b069]/30'
+                          : 'text-white/60 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {t(`home.howItWorks.usage.osLabels.${os}`)}
+                    </button>
+                  );
+                })}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {[0, 1, 2, 3].map((i) => {
+                  const code = t(`home.howItWorks.usage.steps.${i}.code.${selectedOs}`, { defaultValue: '' });
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-black/20 border border-white/[0.06]"
+                    >
+                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#a8842d]/30 to-[#d4b069]/15 border border-[#d4b069]/30 flex items-center justify-center">
+                        <span className="text-sm font-extrabold text-[#e8c98a]">{i + 1}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-white text-sm">
+                          {t(`home.howItWorks.usage.steps.${i}.title`)}
+                        </p>
+                        <p className="text-xs text-white/50 mt-1 leading-relaxed">
+                          {t(`home.howItWorks.usage.steps.${i}.desc`)}
+                        </p>
+                        {code && (
+                          <pre
+                            dir="ltr"
+                            className="mt-2 overflow-x-auto text-[11px] sm:text-xs font-mono text-[#e8c98a] bg-black/40 border border-[#d4b069]/20 rounded-lg px-3 py-2 select-all"
+                          >
+                            <code>{code}</code>
+                          </pre>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="rounded-xl p-4 bg-[#d4b069]/[0.06] border border-[#d4b069]/20">
               <p className="text-sm text-center text-[#e8c98a]/90 leading-relaxed">
                 {t('home.howItWorks.note')}
               </p>
-            </div>
-          </CardContent>
-        </Card>
-      </Section>
-
-      <Divider />
-
-      {/* Partners Section */}
-      <Section>
-        <Card>
-          <CardContent className="py-8">
-            <div className="text-center mb-8">
-              <p className="text-xs text-white/40 uppercase tracking-[0.2em] mb-2">{t('home.partners.subtitle')}</p>
-              <h2 className="text-xl font-bold text-white">{t('home.partners.title')}</h2>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 items-center">
-              {Array.isArray(partnersList) && partnersList.map((partner, i) => (
-                <motion.div
-                  key={partner.name}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.4 }}
-                  whileHover={{ y: -4 }}
-                  className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#d4b069]/30 transition-all"
-                >
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="h-14 sm:h-16 w-auto max-w-full object-contain"
-                    loading="lazy"
-                  />
-                  <p className="text-xs sm:text-sm font-medium text-white/80 text-center">
-                    {partner.name}
-                  </p>
-                </motion.div>
-              ))}
             </div>
           </CardContent>
         </Card>
