@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, Request
 from sqlalchemy import select
 from app.api.deps import DbSession, CurrentUser
+from app.exceptions import ConflictError, NotFoundError, UnauthorizedError
 from app.rate_limit import limiter
 from app.schemas.auth import Token, LoginRequest, TeamRegisterRequest, UserResponse
 from app.schemas.team import TeamResponse
@@ -26,9 +27,9 @@ async def login(request: Request, data: LoginRequest, db: DbSession):
     user = await authenticate_user(db, data.username, data.password)
 
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
+        raise UnauthorizedError(
+            "Invalid credentials",
+            code="INVALID_CREDENTIALS",
         )
 
     category_id = None
@@ -54,13 +55,9 @@ async def register_team_endpoint(request: Request, data: TeamRegisterRequest, db
         return Token(access_token=token)
     except ValueError as e:
         msg = str(e)
-        # Duplicate team name → 409 Conflict; everything else → 400
-        code = (
-            status.HTTP_409_CONFLICT
-            if "already exists" in msg.lower()
-            else status.HTTP_400_BAD_REQUEST
-        )
-        raise HTTPException(status_code=code, detail=msg)
+        if "already exists" in msg.lower():
+            raise ConflictError(msg, code="TEAM_NAME_TAKEN")
+        raise ConflictError(msg, status_code=400, code="REGISTRATION_FAILED")
 
 
 @router.get("/me")
@@ -68,10 +65,7 @@ async def get_current_user_info(current_user: CurrentUser, db: DbSession):
     user = await get_user_by_id(db, current_user.user_id)
 
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
+        raise NotFoundError("User not found", code="USER_NOT_FOUND")
 
     response = {
         "id": user.id,

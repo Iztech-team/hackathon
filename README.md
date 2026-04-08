@@ -96,6 +96,7 @@ To reset to a clean DB at any time, delete `backend/hackathon.db` (or the
 | `ACCESS_TOKEN_EXPIRE_MINUTES`| optional | JWT lifetime in minutes. Default 1440 (24h).                         |
 | `ADMIN_PASSWORD`             | prod     | Seed password for the `admin` bootstrap account on empty DB.         |
 | `CORS_ORIGINS`               | prod     | Comma-separated allowlist of frontend origins, e.g. `https://hackathon.example.com`. `*` is only accepted in dev. |
+| `DISCORD_WEBHOOK_URL`        | optional | If set, unhandled backend exceptions get posted to this Discord webhook with a short traceback. |
 
 ### Frontend (Vite build-time args)
 

@@ -228,6 +228,7 @@
       "loginFailed": "Login failed",
       "regFailed": "Registration failed",
       "teamNameRequired": "Team name is required",
+      "teamNameNoSpaces": "Team name cannot contain spaces — it's used as your login username",
       "passwordRequired": "Password is required",
       "passwordTooShort": "Password must be at least 6 characters",
       "passwordsNoMatch": "Passwords do not match",

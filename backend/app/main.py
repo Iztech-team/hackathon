@@ -10,6 +10,8 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.config import get_settings
 from app.database import init_db, engine
 from app.api.routes import api_router
+from app.discord import notify_unhandled_error
+from app.exceptions import HackathonException
 from app.rate_limit import limiter
 from app.services.auth import create_admin_if_not_exists
 from app.database import AsyncSessionLocal
@@ -56,19 +58,61 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
 
-# Access log + generic error capture middleware
+# ---------------------------------------------------------------------------
+# Expected, controlled errors → turned into clean JSON responses.
+# Raise HackathonException anywhere in the code and this handler formats it.
+# ---------------------------------------------------------------------------
+@app.exception_handler(HackathonException)
+async def hackathon_exception_handler(request: Request, exc: HackathonException):
+    # Not a bug — just a business rule. Log at INFO, not ERROR.
+    logger.info(
+        "HackathonException on %s %s → %d %s: %s",
+        request.method,
+        request.url.path,
+        exc.status_code,
+        exc.code,
+        exc.message,
+    )
+    payload = {
+        "detail": exc.message,
+        "code": exc.code,
+    }
+    if exc.details:
+        payload["details"] = exc.details
+    return JSONResponse(status_code=exc.status_code, content=payload)
+
+
+# ---------------------------------------------------------------------------
+# Access log + unexpected-error fallback.
+#
+# Any exception that isn't:
+#   - a HackathonException (handled above)
+#   - a FastAPI HTTPException (handled by starlette)
+#   - a RateLimitExceeded (handled by slowapi)
+# ends up here. We log the full traceback and, if configured, fire a Discord
+# notification so the on-call person knows something broke.
+# ---------------------------------------------------------------------------
 @app.middleware("http")
 async def access_log_middleware(request: Request, call_next):
     start = time.monotonic()
     try:
         response = await call_next(request)
-    except Exception:
+    except Exception as exc:
         logger.exception(
             "Unhandled error on %s %s", request.method, request.url.path
         )
+        notify_unhandled_error(
+            exc,
+            request_method=request.method,
+            request_path=str(request.url.path),
+            client_ip=request.client.host if request.client else None,
+        )
         return JSONResponse(
             status_code=500,
-            content={"detail": "Internal server error"},
+            content={
+                "detail": "Internal server error",
+                "code": "INTERNAL_ERROR",
+            },
         )
     duration_ms = (time.monotonic() - start) * 1000
     logger.info(

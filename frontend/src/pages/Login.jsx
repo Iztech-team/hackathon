@@ -16,7 +16,6 @@ import { getCategoryById } from '../data/categories';
 import { config } from '../lib/config';
 import { mockTeams } from '../data/mockTeams';
 import { mockJudges, ADMIN_CREDENTIALS } from '../data/mockJudges';
-import { QRCodeSVG } from 'qrcode.react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -41,8 +40,6 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [registeredTeam, setRegisteredTeam] = useState(null);
 
   // Team login form
   const [teamLoginForm, setTeamLoginForm] = useState({ teamName: '', password: '' });
@@ -245,7 +242,13 @@ export default function Login() {
 
   const validateRegister = () => {
     const newErrors = {};
-    if (!registerForm.teamName.trim()) newErrors.teamName = t('login.errors.teamNameRequired');
+    const trimmedName = registerForm.teamName.trim();
+    if (!trimmedName) {
+      newErrors.teamName = t('login.errors.teamNameRequired');
+    } else if (/\s/.test(trimmedName)) {
+      // Team name doubles as the login username, so spaces aren't allowed.
+      newErrors.teamName = t('login.errors.teamNameNoSpaces');
+    }
     if (!registerForm.password) newErrors.password = t('login.errors.passwordRequired');
     else if (registerForm.password.length < 6) newErrors.password = t('login.errors.passwordTooShort');
     if (registerForm.password !== registerForm.confirmPassword) newErrors.confirmPassword = t('login.errors.passwordsNoMatch');
@@ -267,6 +270,7 @@ export default function Login() {
       return;
     }
 
+    justSubmittedRef.current = true;
     setLoading(true);
     setError('');
 
@@ -285,71 +289,26 @@ export default function Login() {
         members: validMembers,
       });
 
-      // In mock mode, result is the team object
-      // In API mode, result is { access_token } and we need to get team data
       if (config.useMockData) {
-        setRegisteredTeam(result);
+        // Mock mode: log the team in with the mock object that has the real id.
+        loginAsTeam(result);
+        navigate('/team');
       } else {
-        // After API registration, login and get team data
+        // API mode: registerTeam already stored the JWT. Hit /auth/me to populate
+        // the auth state with the real team payload, then navigate to /team.
         const success = await loginAsTeamWithCredentials(registerForm.teamName, registerForm.password);
         if (success) {
-          setRegisteredTeam({
-            id: 'registered',
-            teamName: registerForm.teamName,
-            projectName: registerForm.projectName,
-          });
+          navigate('/team');
+        } else {
+          setError(t('login.errors.loginFailed'));
         }
       }
-      setShowSuccess(true);
     } catch (err) {
       setError(err.message || t('login.errors.regFailed'));
     } finally {
       setLoading(false);
     }
   };
-
-  const handleLoginAndContinue = () => {
-    if (registeredTeam) {
-      loginAsTeam(registeredTeam);
-      navigate('/team');
-    }
-  };
-
-  // Success screen after registration
-  if (showSuccess && registeredTeam) {
-    return (
-      <div className="max-w-lg mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center text-[#2b58f7]">{t('login.regComplete')}</CardTitle>
-            <CardDescription className="text-center">
-              {t('login.regCompleteDesc')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <p className="text-white font-semibold text-lg">{registeredTeam.teamName}</p>
-              <p className="text-white/50 text-sm">{registeredTeam.projectName}</p>
-            </div>
-
-            <div className="flex justify-center">
-              <div className="bg-white p-3 rounded-xl">
-                <QRCodeSVG value={`team:${registeredTeam.id}`} size={150} level="M" />
-              </div>
-            </div>
-
-            <p className="text-xs text-center text-white/40">
-              {t('login.saveQrNote')}
-            </p>
-
-            <Button onClick={handleLoginAndContinue} glow className="w-full">
-              {t('login.goToTeamProfile')}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const loginTabs = [
     { id: 'team', label: t('login.teamTab') },

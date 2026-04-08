@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     # Example: "https://hackathon.example.com,https://admin.hackathon.example.com"
     CORS_ORIGINS: str = "*"
 
+    # Optional Discord webhook URL for unhandled backend errors. Leave empty
+    # to disable. See app/discord.py for the posting logic.
+    DISCORD_WEBHOOK_URL: str = ""
+
     class Config:
         env_file = ".env"
         extra = "ignore"
