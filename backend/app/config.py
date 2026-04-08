@@ -38,10 +38,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
 
-    # Default seed account credentials — overridable via env vars, REQUIRED in prod.
+    # Admin is the only seed account. Judges are created by the admin via
+    # the admin panel; teams register themselves through the public form.
     ADMIN_PASSWORD: str = ""
-    JUDGE_PASSWORD: str = ""
-    TEAM_PASSWORD: str = ""
 
     # Comma-separated list of origins allowed through CORS, or "*" for wildcard (dev only).
     # Example: "https://hackathon.example.com,https://admin.hackathon.example.com"
@@ -61,10 +60,6 @@ class Settings(BaseSettings):
             missing = []
             if not self.ADMIN_PASSWORD:
                 missing.append("ADMIN_PASSWORD")
-            if not self.JUDGE_PASSWORD:
-                missing.append("JUDGE_PASSWORD")
-            if not self.TEAM_PASSWORD:
-                missing.append("TEAM_PASSWORD")
             if self.CORS_ORIGINS.strip() == "*":
                 missing.append("CORS_ORIGINS (wildcard not allowed in production)")
             if missing:
@@ -75,13 +70,9 @@ class Settings(BaseSettings):
                 )
                 sys.exit(1)
 
-        # Dev-only weak defaults for seed accounts
+        # Dev-only weak default for the admin account
         if not self.ADMIN_PASSWORD:
             self.ADMIN_PASSWORD = "admin1232026"
-        if not self.JUDGE_PASSWORD:
-            self.JUDGE_PASSWORD = "judge2026"
-        if not self.TEAM_PASSWORD:
-            self.TEAM_PASSWORD = "team2026"
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -105,6 +105,9 @@ async def register_team(db: AsyncSession, data: TeamRegisterRequest) -> tuple[Te
 
 
 async def create_admin_if_not_exists(db: AsyncSession, username: str = "admin", password: Optional[str] = None):
+    """Bootstrap account. This is the ONLY seed account the app creates —
+    judges are added by the admin via the admin panel, and teams register
+    themselves through the public registration form."""
     result = await db.execute(select(User).where(User.username == username))
     if result.scalar_one_or_none() is None:
         pwd = password or get_settings().ADMIN_PASSWORD
@@ -117,54 +120,3 @@ async def create_admin_if_not_exists(db: AsyncSession, username: str = "admin", 
         await db.commit()
         return True
     return False
-
-
-async def create_default_judge_if_not_exists(db: AsyncSession, username: str = "judge", password: Optional[str] = None):
-    result = await db.execute(select(User).where(User.username == username))
-    if result.scalar_one_or_none() is not None:
-        return False
-
-    pwd = password or get_settings().JUDGE_PASSWORD
-    user = User(
-        username=username,
-        password_hash=get_password_hash(pwd),
-        role=UserRole.JUDGE,
-    )
-    db.add(user)
-    await db.flush()
-
-    judge = Judge(
-        user_id=user.id,
-        name="Judge",
-        category_id="ui_ux",
-        avatar_seed="judge-default",
-    )
-    db.add(judge)
-    await db.commit()
-    return True
-
-
-async def create_default_team_if_not_exists(db: AsyncSession, username: str = "team", password: Optional[str] = None):
-    result = await db.execute(select(User).where(User.username == username))
-    if result.scalar_one_or_none() is not None:
-        return False
-
-    pwd = password or get_settings().TEAM_PASSWORD
-    user = User(
-        username=username,
-        password_hash=get_password_hash(pwd),
-        role=UserRole.TEAM,
-    )
-    db.add(user)
-    await db.flush()
-
-    team = Team(
-        user_id=user.id,
-        team_name="team",
-        project_name=None,
-        description=None,
-        logo_seed="team-default",
-    )
-    db.add(team)
-    await db.commit()
-    return True

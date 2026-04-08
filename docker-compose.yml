@@ -19,8 +19,6 @@ services:
       - ALGORITHM=HS256
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
-      - JUDGE_PASSWORD=${JUDGE_PASSWORD:-}
-      - TEAM_PASSWORD=${TEAM_PASSWORD:-}
       - CORS_ORIGINS=${CORS_ORIGINS:-*}
     volumes:
       - backend-data:/app/data

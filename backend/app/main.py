@@ -11,11 +11,7 @@ from app.config import get_settings
 from app.database import init_db, engine
 from app.api.routes import api_router
 from app.rate_limit import limiter
-from app.services.auth import (
-    create_admin_if_not_exists,
-    create_default_judge_if_not_exists,
-    create_default_team_if_not_exists,
-)
+from app.services.auth import create_admin_if_not_exists
 from app.database import AsyncSessionLocal
 
 # ---- Logging configuration ----
@@ -40,8 +36,6 @@ async def lifespan(app: FastAPI):
     # Seed default admin / judge / team accounts
     async with AsyncSessionLocal() as db:
         await create_admin_if_not_exists(db)
-        await create_default_judge_if_not_exists(db)
-        await create_default_team_if_not_exists(db)
 
     yield
 

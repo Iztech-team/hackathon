@@ -62,20 +62,22 @@ bun run dev --host     # or: npm run dev -- --host
 
 ---
 
-## Default credentials (development only)
+## Default credentials
 
-When the backend first initializes the database (empty state) it seeds three
-accounts so you can log in immediately:
+The backend seeds **one** bootstrap account on a fresh database — the admin.
+Everyone else is created from inside the app:
 
-| Role   | Username | Default password | Environment variable |
-|--------|----------|------------------|----------------------|
-| Admin  | `admin`  | `admin1232026`   | `ADMIN_PASSWORD`     |
-| Judge  | `judge`  | `judge2026`      | `JUDGE_PASSWORD`     |
-| Team   | `team`   | `team2026`       | `TEAM_PASSWORD`      |
+- **Judges** are created by the admin through the *Manage Judges* panel.
+- **Teams** register themselves through the public registration form.
 
-**Change them in production** by setting the matching env vars before the
-first run. The backend refuses to start in production (`ENV=production`) if
-any of these env vars — plus `SECRET_KEY` and `CORS_ORIGINS` — are missing.
+| Role  | Username | Default password | Environment variable |
+|-------|----------|------------------|----------------------|
+| Admin | `admin`  | `admin1232026`   | `ADMIN_PASSWORD`     |
+
+**Change the admin password in production** by setting `ADMIN_PASSWORD`
+before the first boot. The backend refuses to start in production
+(`ENV=production`) if `ADMIN_PASSWORD`, `SECRET_KEY`, or `CORS_ORIGINS` are
+missing.
 
 To reset to a clean DB at any time, delete `backend/hackathon.db` (or the
 `backend-data` Docker volume) and restart the backend.
@@ -92,9 +94,7 @@ To reset to a clean DB at any time, delete `backend/hackathon.db` (or the
 | `SECRET_KEY`                 | **yes**  | JWT signing secret. Generate with `python -c "import secrets; print(secrets.token_urlsafe(32))"`. |
 | `DATABASE_URL`               | optional | SQLAlchemy URL. Defaults to `sqlite+aiosqlite:///./hackathon.db`. In Docker: `sqlite+aiosqlite:///./data/hackathon.db`. |
 | `ACCESS_TOKEN_EXPIRE_MINUTES`| optional | JWT lifetime in minutes. Default 1440 (24h).                         |
-| `ADMIN_PASSWORD`             | prod     | Seed password for the `admin` account on empty DB.                  |
-| `JUDGE_PASSWORD`             | prod     | Seed password for the `judge` account on empty DB.                  |
-| `TEAM_PASSWORD`              | prod     | Seed password for the `team` account on empty DB.                   |
+| `ADMIN_PASSWORD`             | prod     | Seed password for the `admin` bootstrap account on empty DB.         |
 | `CORS_ORIGINS`               | prod     | Comma-separated allowlist of frontend origins, e.g. `https://hackathon.example.com`. `*` is only accepted in dev. |
 
 ### Frontend (Vite build-time args)
@@ -194,8 +194,6 @@ so the image is domain-agnostic.
    ENV=production
    SECRET_KEY=<run: python -c "import secrets; print(secrets.token_urlsafe(32))">
    ADMIN_PASSWORD=<strong password>
-   JUDGE_PASSWORD=<strong password>
-   TEAM_PASSWORD=<strong password>
    CORS_ORIGINS=https://hackathon.your-domain.com
    HACKATHON_DOMAIN=hackathon.your-domain.com
    # Leave VITE_API_ENDPOINT blank for same-origin mode

@@ -1,8 +1,11 @@
 """
-One-shot script to wipe all user accounts and recreate just the three default ones:
-  - admin / admin1232026
-  - judge / judge2026  (UI/UX category)
-  - team  / team2026
+One-shot script to wipe ALL user data and recreate just the admin account.
+
+After running this:
+  - The `admin` account is the only user left (password from ADMIN_PASSWORD
+    env var, or the dev default if unset).
+  - Judges must be recreated via the admin panel.
+  - Teams must re-register through the public form.
 
 Run from the backend/ directory:
     python reseed.py
@@ -10,12 +13,8 @@ Run from the backend/ directory:
 import asyncio
 from sqlalchemy import delete
 from app.database import AsyncSessionLocal, init_db
-from app.models import User, Team, Judge, TeamMember, Score
-from app.services.auth import (
-    create_admin_if_not_exists,
-    create_default_judge_if_not_exists,
-    create_default_team_if_not_exists,
-)
+from app.models import User, Team, Judge, TeamMember, Score, HackathonSettings
+from app.services.auth import create_admin_if_not_exists
 
 
 async def main():
@@ -27,17 +26,14 @@ async def main():
         await db.execute(delete(Judge))
         await db.execute(delete(Team))
         await db.execute(delete(User))
+        # Also wipe hackathon settings so start/end/override/frozen reset
+        await db.execute(delete(HackathonSettings))
         await db.commit()
-        print("Wiped all users, teams, judges, members, scores.")
+        print("Wiped all users, teams, judges, members, scores, and settings.")
 
     async with AsyncSessionLocal() as db:
         await create_admin_if_not_exists(db)
-        await create_default_judge_if_not_exists(db)
-        await create_default_team_if_not_exists(db)
-        print("Created default accounts:")
-        print("  admin / admin1232026")
-        print("  judge / judge2026")
-        print("  team  / team2026")
+        print("Created bootstrap admin account.")
 
 
 if __name__ == "__main__":
