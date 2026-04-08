@@ -291,13 +291,11 @@ export default function Leaderboard() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            {sortedTeams.map((team, index) => {
+          {/* ------- Team row renderer (shared by mobile list + desktop grid) ------- */}
+          {(() => {
+            const renderTeamCard = (team, index) => {
               const isExpanded = expandedTeam === team.id;
-              const maxScore = Math.max(
-                ...Object.values(team.scores || {}),
-                1
-              );
+              const maxScore = Math.max(...Object.values(team.scores || {}), 1);
 
               return (
                 <div
@@ -306,7 +304,6 @@ export default function Leaderboard() {
                     isExpanded ? 'ring-1 ring-[#d4b069]/40' : ''
                   }`}
                 >
-                  {/* Main Row — first click expands, second click on the same team navigates to its page */}
                   <div
                     className="p-4 sm:p-5 cursor-pointer hover:bg-white/[0.03] transition-colors"
                     onClick={() => {
@@ -318,10 +315,7 @@ export default function Leaderboard() {
                     }}
                   >
                     <div className="flex items-center gap-4">
-                      {/* Rank badge */}
                       {getRankBadge(index)}
-
-                      {/* Team name + project (centered vertically) */}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-white text-base sm:text-lg leading-tight truncate">
                           {team.teamName}
@@ -332,8 +326,6 @@ export default function Leaderboard() {
                           </p>
                         )}
                       </div>
-
-                      {/* Score pill */}
                       <div className="flex-shrink-0 flex flex-col items-center justify-center min-w-[64px] sm:min-w-[80px] px-3 py-2 rounded-xl bg-black/30 border border-white/[0.08]">
                         <div
                           className="text-xl sm:text-2xl font-extrabold tabular-nums leading-none"
@@ -348,15 +340,13 @@ export default function Leaderboard() {
                     </div>
                   </div>
 
-                  {/* Expanded Details */}
                   {isExpanded && (
                     <div className="px-4 sm:px-5 pb-4 pt-2 border-t border-white/[0.04]">
-                      {/* Category Scores */}
                       <div className="space-y-3 mb-4">
                         <p className="text-xs text-white/40 uppercase tracking-wider">
                           {t('team.scoreBreakdown')}
                         </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                           {CATEGORY_LIST.map((category, catIndex) => {
                             const score = team.scores?.[category.id] || 0;
                             const percentage = (score / maxScore) * 100;
@@ -398,7 +388,6 @@ export default function Leaderboard() {
                         </div>
                       </div>
 
-                      {/* Team Members */}
                       {team.members && team.members.length > 0 && (
                         <motion.div
                           initial={{ opacity: 0 }}
@@ -430,8 +419,137 @@ export default function Leaderboard() {
                   )}
                 </div>
               );
-            })}
-          </div>
+            };
+
+            // Desktop-only podium card for the top 3 (bigger visuals)
+            const renderPodiumCard = (team, index) => {
+              if (!team) return <div key={`empty-${index}`} />;
+              const isFirst = index === 0;
+              const glowBg =
+                index === 0
+                  ? (leaderboardFrozen ? 'bg-sky-400' : 'bg-[#d4b069]')
+                  : index === 1
+                  ? 'bg-zinc-400'
+                  : 'bg-amber-700';
+              const borderCls =
+                index === 0
+                  ? (leaderboardFrozen ? 'border-sky-400/40' : 'border-[#d4b069]/40')
+                  : index === 1
+                  ? 'border-zinc-400/25'
+                  : 'border-amber-700/30';
+              const bgCls =
+                index === 0
+                  ? (leaderboardFrozen ? 'bg-sky-400/[0.06]' : 'bg-[#d4b069]/[0.06]')
+                  : index === 1
+                  ? 'bg-zinc-400/[0.04]'
+                  : 'bg-amber-700/[0.04]';
+              const isExpanded = expandedTeam === team.id;
+
+              return (
+                <motion.div
+                  key={team.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.45 }}
+                  className={`relative rounded-3xl border-2 ${borderCls} ${bgCls} overflow-hidden cursor-pointer hover:brightness-110 transition-all ${
+                    isFirst ? '-mt-4' : ''
+                  } ${isExpanded ? 'ring-2 ring-[#d4b069]/30' : ''}`}
+                  onClick={() => {
+                    if (isExpanded) {
+                      navigate(`/teams/${team.id}`);
+                    } else {
+                      setExpandedTeam(team.id);
+                    }
+                  }}
+                >
+                  {/* Glow aura */}
+                  <div className={`absolute -inset-2 ${glowBg} blur-3xl opacity-20 pointer-events-none`} />
+
+                  <div className="relative p-6 flex flex-col items-center text-center">
+                    {/* Rank crown */}
+                    <div className="mb-4">{getRankBadge(index)}</div>
+
+                    {/* Team name */}
+                    <h3
+                      className={`font-extrabold text-white leading-tight truncate max-w-full ${
+                        isFirst ? 'text-2xl' : 'text-xl'
+                      }`}
+                      title={team.teamName}
+                    >
+                      {team.teamName}
+                    </h3>
+                    {team.projectName && (
+                      <p className="text-xs text-white/40 mt-1 truncate max-w-full">{team.projectName}</p>
+                    )}
+
+                    {/* Big score */}
+                    <div className="mt-5 px-5 py-3 rounded-2xl bg-black/30 border border-white/[0.08] min-w-[120px]">
+                      <div
+                        className={`font-extrabold tabular-nums leading-none ${isFirst ? 'text-4xl' : 'text-3xl'}`}
+                        style={{ color: selectedCategoryData?.color || '#d4b069' }}
+                      >
+                        {team.displayScore}
+                      </div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-widest mt-1.5">
+                        {selectedCategoryData ? t(`categories.${selectedCategoryData.id}`) : t('common.total')}
+                      </div>
+                    </div>
+
+                    {/* Members avatars */}
+                    {team.members && team.members.length > 0 && (
+                      <div className="flex -space-x-2 mt-4">
+                        {team.members.slice(0, 5).map((m, i) => (
+                          <Avatar
+                            key={i}
+                            seed={m.avatarSeed}
+                            size="xs"
+                            className="ring-2 ring-black/50"
+                          />
+                        ))}
+                        {team.members.length > 5 && (
+                          <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-[10px] font-semibold text-white/70 flex items-center justify-center ring-2 ring-black/50">
+                            +{team.members.length - 5}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            };
+
+            // Order top 3 for desktop podium: #2 on the left, #1 centered, #3 on the right
+            const top3 = sortedTeams.slice(0, 3);
+            const podium = [top3[1], top3[0], top3[2]]; // visual order left-to-right
+            const restTeams = sortedTeams.slice(3);
+
+            return (
+              <>
+                {/* Mobile: single-column list of all teams */}
+                <div className="space-y-3 lg:hidden">
+                  {sortedTeams.map((team, index) => renderTeamCard(team, index))}
+                </div>
+
+                {/* Desktop: podium for top 3 + two-column grid for the rest */}
+                <div className="hidden lg:block">
+                  {top3.length > 0 && (
+                    <div className="grid grid-cols-3 gap-5 mb-8 items-start pt-4">
+                      {podium.map((team, i) =>
+                        renderPodiumCard(team, team ? sortedTeams.indexOf(team) : i)
+                      )}
+                    </div>
+                  )}
+                  {restTeams.length > 0 && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {restTeams.map((team) =>
+                        renderTeamCard(team, sortedTeams.indexOf(team))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
 
           <div className="mt-6 pt-6 border-t border-white/[0.06]">
             <div className="flex items-center justify-between text-sm">

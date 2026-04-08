@@ -54,6 +54,7 @@ export default function Home() {
   const themeTags = t('home.theme.tags', { returnObjects: true });
   const timelineEvents = t('home.timeline.events', { returnObjects: true });
   const partnersList = t('home.partners.list', { returnObjects: true });
+  const howItWorksCards = ['claude', 'apiKey', 'claudeCode'];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12">
@@ -184,6 +185,57 @@ export default function Home() {
 
       <Divider />
 
+      {/* How It Works (Claude explainer) */}
+      <Section>
+        <Card>
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white">{t('home.howItWorks.title')}</h2>
+            </div>
+            <p className="text-sm text-center text-white/40 mb-5">{t('home.howItWorks.subtitle')}</p>
+            <p className="text-center text-white/60 max-w-2xl mx-auto leading-relaxed mb-8">
+              {t('home.howItWorks.intro')}
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {howItWorksCards.map((key, i) => (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.45 }}
+                  className="relative rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:bg-white/[0.05] hover:border-[#d4b069]/30 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#a8842d]/20 to-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center mb-3">
+                    <span className="text-base font-extrabold text-[#e8c98a]">{i + 1}</span>
+                  </div>
+                  <h3 className="font-bold text-white text-base mb-2">
+                    {t(`home.howItWorks.cards.${key}.title`)}
+                  </h3>
+                  <p className="text-sm text-white/55 leading-relaxed">
+                    {t(`home.howItWorks.cards.${key}.desc`)}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="rounded-xl p-4 bg-[#d4b069]/[0.06] border border-[#d4b069]/20">
+              <p className="text-sm text-center text-[#e8c98a]/90 leading-relaxed">
+                {t('home.howItWorks.note')}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </Section>
+
+      <Divider />
+
       {/* Partners Section */}
       <Section>
         <Card>
@@ -267,6 +319,56 @@ export default function Home() {
                   </motion.div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+      </Section>
+
+      <Divider />
+
+      {/* Judging Criteria */}
+      <Section>
+        <Card>
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white">{t('home.criteria.title')}</h2>
+            </div>
+            <p className="text-sm text-center text-white/40 mb-8">{t('home.criteria.subtitle')}</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {CATEGORY_LIST.map((category, i) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.45 }}
+                  className="relative rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:bg-white/[0.05] hover:border-[#d4b069]/30 transition-all"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: `${category.color}20`, border: `1px solid ${category.color}40` }}
+                    >
+                      <div className="w-4 h-4 rounded" style={{ backgroundColor: category.color }} />
+                    </div>
+                    <span className="text-[10px] font-bold text-[#e8c98a] bg-[#d4b069]/10 border border-[#d4b069]/30 px-2 py-1 rounded-full uppercase tracking-wider">
+                      {t('home.criteria.maxPoints', { points: 15 })}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-white text-base mb-2">
+                    {t(`home.criteria.items.${category.id}.name`)}
+                  </h3>
+                  <p className="text-sm text-white/55 leading-relaxed">
+                    {t(`home.criteria.items.${category.id}.desc`)}
+                  </p>
+                </motion.div>
+              ))}
             </div>
           </CardContent>
         </Card>

@@ -78,6 +78,53 @@
         { "time": "4:30", "title": "Prize Distribution & Closing" }
       ]
     },
+    "criteria": {
+      "title": "Judging Criteria",
+      "subtitle": "Judges score each team from 0 to 15 in every category",
+      "maxPoints": "Max {{points}} pts",
+      "items": {
+        "ui_ux": {
+          "name": "UI/UX",
+          "desc": "Visual design, clarity, layout, accessibility and overall user experience."
+        },
+        "frontend": {
+          "name": "Frontend",
+          "desc": "Code quality, responsiveness across devices, performance and interactivity."
+        },
+        "backend": {
+          "name": "Backend",
+          "desc": "Architecture, API design, data handling, security and reliability."
+        },
+        "innovation": {
+          "name": "Innovation",
+          "desc": "Originality of the idea, creativity, and how well it addresses a real Hebron problem."
+        },
+        "presentation": {
+          "name": "Presentation",
+          "desc": "Pitch clarity, demo quality and ability to communicate your solution to the judges."
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Build real projects with Claude as your pair programmer",
+      "intro": "This is an AI-augmented hackathon. Every team receives an API key that lets you use Claude — Anthropic's AI model — to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful for Hebron.",
+      "cards": {
+        "claude": {
+          "title": "Claude",
+          "desc": "Claude is an AI assistant you can chat with, ask to write code, debug issues, explain unfamiliar tech, and review your work."
+        },
+        "apiKey": {
+          "title": "Your API Key",
+          "desc": "When the admin reveals keys, you'll find yours in the Team tab. Copy it and use it with Claude Code or any API client to make Claude requests."
+        },
+        "claudeCode": {
+          "title": "Claude Code",
+          "desc": "A CLI tool that plugs Claude directly into your terminal and editor. It reads your project, edits files, runs commands, and ships features while you guide it."
+        }
+      },
+      "note": "You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours."
+    },
     "partners": {
       "title": "Our Partners",
       "subtitle": "Supported by",
