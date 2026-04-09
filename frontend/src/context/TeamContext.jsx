@@ -55,6 +55,9 @@ const normalizeTeam = (team) => ({
   })),
   scores: team.scores || {},
   totalScore: team.total_score || 0,
+  handRaised: !!team.hand_raised,
+  handRaisedAt: team.hand_raised_at || null,
+  handRaisedNote: team.hand_raised_note || null,
 });
 
 export function TeamProvider({ children }) {

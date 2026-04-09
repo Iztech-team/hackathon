@@ -1,4 +1,7 @@
+from datetime import datetime
+from typing import Optional
 from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.api.deps import DbSession, CurrentUser, CurrentTeam, CurrentAdmin
@@ -29,7 +32,14 @@ def team_to_response(team: Team) -> dict:
         ],
         "scores": scores_dict,
         "total_score": sum(scores_dict.values()),
+        "hand_raised": bool(team.hand_raised),
+        "hand_raised_at": team.hand_raised_at,
+        "hand_raised_note": team.hand_raised_note,
     }
+
+
+class RaiseHandRequest(BaseModel):
+    note: Optional[str] = Field(None, max_length=500)
 
 
 @router.get("")
@@ -41,6 +51,67 @@ async def list_teams(db: DbSession):
     )
     teams = result.scalars().all()
     return [team_to_response(t) for t in teams]
+
+
+@router.get("/raised-hands")
+async def list_raised_hands(db: DbSession):
+    """List teams currently requesting help. Public — visible to everyone."""
+    result = await db.execute(
+        select(Team)
+        .options(selectinload(Team.members), selectinload(Team.scores))
+        .where(Team.hand_raised == True)  # noqa: E712
+        .order_by(Team.hand_raised_at.asc())
+    )
+    teams = result.scalars().all()
+    return [team_to_response(t) for t in teams]
+
+
+@router.post("/me/raise-hand")
+async def raise_hand(
+    data: RaiseHandRequest,
+    db: DbSession,
+    current_team: CurrentTeam,
+):
+    """Team requests help. Stores optional short note and timestamp."""
+    result = await db.execute(
+        select(Team)
+        .options(selectinload(Team.members), selectinload(Team.scores))
+        .where(Team.user_id == current_team.user_id)
+    )
+    team = result.scalar_one_or_none()
+    if team is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Team not found",
+        )
+    team.hand_raised = True
+    team.hand_raised_at = datetime.utcnow()
+    team.hand_raised_note = (data.note or "").strip() or None
+    await db.commit()
+    await db.refresh(team)
+    return team_to_response(team)
+
+
+@router.delete("/me/raise-hand")
+async def lower_hand(db: DbSession, current_team: CurrentTeam):
+    """Team clears their help request."""
+    result = await db.execute(
+        select(Team)
+        .options(selectinload(Team.members), selectinload(Team.scores))
+        .where(Team.user_id == current_team.user_id)
+    )
+    team = result.scalar_one_or_none()
+    if team is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Team not found",
+        )
+    team.hand_raised = False
+    team.hand_raised_at = None
+    team.hand_raised_note = None
+    await db.commit()
+    await db.refresh(team)
+    return team_to_response(team)
 
 
 @router.get("/{team_id}")

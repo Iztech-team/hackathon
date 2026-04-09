@@ -119,6 +119,22 @@ class ApiClient {
     });
   }
 
+  // Raise-hand (help request)
+  async raiseHand(note) {
+    return this.request('/teams/me/raise-hand', {
+      method: 'POST',
+      body: JSON.stringify({ note: note || null }),
+    });
+  }
+
+  async lowerHand() {
+    return this.request('/teams/me/raise-hand', { method: 'DELETE' });
+  }
+
+  async getRaisedHands() {
+    return this.request('/teams/raised-hands');
+  }
+
   // Scores endpoints
   async setScore(teamId, categoryId, points) {
     return this.request(`/scores/${teamId}/${categoryId}`, {

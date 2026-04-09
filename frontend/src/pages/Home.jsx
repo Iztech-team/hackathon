@@ -103,11 +103,6 @@ export default function Home() {
                 </motion.svg>
               </Button>
             </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                {t('nav.login')}
-              </Button>
-            </Link>
             <a
               href="https://chat.whatsapp.com/DLLSZK1Gwg6Hv8p6D10nL8"
               target="_blank"
@@ -125,6 +120,11 @@ export default function Home() {
                 {t('home.joinWhatsapp')}
               </Button>
             </a>
+            <Link to="/login">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                {t('nav.login')}
+              </Button>
+            </Link>
           </div>
         )}
 

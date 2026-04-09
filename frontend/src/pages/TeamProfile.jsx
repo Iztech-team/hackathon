@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useTeams } from '../context/TeamContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
@@ -67,6 +69,51 @@ export default function TeamProfile() {
   const [projectForm, setProjectForm] = useState({ projectName: '', description: '' });
   const [addingMember, setAddingMember] = useState(false);
   const [newMemberForm, setNewMemberForm] = useState({ name: '', phone: '', avatarSeed: `member-${Date.now()}` });
+
+  // Raise-hand (help request) state — backed by POST/DELETE /teams/me/raise-hand
+  const [handRaised, setHandRaised] = useState(!!team?.handRaised);
+  const [handNote, setHandNote] = useState(team?.handRaisedNote || '');
+  const [handRaisedAt, setHandRaisedAt] = useState(team?.handRaisedAt || null);
+  const [showHandModal, setShowHandModal] = useState(false);
+  const [handSubmitting, setHandSubmitting] = useState(false);
+
+  // Keep local hand state in sync when the team record refreshes
+  useEffect(() => {
+    if (!team) return;
+    setHandRaised(!!team.handRaised);
+    setHandNote(team.handRaisedNote || '');
+    setHandRaisedAt(team.handRaisedAt || null);
+  }, [team?.handRaised, team?.handRaisedNote, team?.handRaisedAt]);
+
+  const handleRaiseHand = async () => {
+    const note = handNote.trim();
+    if (!note) return; // issue description is required
+    setHandSubmitting(true);
+    try {
+      const updated = await api.raiseHand(note);
+      setHandRaised(true);
+      setHandRaisedAt(updated.hand_raised_at);
+      setShowHandModal(false);
+    } catch (e) {
+      console.error('Failed to raise hand:', e);
+    } finally {
+      setHandSubmitting(false);
+    }
+  };
+
+  const handleLowerHand = async () => {
+    setHandSubmitting(true);
+    try {
+      await api.lowerHand();
+      setHandRaised(false);
+      setHandRaisedAt(null);
+      setHandNote('');
+    } catch (e) {
+      console.error('Failed to lower hand:', e);
+    } finally {
+      setHandSubmitting(false);
+    }
+  };
 
   if (!team) {
     return (
@@ -194,6 +241,124 @@ export default function TeamProfile() {
           </div>
         </div>
       </div>
+
+      {/* Raise Hand — request help from judges/admins */}
+      <div
+        className={`rounded-2xl border p-5 flex items-center gap-4 transition-all ${
+          handRaised
+            ? 'border-red-400/50 shadow-lg shadow-red-500/20'
+            : 'bg-white/[0.02] border-white/[0.08]'
+        }`}
+        style={handRaised ? { background: 'linear-gradient(to right, rgba(185,28,28,0.25), rgba(239,68,68,0.15))' } : undefined}
+      >
+        <div
+          className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 border ${
+            handRaised ? 'border-red-400/50' : 'bg-white/[0.04] border-white/[0.08]'
+          }`}
+          style={handRaised ? { background: 'linear-gradient(to right, #b91c1c, #ef4444)' } : undefined}
+        >
+          <motion.span
+            animate={handRaised ? { rotate: [0, -15, 15, -10, 10, 0] } : { rotate: 0 }}
+            transition={handRaised ? { duration: 1.2, repeat: Infinity, repeatDelay: 2 } : {}}
+          >
+            ✋
+          </motion.span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-white">
+            {handRaised ? t('team.raiseHand.activeTitle') : t('team.raiseHand.title')}
+          </p>
+          <p className="text-sm text-white/60 truncate">
+            {handRaised
+              ? (handNote ? `"${handNote}"` : t('team.raiseHand.activeDesc'))
+              : t('team.raiseHand.desc')}
+          </p>
+        </div>
+        {handRaised ? (
+          <Button
+            onClick={handleLowerHand}
+            disabled={handSubmitting}
+            variant="outline"
+            size="sm"
+            className="flex-shrink-0"
+          >
+            {t('team.raiseHand.cancel')}
+          </Button>
+        ) : (
+          <Button
+            onClick={() => { setHandNote(''); setShowHandModal(true); }}
+            size="sm"
+            className="flex-shrink-0 text-white"
+            style={{ background: 'linear-gradient(to right, #b91c1c, #ef4444)' }}
+          >
+            {t('team.raiseHand.button')}
+          </Button>
+        )}
+      </div>
+
+      {/* Raise Hand modal (optional note) — portaled to body to escape any ancestor stacking context */}
+      {showHandModal && createPortal(
+        (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            onClick={() => !handSubmitting && setShowHandModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl border border-red-400/30 bg-[#0a0a0a] p-6 space-y-4 shadow-2xl shadow-red-500/20"
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-xl border border-red-400/50 flex items-center justify-center text-xl"
+                  style={{ background: 'linear-gradient(to right, #b91c1c, #ef4444)' }}
+                >
+                  ✋
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">{t('team.raiseHand.modalTitle')}</h3>
+                  <p className="text-xs text-white/50">{t('team.raiseHand.modalDesc')}</p>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-white/70 uppercase tracking-wider">
+                  {t('team.raiseHand.issueLabel')} <span className="text-red-400">*</span>
+                </label>
+                <Textarea
+                  value={handNote}
+                  onChange={(e) => setHandNote(e.target.value.slice(0, 500))}
+                  placeholder={t('team.raiseHand.notePlaceholder')}
+                  rows={3}
+                />
+                <p className="text-[11px] text-white/40">{handNote.trim().length}/500</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowHandModal(false)}
+                  disabled={handSubmitting}
+                  className="flex-1"
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button
+                  onClick={handleRaiseHand}
+                  disabled={handSubmitting || !handNote.trim()}
+                  className="flex-1 text-white disabled:opacity-50"
+                  style={{ background: 'linear-gradient(to right, #b91c1c, #ef4444)' }}
+                >
+                  {handSubmitting ? '...' : t('team.raiseHand.send')}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        ),
+        document.body
+      )}
 
       {/* WhatsApp group CTA */}
       <a

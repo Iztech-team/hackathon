@@ -41,6 +41,30 @@ export default function Leaderboard() {
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null); // null = overall, or category id
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('ranking'); // 'ranking' | 'needsHelp'
+  const [raisedHands, setRaisedHands] = useState([]);
+  const [raisedHandsLoading, setRaisedHandsLoading] = useState(false);
+
+  // Fetch raised hands whenever the Needs Help tab is active (public).
+  // Poll every 15s so new requests show up quickly.
+  useEffect(() => {
+    if (viewMode !== 'needsHelp') return;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        setRaisedHandsLoading(true);
+        const data = await api.getRaisedHands();
+        if (!cancelled) setRaisedHands(Array.isArray(data) ? data : []);
+      } catch (e) {
+        if (!cancelled) setRaisedHands([]);
+      } finally {
+        if (!cancelled) setRaisedHandsLoading(false);
+      }
+    };
+    load();
+    const id = setInterval(load, 15000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [viewMode]);
 
   // When frozen, fetch the snapshot stored server-side at freeze time.
   useEffect(() => {
@@ -322,6 +346,49 @@ export default function Leaderboard() {
             )}
           </div>
 
+          {/* View mode tabs — everyone can switch to the Needs Help sub-tab */}
+          <div className="mb-4 flex gap-2">
+            <button
+              onClick={() => setViewMode('ranking')}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                viewMode === 'ranking'
+                  ? 'bg-[#3b82f6] text-white shadow-lg shadow-[#3b82f6]/30'
+                  : 'bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white'
+              }`}
+            >
+              {t('leaderboard.tabRanking')}
+            </button>
+            <button
+              onClick={() => setViewMode('needsHelp')}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 text-white ${
+                viewMode === 'needsHelp' ? 'shadow-lg shadow-red-500/30' : 'bg-white/[0.04] hover:bg-white/[0.08]'
+              }`}
+              style={viewMode === 'needsHelp' ? { background: 'linear-gradient(to right, #b91c1c, #ef4444)' } : undefined}
+            >
+              <span>✋</span>
+              {t('leaderboard.tabNeedsHelp')}
+              {raisedHands.length > 0 && (
+                <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold tabular-nums ${
+                  viewMode === 'needsHelp' ? 'bg-black/30 text-white' : 'bg-red-500/20 text-red-300'
+                }`}>
+                  {raisedHands.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Needs Help panel — public */}
+          {viewMode === 'needsHelp' && (
+            <NeedsHelpPanel
+              teams={raisedHands}
+              loading={raisedHandsLoading}
+              onOpenTeam={(id) => navigate(`/teams/${id}`)}
+              t={t}
+            />
+          )}
+
+          {viewMode === 'ranking' && (
+          <>
           {/* Category Filters */}
           <div className="mb-6 pb-6 border-b border-white/[0.06] -mx-4 sm:mx-0 px-4 sm:px-0">
             <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap scrollbar-hide">
@@ -624,8 +691,88 @@ export default function Leaderboard() {
               <span className="font-semibold text-white">{sortedTeams.length}</span>
             </div>
           </div>
+          </>
+          )}
         </CardContent>
       </Card>
     </motion.div>
+  );
+}
+
+function formatElapsed(iso, t) {
+  if (!iso) return '';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+  const diffMs = Date.now() - then;
+  const mins = Math.max(0, Math.floor(diffMs / 60000));
+  if (mins < 1) return t('leaderboard.needsHelp.justNow');
+  if (mins < 60) return t('leaderboard.needsHelp.minutesAgo', { count: mins });
+  const hours = Math.floor(mins / 60);
+  return t('leaderboard.needsHelp.hoursAgo', { count: hours });
+}
+
+function NeedsHelpPanel({ teams, loading, onOpenTeam, t }) {
+  if (loading && teams.length === 0) {
+    return (
+      <div className="py-12 text-center text-white/40 text-sm">
+        {t('common.loading') || 'Loading...'}
+      </div>
+    );
+  }
+  if (teams.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center mx-auto mb-4 text-3xl">
+          ✓
+        </div>
+        <h3 className="text-lg font-bold text-white mb-1">
+          {t('leaderboard.needsHelp.emptyTitle')}
+        </h3>
+        <p className="text-sm text-white/50">{t('leaderboard.needsHelp.emptyDesc')}</p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-white/50 uppercase tracking-wider mb-2">
+        {t('leaderboard.needsHelp.oldestFirst')}
+      </p>
+      {teams.map((team) => (
+        <div
+          key={team.id}
+          className="rounded-2xl border border-red-400/40 p-4 flex items-start gap-4 cursor-pointer hover:brightness-110 transition-all shadow-lg shadow-red-500/10"
+          style={{ background: 'linear-gradient(to right, rgba(185,28,28,0.18), rgba(239,68,68,0.06))' }}
+          onClick={() => onOpenTeam(team.id)}
+        >
+          <div
+            className="w-11 h-11 rounded-xl border border-red-400/50 flex items-center justify-center text-xl flex-shrink-0"
+            style={{ background: 'linear-gradient(to right, #b91c1c, #ef4444)' }}
+          >
+            ✋
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline justify-between gap-3">
+              <h4 className="font-bold text-white truncate">{team.team_name}</h4>
+              <span className="text-[11px] text-red-200/90 whitespace-nowrap tabular-nums">
+                {formatElapsed(team.hand_raised_at, t)}
+              </span>
+            </div>
+            {team.project_name && (
+              <p className="text-xs text-white/50 truncate mt-0.5">{team.project_name}</p>
+            )}
+            {team.hand_raised_note && (
+              <p className="text-sm text-red-100/95 mt-2 italic border-l-2 border-red-400/50 pl-2">
+                "{team.hand_raised_note}"
+              </p>
+            )}
+            {team.members && team.members.length > 0 && (
+              <p className="text-[11px] text-white/40 mt-2">
+                {team.members.map((m) => m.name).join(' • ')}
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

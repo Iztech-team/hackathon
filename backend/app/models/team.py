@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, ForeignKey, Text
+from sqlalchemy import Column, String, DateTime, ForeignKey, Text, Boolean
 from sqlalchemy.dialects.sqlite import CHAR
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -16,6 +16,9 @@ class Team(Base):
     description = Column(Text, nullable=True)
     logo_seed = Column(String(100), nullable=True)
     api_key = Column(String(255), nullable=True)
+    hand_raised = Column(Boolean, nullable=False, default=False, server_default="0")
+    hand_raised_at = Column(DateTime, nullable=True)
+    hand_raised_note = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", backref="team_profile", lazy="joined")

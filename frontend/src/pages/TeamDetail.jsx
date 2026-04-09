@@ -112,6 +112,31 @@ export default function TeamDetail() {
         </div>
       </div>
 
+      {/* Hand-raised banner — shown when the team is currently asking for help */}
+      {team.handRaised && (
+        <div
+          className="rounded-2xl border border-red-400/50 p-5 flex items-start gap-4 shadow-lg shadow-red-500/20"
+          style={{ background: 'linear-gradient(to right, rgba(185,28,28,0.25), rgba(239,68,68,0.12))' }}
+        >
+          <div
+            className="w-12 h-12 rounded-xl border border-red-400/50 flex items-center justify-center text-2xl flex-shrink-0"
+            style={{ background: 'linear-gradient(to right, #b91c1c, #ef4444)' }}
+          >
+            ✋
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-bold text-white">{t('team.raiseHand.activeTitle')}</p>
+            {team.handRaisedNote ? (
+              <p className="text-sm text-red-100/95 mt-1 italic border-l-2 border-red-400/50 pl-2">
+                "{team.handRaisedNote}"
+              </p>
+            ) : (
+              <p className="text-sm text-white/70 mt-1">{t('team.raiseHand.activeDesc')}</p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Score Breakdown */}
       <Card>
         <CardHeader>

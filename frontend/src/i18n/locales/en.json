@@ -268,6 +268,19 @@
       "notAssigned": "No API key has been assigned to your team yet",
       "copy": "Copy",
       "copied": "Copied!"
+    },
+    "raiseHand": {
+      "title": "Need help?",
+      "desc": "Raise your hand and a judge or admin will come by",
+      "activeTitle": "Hand raised",
+      "activeDesc": "A judge or admin will come by shortly",
+      "button": "Raise hand",
+      "cancel": "Lower hand",
+      "modalTitle": "Raise your hand",
+      "modalDesc": "Describe the issue you're facing so help arrives prepared",
+      "issueLabel": "What's the issue?",
+      "notePlaceholder": "e.g. stuck on Docker deploy, need the API key, ...",
+      "send": "Request help"
     }
   },
   "judge": {
@@ -396,6 +409,16 @@
     "noTeams": "No teams yet",
     "frozenTitle": "Leaderboard Frozen",
     "frozenSubtitle": "The scoreboard is locked for the final stretch of the hackathon",
-    "frozenNote": "Judges are still scoring in the background. Final results will be revealed at the end."
+    "frozenNote": "Judges are still scoring in the background. Final results will be revealed at the end.",
+    "tabRanking": "Ranking",
+    "tabNeedsHelp": "Needs help",
+    "needsHelp": {
+      "emptyTitle": "All clear",
+      "emptyDesc": "No teams are asking for help right now",
+      "oldestFirst": "Oldest requests first",
+      "justNow": "just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago"
+    }
   }
 }
