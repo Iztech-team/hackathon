@@ -74,10 +74,10 @@ export function HeaderCountdownChip({ frost = false }) {
         dot: 'bg-white/30',
       }
     : {
-        wrap: 'bg-[#d4b069]/10 border-[#d4b069]/30',
-        label: 'text-[#e8c98a]',
+        wrap: 'bg-[#3b82f6]/10 border-[#3b82f6]/30',
+        label: 'text-[#60a5fa]',
         value: 'text-white',
-        dot: 'bg-[#d4b069]',
+        dot: 'bg-[#3b82f6]',
       };
 
   const label = isLive

@@ -256,7 +256,7 @@ export default function AdminDashboard() {
                 ? 'bg-red-500/15 text-red-300 border border-red-500/30'
                 : hackathonState === 'ended'
                 ? 'bg-white/5 text-white/40 border border-white/10'
-                : 'bg-[#d4b069]/15 text-[#e8c98a] border border-[#d4b069]/30'
+                : 'bg-[#3b82f6]/15 text-[#60a5fa] border border-[#3b82f6]/30'
             }`}
           >
             {hackathonState}
@@ -287,12 +287,12 @@ export default function AdminDashboard() {
                   onClick={() => { setIsCustom(false); setDurationHours(h); }}
                   className={`relative rounded-xl py-3 px-2 text-center transition-all border ${
                     active
-                      ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] border-[#d4b069] shadow-lg shadow-[#d4b069]/30'
+                      ? 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] border-[#3b82f6] shadow-lg shadow-[#3b82f6]/30'
                       : 'bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15]'
                   }`}
                 >
                   <div className="text-xl font-extrabold tabular-nums leading-none">{h}</div>
-                  <div className={`text-[9px] uppercase tracking-widest mt-1 ${active ? 'text-[#1a1306]/70' : 'text-white/40'}`}>
+                  <div className={`text-[9px] uppercase tracking-widest mt-1 ${active ? 'text-[#ffffff]/70' : 'text-white/40'}`}>
                     {h === 1 ? 'hour' : 'hours'}
                   </div>
                 </button>
@@ -303,12 +303,12 @@ export default function AdminDashboard() {
               onClick={() => setIsCustom(true)}
               className={`relative rounded-xl py-3 px-2 text-center transition-all border ${
                 isCustom
-                  ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] border-[#d4b069] shadow-lg shadow-[#d4b069]/30'
+                  ? 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] border-[#3b82f6] shadow-lg shadow-[#3b82f6]/30'
                   : 'bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-white/[0.15]'
               }`}
             >
               <div className="text-xl font-extrabold leading-none">+</div>
-              <div className={`text-[9px] uppercase tracking-widest mt-1 ${isCustom ? 'text-[#1a1306]/70' : 'text-white/40'}`}>
+              <div className={`text-[9px] uppercase tracking-widest mt-1 ${isCustom ? 'text-[#ffffff]/70' : 'text-white/40'}`}>
                 custom
               </div>
             </button>
@@ -324,7 +324,7 @@ export default function AdminDashboard() {
                 step="0.25"
                 value={durationHours}
                 onChange={(e) => setDurationHours(e.target.value)}
-                className="flex-1 h-11 px-4 rounded-xl text-base text-white bg-black/30 border border-white/[0.15] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#d4b069]/50"
+                className="flex-1 h-11 px-4 rounded-xl text-base text-white bg-black/30 border border-white/[0.15] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/50"
                 placeholder="e.g. 6.5"
               />
               <span className="text-sm text-white/50 uppercase tracking-widest">hrs</span>
@@ -425,7 +425,7 @@ export default function AdminDashboard() {
             <span
               className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
                 keysStatus.revealed
-                  ? 'bg-[#d4b069]/15 text-[#e8c98a] border border-[#d4b069]/30'
+                  ? 'bg-[#3b82f6]/15 text-[#60a5fa] border border-[#3b82f6]/30'
                   : 'bg-white/5 text-white/40 border border-white/10'
               }`}
             >
@@ -441,8 +441,8 @@ export default function AdminDashboard() {
         )}
 
         {keysMessage && (
-          <div className="rounded-xl p-3 bg-[#d4b069]/10 border border-[#d4b069]/20">
-            <p className="text-[#e8c98a] text-sm font-medium">{keysMessage}</p>
+          <div className="rounded-xl p-3 bg-[#3b82f6]/10 border border-[#3b82f6]/20">
+            <p className="text-[#60a5fa] text-sm font-medium">{keysMessage}</p>
           </div>
         )}
         {keysError && (

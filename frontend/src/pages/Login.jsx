@@ -344,7 +344,7 @@ export default function Login() {
                 }}
                 className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                   mainTab === tab
-                    ? 'bg-gradient-to-r from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-lg shadow-[#d4b069]/30'
+                    ? 'bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30'
                     : 'text-white/50 hover:text-white'
                 }`}
               >

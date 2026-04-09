@@ -383,13 +383,13 @@ export default function JudgeScan() {
                   {/* Rank avatar */}
                   <div className="relative flex-shrink-0">
                     {team.rank <= 3 && (
-                      <div className="absolute -inset-0.5 bg-[#d4b069] rounded-xl blur-sm opacity-50" />
+                      <div className="absolute -inset-0.5 bg-[#3b82f6] rounded-xl blur-sm opacity-50" />
                     )}
                     <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-sm border ${
                       team.rank === 1
-                        ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] border-[#d4b069]/60 shadow-lg shadow-[#d4b069]/40'
+                        ? 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] border-[#3b82f6]/60 shadow-lg shadow-[#3b82f6]/40'
                         : team.rank <= 3
-                        ? 'bg-[#d4b069]/15 text-[#e8c98a] border-[#d4b069]/40'
+                        ? 'bg-[#3b82f6]/15 text-[#60a5fa] border-[#3b82f6]/40'
                         : 'bg-white/[0.04] text-white/50 border-white/10'
                     }`}>
                       #{team.rank}

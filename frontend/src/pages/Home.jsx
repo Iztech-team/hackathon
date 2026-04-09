@@ -73,14 +73,14 @@ export default function Home() {
             {t('home.liveNow')}
           </div>
         ) : hackathonState !== 'ended' ? (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d4b069]/10 border border-[#d4b069]/30 text-[#e8c98a] text-sm font-medium mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#d4b069] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3b82f6]/10 border border-[#3b82f6]/30 text-[#60a5fa] text-sm font-medium mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#3b82f6] animate-pulse" />
             {t('home.liveBadge')}
           </div>
         ) : null}
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           {t('app.title')}
-          <span className="text-[#d4b069] ms-3">{t('app.subtitle')}</span>
+          <span className="text-[#3b82f6] ms-3">{t('app.subtitle')}</span>
         </h1>
         <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8">
           {t('home.tagline')}
@@ -171,8 +171,8 @@ export default function Home() {
         <Card>
           <CardContent className="py-8">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
@@ -189,7 +189,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.3 }}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#d4b069]/10 border border-[#d4b069]/30 text-[#e8c98a]"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#3b82f6]/10 border border-[#3b82f6]/30 text-[#60a5fa]"
                 >
                   {tag}
                 </motion.span>
@@ -218,7 +218,7 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.4 }}
                   whileHover={{ y: -4 }}
-                  className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#d4b069]/30 transition-all"
+                  className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-[#3b82f6]/30 transition-all"
                 >
                   <img
                     src={partner.logo}
@@ -265,15 +265,15 @@ export default function Home() {
                     transition={{ delay: i * 0.07, duration: 0.4 }}
                     className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors ${
                       isHighlight
-                        ? 'bg-[#d4b069]/[0.08] border-[#d4b069]/30'
+                        ? 'bg-[#3b82f6]/[0.08] border-[#3b82f6]/30'
                         : 'bg-white/[0.02] border-white/[0.06]'
                     }`}
                   >
                     {/* Time pill */}
                     <div className={`flex-shrink-0 w-20 h-14 rounded-xl flex items-center justify-center font-extrabold tabular-nums text-base ${
                       isHighlight
-                        ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-lg shadow-[#d4b069]/30'
-                        : 'bg-black/40 border border-[#d4b069]/30 text-[#d4b069]'
+                        ? 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30'
+                        : 'bg-black/40 border border-[#3b82f6]/30 text-[#3b82f6]'
                     }`}>
                       {event.time}
                     </div>
@@ -302,8 +302,8 @@ export default function Home() {
         <Card>
           <CardContent className="py-8">
             <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -319,7 +319,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.45 }}
-                  className="relative rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:bg-white/[0.05] hover:border-[#d4b069]/30 transition-all"
+                  className="relative rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:bg-white/[0.05] hover:border-[#3b82f6]/30 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div
@@ -328,7 +328,7 @@ export default function Home() {
                     >
                       <div className="w-4 h-4 rounded" style={{ backgroundColor: category.color }} />
                     </div>
-                    <span className="text-[10px] font-bold text-[#e8c98a] bg-[#d4b069]/10 border border-[#d4b069]/30 px-2 py-1 rounded-full uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-[#60a5fa] bg-[#3b82f6]/10 border border-[#3b82f6]/30 px-2 py-1 rounded-full uppercase tracking-wider">
                       {t('home.criteria.maxPoints', { points: 15 })}
                     </span>
                   </div>

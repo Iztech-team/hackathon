@@ -112,7 +112,7 @@ export function AvatarPicker({ value, onChange, className }) {
                     className={cn(
                       'p-1 rounded-lg transition-all flex items-center justify-center',
                       value === seed
-                        ? 'bg-[#d4b069]/20 ring-2 ring-[#d4b069]'
+                        ? 'bg-[#3b82f6]/20 ring-2 ring-[#3b82f6]'
                         : 'hover:bg-white/10'
                     )}
                   >
@@ -130,13 +130,13 @@ export function AvatarPicker({ value, onChange, className }) {
                   value={customSeed}
                   onChange={(e) => setCustomSeed(e.target.value)}
                   placeholder="Your name..."
-                  className="flex-1 min-w-0 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-[#d4b069]"
+                  className="flex-1 min-w-0 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
                   onKeyDown={(e) => e.key === 'Enter' && handleCustomSeed()}
                 />
                 <button
                   type="button"
                   onClick={handleCustomSeed}
-                  className="px-3 py-1.5 rounded-lg bg-[#d4b069] text-[#1a1306] text-sm font-semibold hover:bg-[#e0bc78] transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-[#3b82f6] text-[#ffffff] text-sm font-semibold hover:bg-[#2563eb] transition-colors"
                 >
                   Set
                 </button>

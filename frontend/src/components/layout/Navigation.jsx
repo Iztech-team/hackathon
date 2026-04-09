@@ -41,7 +41,7 @@ function NavLink({ to, label, icon, iconKey, theme = 'gold' }) {
   const activeClasses =
     theme === 'frost'
       ? 'bg-gradient-to-r from-[#0ea5e9] via-[#38bdf8] to-[#bae6fd] text-[#0c4a6e] shadow-lg shadow-sky-400/40'
-      : 'bg-gradient-to-r from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-lg shadow-[#d4b069]/30';
+      : 'bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30';
 
   return (
     <Link to={to} className="relative">
@@ -517,12 +517,12 @@ export function Header() {
             className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500 ${
               frost
                 ? 'bg-gradient-to-br from-[#0ea5e9] via-[#38bdf8] to-[#bae6fd] shadow-sky-400/40'
-                : 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] shadow-[#d4b069]/30'
+                : 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] shadow-[#3b82f6]/30'
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className={`text-lg font-bold ${frost ? 'text-[#0c4a6e]' : 'text-[#1a1306]'}`}>CH</span>
+            <span className={`text-lg font-bold ${frost ? 'text-[#0c4a6e]' : 'text-[#ffffff]'}`}>CH</span>
           </motion.div>
           <div className="min-w-0">
             <h1 className="text-base font-bold text-white truncate">{t('app.title')}</h1>

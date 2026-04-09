@@ -23,9 +23,9 @@
     --destructive-foreground: 0 0% 98%;
     --radius: 0.75rem;
     --primary-hex: #2b58f7;
-    --gold-hex: #d4b069;
-    --gold-soft-hex: #e8c98a;
-    --gold-deep-hex: #a8842d;
+    --gold-hex: #3b82f6;
+    --gold-soft-hex: #60a5fa;
+    --gold-deep-hex: #1d4ed8;
   }
 
   * {
@@ -119,34 +119,34 @@
 
 /* Remap gold accents → sky blue inside the frozen area by overriding the
  * exact hex colors used by the leaderboard cards and rank badges. */
-.leaderboard-frozen [style*="#d4b069"],
+.leaderboard-frozen [style*="#3b82f6"],
 .leaderboard-frozen [style*="rgb(212, 176, 105)"] {
   color: #bae6fd !important;
 }
 
-.leaderboard-frozen .text-\[\#d4b069\] {
+.leaderboard-frozen .text-\[\#3b82f6\] {
   color: #bae6fd !important;
 }
-.leaderboard-frozen .border-\[\#d4b069\]\/40,
-.leaderboard-frozen .border-\[\#d4b069\]\/30 {
+.leaderboard-frozen .border-\[\#3b82f6\]\/40,
+.leaderboard-frozen .border-\[\#3b82f6\]\/30 {
   border-color: rgba(56, 189, 248, 0.4) !important;
 }
-.leaderboard-frozen .bg-\[\#d4b069\]\/\[0\.05\],
-.leaderboard-frozen .bg-\[\#d4b069\]\/10 {
+.leaderboard-frozen .bg-\[\#3b82f6\]\/\[0\.05\],
+.leaderboard-frozen .bg-\[\#3b82f6\]\/10 {
   background-color: rgba(56, 189, 248, 0.08) !important;
 }
-.leaderboard-frozen .ring-\[\#d4b069\]\/40,
-.leaderboard-frozen .ring-\[\#d4b069\]\/30 {
+.leaderboard-frozen .ring-\[\#3b82f6\]\/40,
+.leaderboard-frozen .ring-\[\#3b82f6\]\/30 {
   --tw-ring-color: rgba(56, 189, 248, 0.4) !important;
 }
 
 /* Gradient rank badge (1st place) — hue-shift the warm gradient into ice */
-.leaderboard-frozen .bg-gradient-to-br.from-\[\#a8842d\],
-.leaderboard-frozen .bg-gradient-to-br.via-\[\#d4b069\],
-.leaderboard-frozen .bg-gradient-to-br.to-\[\#e8c98a\] {
+.leaderboard-frozen .bg-gradient-to-br.from-\[\#1d4ed8\],
+.leaderboard-frozen .bg-gradient-to-br.via-\[\#3b82f6\],
+.leaderboard-frozen .bg-gradient-to-br.to-\[\#60a5fa\] {
   background-image: linear-gradient(135deg, #0ea5e9, #38bdf8, #bae6fd) !important;
 }
-.leaderboard-frozen .bg-gradient-to-br .text-\[\#1a1306\] {
+.leaderboard-frozen .bg-gradient-to-br .text-\[\#ffffff\] {
   color: #0c4a6e !important;
 }
 
@@ -189,21 +189,21 @@
 }
 
 /* Category filter pills when frozen — active state becomes sky blue */
-.leaderboard-frozen button[class*="bg-[#d4b069]"] {
+.leaderboard-frozen button[class*="bg-[#3b82f6]"] {
   background-color: #38bdf8 !important;
   color: #0c4a6e !important;
   box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.5) !important;
 }
 /* Category-colored pills use inline `backgroundColor` from category.color
- * which is #d4b069. Override both the bg and shadow. */
+ * which is #3b82f6. Override both the bg and shadow. */
 .leaderboard-frozen button[style*="background-color: rgb(212, 176, 105)"],
-.leaderboard-frozen button[style*="backgroundColor: #d4b069"],
-.leaderboard-frozen button[style*="#d4b069"] {
+.leaderboard-frozen button[style*="backgroundColor: #3b82f6"],
+.leaderboard-frozen button[style*="#3b82f6"] {
   background-color: #38bdf8 !important;
   box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.5) !important;
 }
 
-/* Progress bar linear gradients use #d4b069 inline — swap them via a mask.
+/* Progress bar linear gradients use #3b82f6 inline — swap them via a mask.
  * Simpler: force the background image to a sky gradient when .rounded-full
  * is nested inside .leaderboard-frozen and uses an inline background. */
 .leaderboard-frozen .h-full.rounded-full[style*="linear-gradient"] {
@@ -211,8 +211,8 @@
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.5) !important;
 }
 
-/* First-place rank badge glow halo (absolute div with bg-[#d4b069]) */
-.leaderboard-frozen .absolute.bg-\[\#d4b069\] {
+/* First-place rank badge glow halo (absolute div with bg-[#3b82f6]) */
+.leaderboard-frozen .absolute.bg-\[\#3b82f6\] {
   background-color: #38bdf8 !important;
 }
 
@@ -264,7 +264,7 @@
     content: '';
     position: absolute;
     inset: -2px;
-    background: #d4b069;
+    background: #3b82f6;
     border-radius: inherit;
     filter: blur(15px);
     opacity: 0.55;

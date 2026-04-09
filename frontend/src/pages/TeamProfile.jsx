@@ -153,7 +153,7 @@ export default function TeamProfile() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#d4b069]/20 via-[#a8842d]/10 to-transparent border border-white/[0.08]">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#3b82f6]/20 via-[#1d4ed8]/10 to-transparent border border-white/[0.08]">
         <div className="absolute inset-0 opacity-30" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '24px 24px'}} />
 
         <div className="relative p-6 md:p-8">
@@ -167,7 +167,7 @@ export default function TeamProfile() {
               >
                 {team.teamName}
               </motion.h1>
-              <p className="text-lg text-[#d4b069] font-medium mb-2">{team.projectName}</p>
+              <p className="text-lg text-[#3b82f6] font-medium mb-2">{team.projectName}</p>
               {team.description && (
                 <p className="text-sm text-white/50 max-w-md">{team.description}</p>
               )}
@@ -186,7 +186,7 @@ export default function TeamProfile() {
             {/* Right: Score & Rank */}
             <div className="flex flex-col items-center gap-3">
               <div className="text-center px-6 py-4 rounded-2xl bg-black/30 backdrop-blur-sm border border-white/[0.06]">
-                <div className="text-5xl font-bold text-[#d4b069] mb-1">{totalScore}</div>
+                <div className="text-5xl font-bold text-[#3b82f6] mb-1">{totalScore}</div>
                 <div className="text-xs text-white/40 uppercase tracking-wider">{t('team.totalPoints')}</div>
               </div>
               <Badge className="text-base px-4 py-1.5">{t('common.rank')} #{rank}</Badge>
@@ -240,7 +240,7 @@ export default function TeamProfile() {
                 layout
                 className={`rounded-xl border transition-all ${
                   editingMember === idx
-                    ? 'bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20'
+                    ? 'bg-white/[0.05] border-[#3b82f6]/30 ring-1 ring-[#3b82f6]/20'
                     : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] cursor-pointer'
                 }`}
                 onClick={() => editingMember === null && handleEditMember(member, idx)}
@@ -309,7 +309,7 @@ export default function TeamProfile() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="rounded-xl border bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20 p-4 space-y-4"
+                className="rounded-xl border bg-white/[0.05] border-[#3b82f6]/30 ring-1 ring-[#3b82f6]/20 p-4 space-y-4"
               >
                 <div className="flex items-start gap-4">
                   <AvatarPicker
@@ -423,8 +423,8 @@ export default function TeamProfile() {
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
               </div>
@@ -434,7 +434,7 @@ export default function TeamProfile() {
               type="button"
               onClick={handleRefreshKey}
               disabled={refreshingKey}
-              className="p-2 rounded-xl text-white/50 hover:text-[#d4b069] hover:bg-[#d4b069]/10 transition-colors disabled:opacity-50"
+              className="p-2 rounded-xl text-white/50 hover:text-[#3b82f6] hover:bg-[#3b82f6]/10 transition-colors disabled:opacity-50"
               title="Refresh"
             >
               <svg
@@ -459,7 +459,7 @@ export default function TeamProfile() {
               >
                 <code
                   dir="ltr"
-                  className="flex-1 min-w-0 truncate px-4 py-3 rounded-xl bg-black/40 border border-[#d4b069]/30 text-[#e8c98a] font-mono text-sm tracking-tight select-all"
+                  className="flex-1 min-w-0 truncate px-4 py-3 rounded-xl bg-black/40 border border-[#3b82f6]/30 text-[#60a5fa] font-mono text-sm tracking-tight select-all"
                 >
                   {apiKey}
                 </code>
@@ -549,7 +549,7 @@ export default function TeamProfile() {
             transition={{ delay: 0.6 }}
           >
             <span className="text-sm text-white/50">{t('team.totalScore')}</span>
-            <span className="text-xl font-bold text-[#d4b069]">{totalScore} {t('common.points')}</span>
+            <span className="text-xl font-bold text-[#3b82f6]">{totalScore} {t('common.points')}</span>
           </motion.div>
         </CardContent>
       </Card>

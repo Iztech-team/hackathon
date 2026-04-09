@@ -67,7 +67,7 @@ export default function TeamDetail() {
       </Link>
 
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#d4b069]/15 via-[#a8842d]/8 to-transparent border border-white/[0.08]">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#3b82f6]/15 via-[#1d4ed8]/8 to-transparent border border-white/[0.08]">
         <div className="absolute inset-0 opacity-30" style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)',
           backgroundSize: '24px 24px'
@@ -84,7 +84,7 @@ export default function TeamDetail() {
                 {team.teamName}
               </motion.h1>
               {team.projectName && (
-                <p className="text-lg text-[#d4b069] font-medium mb-2">{team.projectName}</p>
+                <p className="text-lg text-[#3b82f6] font-medium mb-2">{team.projectName}</p>
               )}
               {team.description && (
                 <p className="text-sm text-white/50 max-w-md">{team.description}</p>
@@ -103,7 +103,7 @@ export default function TeamDetail() {
             {/* Score & Rank */}
             <div className="flex flex-col items-center gap-3">
               <div className="text-center px-6 py-4 rounded-2xl bg-black/30 backdrop-blur-sm border border-white/[0.06]">
-                <div className="text-5xl font-bold text-[#d4b069] mb-1">{totalScore}</div>
+                <div className="text-5xl font-bold text-[#3b82f6] mb-1">{totalScore}</div>
                 <div className="text-xs text-white/40 uppercase tracking-wider">{t('team.totalPoints')}</div>
               </div>
               {rank > 0 && <Badge className="text-base px-4 py-1.5">{t('common.rank')} #{rank}</Badge>}
@@ -161,7 +161,7 @@ export default function TeamDetail() {
             transition={{ delay: 0.6 }}
           >
             <span className="text-sm text-white/50">{t('team.totalScore')}</span>
-            <span className="text-xl font-bold text-[#d4b069]">{totalScore} {t('common.points')}</span>
+            <span className="text-xl font-bold text-[#3b82f6]">{totalScore} {t('common.points')}</span>
           </motion.div>
         </CardContent>
       </Card>
@@ -185,11 +185,11 @@ export default function TeamDetail() {
                   whileHover={{ y: -3 }}
                   className="relative group"
                 >
-                  <div className="absolute -inset-0.5 bg-gradient-to-br from-[#a8842d] to-[#e8c98a] rounded-2xl blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
-                  <div className="relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-[#d4b069]/30 transition-colors">
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-[#1d4ed8] to-[#60a5fa] rounded-2xl blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
+                  <div className="relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-[#3b82f6]/30 transition-colors">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-[#d4b069] rounded-full blur-lg opacity-30" />
-                      <Avatar seed={member.avatarSeed} size="xl" className="relative ring-2 ring-[#d4b069]/30" />
+                      <div className="absolute inset-0 bg-[#3b82f6] rounded-full blur-lg opacity-30" />
+                      <Avatar seed={member.avatarSeed} size="xl" className="relative ring-2 ring-[#3b82f6]/30" />
                     </div>
                     <div className="text-center min-w-0 w-full">
                       <p className="font-bold text-white truncate text-base">{member.name}</p>

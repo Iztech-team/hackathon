@@ -50,7 +50,7 @@ export function Countdown() {
 
   // Color theme: gold while waiting, red while live
   const isLive = state === 'live';
-  const accent = isLive ? '#ef4444' : '#d4b069';
+  const accent = isLive ? '#ef4444' : '#3b82f6';
   const accentSoft = isLive ? 'rgba(239, 68, 68, 0.18)' : 'rgba(212, 176, 105, 0.12)';
   const borderColor = isLive ? 'rgba(239, 68, 68, 0.35)' : 'rgba(255, 255, 255, 0.12)';
 

@@ -112,7 +112,7 @@ export default function Leaderboard() {
     if (position === 0) {
       return leaderboardFrozen
         ? 'border-sky-400/40 bg-sky-400/[0.05]'
-        : 'border-[#d4b069]/40 bg-[#d4b069]/[0.05]';
+        : 'border-[#3b82f6]/40 bg-[#3b82f6]/[0.05]';
     }
     if (position === 1) return 'border-zinc-400/20 bg-zinc-400/[0.04]';
     if (position === 2) return 'border-amber-700/30 bg-amber-700/[0.04]';
@@ -129,7 +129,7 @@ export default function Leaderboard() {
     if (isGold) {
       cardClasses = leaderboardFrozen
         ? 'bg-gradient-to-br from-[#0ea5e9] via-[#38bdf8] to-[#bae6fd] text-[#0c4a6e] border-sky-400/60 shadow-lg shadow-sky-400/40'
-        : 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] border-[#d4b069]/60 shadow-lg shadow-[#d4b069]/40';
+        : 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] border-[#3b82f6]/60 shadow-lg shadow-[#3b82f6]/40';
     } else if (isSilver) {
       cardClasses = 'bg-gradient-to-br from-zinc-400 to-zinc-600 text-black border-zinc-400/40 shadow-lg shadow-zinc-400/20';
     } else if (isBronze) {
@@ -138,7 +138,7 @@ export default function Leaderboard() {
 
     // Glow color per rank — #1 flips from gold to sky blue when frozen
     const glowBg = isGold
-      ? (leaderboardFrozen ? 'bg-sky-400' : 'bg-[#d4b069]')
+      ? (leaderboardFrozen ? 'bg-sky-400' : 'bg-[#3b82f6]')
       : isSilver
       ? 'bg-zinc-400'
       : 'bg-amber-700';
@@ -174,7 +174,7 @@ export default function Leaderboard() {
                 <CardContent className="py-16">
                   <div className="flex flex-col items-center justify-center text-center gap-4">
                     <div className={`w-12 h-12 rounded-2xl animate-pulse ${
-                      leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#d4b069]/10'
+                      leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#3b82f6]/10'
                     }`} />
                     <div className="space-y-2 w-full max-w-xs">
                       <div className="h-3 rounded bg-white/[0.05] animate-pulse" />
@@ -198,10 +198,10 @@ export default function Leaderboard() {
           <CardContent className="py-16">
             <div className="text-center">
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-                leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#d4b069]/10'
+                leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#3b82f6]/10'
               }`}>
                 <svg
-                  className={`w-8 h-8 ${leaderboardFrozen ? 'text-sky-300' : 'text-[#d4b069]'}`}
+                  className={`w-8 h-8 ${leaderboardFrozen ? 'text-sky-300' : 'text-[#3b82f6]'}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -278,14 +278,14 @@ export default function Leaderboard() {
               </CardDescription>
             </div>
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-              leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#d4b069]/10'
+              leaderboardFrozen ? 'bg-sky-400/15' : 'bg-[#3b82f6]/10'
             }`}>
               {leaderboardFrozen ? (
                 <svg className="w-6 h-6 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               )}
@@ -308,7 +308,7 @@ export default function Leaderboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('common.search')}
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#d4b069]/50 focus:border-transparent transition-all"
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/50 focus:border-transparent transition-all"
             />
             {searchQuery && (
               <button
@@ -329,7 +329,7 @@ export default function Leaderboard() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                   selectedCategory === null
-                    ? 'bg-[#d4b069] text-[#1a1306] shadow-lg shadow-[#d4b069]/30'
+                    ? 'bg-[#3b82f6] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30'
                     : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.08] hover:text-white'
                 }`}
               >
@@ -366,7 +366,7 @@ export default function Leaderboard() {
                 <div
                   key={team.id}
                   className={`rounded-2xl border transition-all duration-300 ${getRankStyle(index)} ${
-                    isExpanded ? 'ring-1 ring-[#d4b069]/40' : ''
+                    isExpanded ? 'ring-1 ring-[#3b82f6]/40' : ''
                   }`}
                 >
                   <div
@@ -394,7 +394,7 @@ export default function Leaderboard() {
                       <div className="flex-shrink-0 flex flex-col items-center justify-center min-w-[64px] sm:min-w-[80px] px-3 py-2 rounded-xl bg-black/30 border border-white/[0.08]">
                         <div
                           className="text-xl sm:text-2xl font-extrabold tabular-nums leading-none"
-                          style={{ color: selectedCategoryData?.color || '#d4b069' }}
+                          style={{ color: selectedCategoryData?.color || '#3b82f6' }}
                         >
                           {team.displayScore}
                         </div>
@@ -492,19 +492,19 @@ export default function Leaderboard() {
               const isFirst = index === 0;
               const glowBg =
                 index === 0
-                  ? (leaderboardFrozen ? 'bg-sky-400' : 'bg-[#d4b069]')
+                  ? (leaderboardFrozen ? 'bg-sky-400' : 'bg-[#3b82f6]')
                   : index === 1
                   ? 'bg-zinc-400'
                   : 'bg-amber-700';
               const borderCls =
                 index === 0
-                  ? (leaderboardFrozen ? 'border-sky-400/40' : 'border-[#d4b069]/40')
+                  ? (leaderboardFrozen ? 'border-sky-400/40' : 'border-[#3b82f6]/40')
                   : index === 1
                   ? 'border-zinc-400/25'
                   : 'border-amber-700/30';
               const bgCls =
                 index === 0
-                  ? (leaderboardFrozen ? 'bg-sky-400/[0.06]' : 'bg-[#d4b069]/[0.06]')
+                  ? (leaderboardFrozen ? 'bg-sky-400/[0.06]' : 'bg-[#3b82f6]/[0.06]')
                   : index === 1
                   ? 'bg-zinc-400/[0.04]'
                   : 'bg-amber-700/[0.04]';
@@ -518,7 +518,7 @@ export default function Leaderboard() {
                   transition={{ delay: index * 0.1, duration: 0.45 }}
                   className={`relative rounded-3xl border-2 ${borderCls} ${bgCls} overflow-hidden cursor-pointer hover:brightness-110 transition-all ${
                     isFirst ? '-mt-4' : ''
-                  } ${isExpanded ? 'ring-2 ring-[#d4b069]/30' : ''}`}
+                  } ${isExpanded ? 'ring-2 ring-[#3b82f6]/30' : ''}`}
                   onClick={() => {
                     if (isExpanded) {
                       navigate(`/teams/${team.id}`);
@@ -551,7 +551,7 @@ export default function Leaderboard() {
                     <div className="mt-5 px-5 py-3 rounded-2xl bg-black/30 border border-white/[0.08] min-w-[120px]">
                       <div
                         className={`font-extrabold tabular-nums leading-none ${isFirst ? 'text-4xl' : 'text-3xl'}`}
-                        style={{ color: selectedCategoryData?.color || '#d4b069' }}
+                        style={{ color: selectedCategoryData?.color || '#3b82f6' }}
                       >
                         {team.displayScore}
                       </div>
