@@ -11,6 +11,7 @@ import { Textarea } from '../components/ui/Textarea';
 import { Avatar, AvatarPicker } from '../components/ui/Avatar';
 import { Badge, CategoryBadge } from '../components/ui/Badge';
 import { CATEGORY_LIST, calculateTotalScore } from '../data/categories';
+import HowItWorks from '../components/HowItWorks';
 
 export default function TeamProfile() {
   const navigate = useNavigate();
@@ -193,6 +194,163 @@ export default function TeamProfile() {
           </div>
         </div>
       </div>
+
+      {/* WhatsApp group CTA */}
+      <a
+        href="https://chat.whatsapp.com/DLLSZK1Gwg6Hv8p6D10nL8"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block"
+      >
+        <Button
+          className="w-full gap-2"
+          glow
+          style={{ background: 'linear-gradient(to right, #128C7E, #25D366)', color: 'white' }}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          {t('team.joinWhatsapp')}
+        </Button>
+      </a>
+
+      {/* Team Members */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{t('team.teamMembers')}</CardTitle>
+              <CardDescription>{t('team.teamMembersDesc')}</CardDescription>
+            </div>
+            {!addingMember && (
+              <Button variant="ghost" size="sm" onClick={() => setAddingMember(true)} className="gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                {t('common.add')}
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {team.members.map((member, idx) => (
+              <motion.div
+                key={idx}
+                layout
+                className={`rounded-xl border transition-all ${
+                  editingMember === idx
+                    ? 'bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20'
+                    : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] cursor-pointer'
+                }`}
+                onClick={() => editingMember === null && handleEditMember(member, idx)}
+              >
+                {editingMember === idx ? (
+                  <div className="p-4 space-y-4">
+                    <div className="flex items-start gap-4">
+                      <AvatarPicker
+                        value={editForm.avatarSeed}
+                        onChange={(seed) => setEditForm({ ...editForm, avatarSeed: seed })}
+                      />
+                      <div className="flex-1 space-y-3">
+                        <Input
+                          value={editForm.name}
+                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                          placeholder={t('common.name')}
+                        />
+                        <Input
+                          value={editForm.phone}
+                          onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                          placeholder={t('common.phone')}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelEdit();
+                        }}
+                        variant="ghost"
+                        size="sm"
+                        className="flex-1"
+                      >
+                        {t('common.cancel')}
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveMember(idx);
+                        }}
+                        size="sm"
+                        className="flex-1"
+                      >
+                        {t('common.save')}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 p-4">
+                    <Avatar seed={member.avatarSeed} size="lg" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white truncate">{member.name}</p>
+                      <p className="text-sm text-white/40">{member.phone}</p>
+                    </div>
+                    <svg className="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+
+            {/* Add Member Form */}
+            {addingMember && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-xl border bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20 p-4 space-y-4"
+              >
+                <div className="flex items-start gap-4">
+                  <AvatarPicker
+                    value={newMemberForm.avatarSeed}
+                    onChange={(seed) => setNewMemberForm({ ...newMemberForm, avatarSeed: seed })}
+                  />
+                  <div className="flex-1 space-y-3">
+                    <Input
+                      value={newMemberForm.name}
+                      onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
+                      placeholder="Name"
+                    />
+                    <Input
+                      value={newMemberForm.phone}
+                      onChange={(e) => setNewMemberForm({ ...newMemberForm, phone: e.target.value })}
+                      placeholder="Phone"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleCancelAddMember}
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleAddMember}
+                    size="sm"
+                    className="flex-1"
+                  >
+                    {t('team.addMemberBtn')}
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Project Info */}
       <Card>
@@ -396,144 +554,6 @@ export default function TeamProfile() {
         </CardContent>
       </Card>
 
-      {/* Team Members */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>{t('team.teamMembers')}</CardTitle>
-              <CardDescription>{t('team.teamMembersDesc')}</CardDescription>
-            </div>
-            {!addingMember && (
-              <Button variant="ghost" size="sm" onClick={() => setAddingMember(true)} className="gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                {t('common.add')}
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            {team.members.map((member, idx) => (
-              <motion.div
-                key={idx}
-                layout
-                className={`rounded-xl border transition-all ${
-                  editingMember === idx
-                    ? 'bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20'
-                    : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] cursor-pointer'
-                }`}
-                onClick={() => editingMember === null && handleEditMember(member, idx)}
-              >
-                {editingMember === idx ? (
-                  <div className="p-4 space-y-4">
-                    <div className="flex items-start gap-4">
-                      <AvatarPicker
-                        value={editForm.avatarSeed}
-                        onChange={(seed) => setEditForm({ ...editForm, avatarSeed: seed })}
-                      />
-                      <div className="flex-1 space-y-3">
-                        <Input
-                          value={editForm.name}
-                          onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                          placeholder={t('common.name')}
-                        />
-                        <Input
-                          value={editForm.phone}
-                          onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                          placeholder={t('common.phone')}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCancelEdit();
-                        }}
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        {t('common.cancel')}
-                      </Button>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSaveMember(idx);
-                        }}
-                        size="sm"
-                        className="flex-1"
-                      >
-                        {t('common.save')}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-4 p-4">
-                    <Avatar seed={member.avatarSeed} size="lg" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white truncate">{member.name}</p>
-                      <p className="text-sm text-white/40">{member.phone}</p>
-                    </div>
-                    <svg className="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-
-            {/* Add Member Form */}
-            {addingMember && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="rounded-xl border bg-white/[0.05] border-[#d4b069]/30 ring-1 ring-[#d4b069]/20 p-4 space-y-4"
-              >
-                <div className="flex items-start gap-4">
-                  <AvatarPicker
-                    value={newMemberForm.avatarSeed}
-                    onChange={(seed) => setNewMemberForm({ ...newMemberForm, avatarSeed: seed })}
-                  />
-                  <div className="flex-1 space-y-3">
-                    <Input
-                      value={newMemberForm.name}
-                      onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
-                      placeholder="Name"
-                    />
-                    <Input
-                      value={newMemberForm.phone}
-                      onChange={(e) => setNewMemberForm({ ...newMemberForm, phone: e.target.value })}
-                      placeholder="Phone"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleCancelAddMember}
-                    variant="ghost"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleAddMember}
-                    size="sm"
-                    className="flex-1"
-                  >
-                    {t('team.addMemberBtn')}
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Quick Action */}
       <Button onClick={() => navigate('/leaderboard')} variant="outline" className="w-full gap-2">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -541,6 +561,9 @@ export default function TeamProfile() {
         </svg>
         {t('team.viewLeaderboard')}
       </Button>
+
+      {/* How It Works / Setup Guide */}
+      <HowItWorks />
     </div>
   );
 }

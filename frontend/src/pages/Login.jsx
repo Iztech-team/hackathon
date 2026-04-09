@@ -59,7 +59,12 @@ export default function Login() {
     confirmPassword: '',
     logoSeed: 'team-logo-' + Date.now(),
   });
-  const [members, setMembers] = useState([{ id: 1, name: '', phone: '', avatarSeed: 'member-1' }]);
+  const MIN_MEMBERS = 2;
+  const MAX_MEMBERS = 4;
+  const [members, setMembers] = useState([
+    { id: 1, name: '', phone: '', avatarSeed: 'member-1' },
+    { id: 2, name: '', phone: '', avatarSeed: 'member-2' },
+  ]);
   const [registerErrors, setRegisterErrors] = useState({});
 
   // Redirect already-authenticated visitors to their landing page (role-aware).
@@ -230,12 +235,13 @@ export default function Login() {
   };
 
   const addMember = () => {
+    if (members.length >= MAX_MEMBERS) return;
     const newId = Math.max(...members.map((m) => m.id)) + 1;
     setMembers((prev) => [...prev, { id: newId, name: '', phone: '', avatarSeed: `member-${newId}` }]);
   };
 
   const removeMember = (id) => {
-    if (members.length > 1) {
+    if (members.length > MIN_MEMBERS) {
       setMembers((prev) => prev.filter((m) => m.id !== id));
     }
   };
@@ -254,9 +260,12 @@ export default function Login() {
     if (registerForm.password !== registerForm.confirmPassword) newErrors.confirmPassword = t('login.errors.passwordsNoMatch');
 
     const validMembers = members.filter((m) => m.name.trim());
-    if (validMembers.length === 0) newErrors.members = t('login.errors.memberRequired');
-    const membersWithoutPhone = validMembers.filter((m) => !m.phone.trim());
-    if (membersWithoutPhone.length > 0) newErrors.members = t('login.errors.memberPhoneRequired');
+    if (validMembers.length < MIN_MEMBERS) newErrors.members = t('login.errors.memberMinTwo');
+    else if (validMembers.length > MAX_MEMBERS) newErrors.members = t('login.errors.memberMaxFour');
+    else {
+      const membersWithoutPhone = validMembers.filter((m) => !m.phone.trim());
+      if (membersWithoutPhone.length > 0) newErrors.members = t('login.errors.memberPhoneRequired');
+    }
 
     return newErrors;
   };
@@ -535,13 +544,15 @@ export default function Login() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <FormLabel required>{t('login.teamMembers')}</FormLabel>
-                      <button
-                        type="button"
-                        onClick={addMember}
-                        className="text-xs text-[#2b58f7] hover:text-[#4169f8]"
-                      >
-                        {t('login.addMember')}
-                      </button>
+                      {members.length < MAX_MEMBERS && (
+                        <button
+                          type="button"
+                          onClick={addMember}
+                          className="text-xs text-[#2b58f7] hover:text-[#4169f8]"
+                        >
+                          {t('login.addMember')}
+                        </button>
+                      )}
                     </div>
 
                     {members.map((member, index) => (
@@ -567,7 +578,7 @@ export default function Login() {
                             className="flex-1"
                           />
                         </div>
-                        {members.length > 1 && (
+                        {members.length > MIN_MEMBERS && (
                           <button
                             type="button"
                             onClick={() => removeMember(member.id)}

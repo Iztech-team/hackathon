@@ -89,6 +89,12 @@ class ApiClient {
     });
   }
 
+  async deleteTeam(teamId) {
+    return this.request(`/teams/${teamId}`, {
+      method: 'DELETE',
+    });
+  }
+
   async getTeamMembers(teamId) {
     return this.request(`/teams/${teamId}/members`);
   }

@@ -12,7 +12,20 @@ import { config } from '../lib/config';
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
-  const { teams, resetToMockData: resetTeams, fetchTeams } = useTeams();
+  const { teams, resetToMockData: resetTeams, fetchTeams, deleteTeam } = useTeams();
+  const [deletingTeamId, setDeletingTeamId] = useState(null);
+
+  const handleDeleteTeam = async (team) => {
+    if (!window.confirm(t('admin.confirmDeleteTeam', { name: team.team_name || team.teamName }))) return;
+    setDeletingTeamId(team.id);
+    try {
+      await deleteTeam(team.id);
+    } catch (err) {
+      window.alert(err.message || 'Failed to delete team');
+    } finally {
+      setDeletingTeamId(null);
+    }
+  };
   const { state: hackathonState, override, leaderboardFrozen, refresh: refreshHackathon, setOverride, setFreeze } = useHackathonState();
   const [keysStatus, setKeysStatus] = useState(null);
   const [keysBusy, setKeysBusy] = useState(false);
@@ -484,6 +497,50 @@ export default function AdminDashboard() {
             {t('admin.apiKeys.clear')}
           </Button>
         </div>
+      </div>
+
+      {/* Manage Teams */}
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+            {t('admin.manageTeams')}
+          </h3>
+          <p className="text-xs text-white/40 mt-1">{t('admin.manageTeamsDesc')}</p>
+        </div>
+
+        {teams.length === 0 ? (
+          <p className="text-sm text-white/40">{t('leaderboard.noTeams')}</p>
+        ) : (
+          <div className="space-y-2">
+            {teams.map((team) => (
+              <div
+                key={team.id}
+                className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium text-white truncate">
+                    {team.team_name || team.teamName}
+                  </div>
+                  <div className="text-xs text-white/40 truncate">
+                    {(team.members?.length || 0)} {t('team.members')}
+                    {team.project_name ? ` · ${team.project_name}` : ''}
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => handleDeleteTeam(team)}
+                  disabled={deletingTeamId === team.id}
+                  className="text-red-400 border-red-500/30 hover:bg-red-500/10"
+                >
+                  <svg className="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  {deletingTeamId === team.id ? '...' : t('common.delete')}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

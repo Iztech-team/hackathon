@@ -56,6 +56,7 @@
     "registerYourTeam": "Register Your Team",
     "viewYourTeamProfile": "View Your Team Profile",
     "checkLeaderboard": "Check Leaderboard",
+    "joinWhatsapp": "Join WhatsApp Group",
     "stats": {
       "teamsRegistered": "Teams Registered",
       "participants": "Participants",
@@ -98,10 +99,6 @@
         "innovation": {
           "name": "Innovation",
           "desc": "Originality of the idea, creativity, and how well it addresses a real Hebron problem."
-        },
-        "presentation": {
-          "name": "Presentation",
-          "desc": "Pitch clarity, demo quality and ability to communicate your solution to the judges."
         }
       }
     },
@@ -122,6 +119,10 @@
           "title": "Claude Code",
           "desc": "A CLI tool that plugs Claude directly into your terminal and editor. It reads your project, edits files, runs commands, and ships features while you guide it."
         }
+      },
+      "video": {
+        "title": "Watch: Install Claude Code in VS Code",
+        "subtitle": "A quick walkthrough — set it up before hackathon day"
       },
       "note": "You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours.",
       "usage": {
@@ -187,8 +188,7 @@
     "ui_ux": "UI/UX",
     "frontend": "Frontend",
     "backend": "Backend",
-    "innovation": "Innovation",
-    "presentation": "Presentation"
+    "innovation": "Innovation"
   },
   "login": {
     "welcome": "Welcome",
@@ -233,6 +233,8 @@
       "passwordTooShort": "Password must be at least 6 characters",
       "passwordsNoMatch": "Passwords do not match",
       "memberRequired": "At least one team member is required",
+      "memberMinTwo": "At least 2 team members are required",
+      "memberMaxFour": "A team can have at most 4 members",
       "memberPhoneRequired": "All members must have a phone number"
     }
   },
@@ -256,6 +258,7 @@
     "teamMembers": "Team Members",
     "teamMembersDesc": "Click on a member to edit their details",
     "viewLeaderboard": "View Leaderboard",
+    "joinWhatsapp": "Join Hackathon WhatsApp Group",
     "addMemberBtn": "Add Member",
     "apiKey": {
       "title": "Your Team API Key",
@@ -306,6 +309,9 @@
     "leaderboardFrozen": "Leaderboard is frozen",
     "leaderboardLive": "Leaderboard is live",
     "freezeDesc": "Lock the scoreboard so participants can't see new scores in the final minutes",
+    "manageTeams": "Manage Teams",
+    "manageTeamsDesc": "Delete teams from the hackathon",
+    "confirmDeleteTeam": "Are you sure you want to delete team \"{{name}}\"? This will remove all its members and scores.",
     "apiKeys": {
       "title": "API Keys",
       "desc": "Upload a CSV file with the list of API keys — each team gets one key",

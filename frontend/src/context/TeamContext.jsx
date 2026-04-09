@@ -367,6 +367,21 @@ export function TeamProvider({ children }) {
     }
   };
 
+  const deleteTeam = async (teamId) => {
+    if (config.useMockData) {
+      setTeams(prev => prev.filter(t => t.id !== teamId));
+      return;
+    }
+
+    try {
+      await api.deleteTeam(teamId);
+      await fetchTeams();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   const resetToMockData = () => {
     localStorage.removeItem('hackathon-teams');
     setTeams(mockTeams);
@@ -390,6 +405,7 @@ export function TeamProvider({ children }) {
         updateTeamMember,
         addTeamMember,
         deleteTeamMember,
+        deleteTeam,
         resetToMockData,
         fetchTeams,
       }}

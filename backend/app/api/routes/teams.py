@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from app.api.deps import DbSession, CurrentUser, CurrentTeam
+from app.api.deps import DbSession, CurrentUser, CurrentTeam, CurrentAdmin
 from app.schemas.team import TeamResponse, TeamUpdate, TeamMemberCreate, TeamMemberUpdate, TeamMemberResponse
 from app.models import Team, TeamMember
 from app.models.user import UserRole
@@ -94,6 +94,27 @@ async def update_team(team_id: str, data: TeamUpdate, db: DbSession, current_use
     await db.refresh(team)
 
     return team_to_response(team)
+
+
+@router.delete("/{team_id}")
+async def delete_team(team_id: str, db: DbSession, current_admin: CurrentAdmin):
+    result = await db.execute(
+        select(Team).options(selectinload(Team.user)).where(Team.id == team_id)
+    )
+    team = result.scalar_one_or_none()
+
+    if team is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Team not found",
+        )
+
+    # Delete user (cascades to team, members, scores)
+    user = team.user
+    await db.delete(user)
+    await db.commit()
+
+    return {"message": "Team deleted"}
 
 
 @router.get("/{team_id}/members")

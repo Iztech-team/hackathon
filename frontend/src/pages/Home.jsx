@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Countdown } from '../components/ui/Countdown';
 import { useHackathonState } from '../hooks/useHackathonState';
 import { CATEGORY_LIST } from '../data/categories';
+import HowItWorks from '../components/HowItWorks';
 
 // Reusable section that fades + slides up the first time it enters the viewport.
 // `once: true` prevents it from re-triggering during page transitions (which would flash
@@ -55,13 +55,6 @@ export default function Home() {
   const themeTags = t('home.theme.tags', { returnObjects: true });
   const timelineEvents = t('home.timeline.events', { returnObjects: true });
   const partnersList = t('home.partners.list', { returnObjects: true });
-  const howItWorksCards = ['claude', 'apiKey', 'claudeCode'];
-
-  // OS selector for the Claude Code setup steps. Windows is the default
-  // since the majority of participants are on Windows.
-  const [selectedOs, setSelectedOs] = useState('windows');
-  const osOptions = ['windows', 'macos', 'linux'];
-
   return (
     <div className="max-w-4xl mx-auto space-y-12">
       {/* Hero Section */}
@@ -115,6 +108,23 @@ export default function Home() {
                 {t('nav.login')}
               </Button>
             </Link>
+            <a
+              href="https://chat.whatsapp.com/DLLSZK1Gwg6Hv8p6D10nL8"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <Button
+                size="lg"
+                className="w-full sm:w-auto gap-2"
+                style={{ background: 'linear-gradient(to right, #128C7E, #25D366)', color: 'white' }}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                {t('home.joinWhatsapp')}
+              </Button>
+            </a>
           </div>
         )}
 
@@ -230,125 +240,8 @@ export default function Home() {
 
       {/* How It Works (Claude explainer) */}
       <Section>
-        <Card>
-          <CardContent className="py-8">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#d4b069]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-bold text-white">{t('home.howItWorks.title')}</h2>
-            </div>
-            <p className="text-sm text-center text-white/40 mb-5">{t('home.howItWorks.subtitle')}</p>
-            <p className="text-center text-white/60 max-w-2xl mx-auto leading-relaxed mb-8">
-              {t('home.howItWorks.intro')}
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {howItWorksCards.map((key, i) => (
-                <motion.div
-                  key={key}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.45 }}
-                  className="relative rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:bg-white/[0.05] hover:border-[#d4b069]/30 transition-all"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#a8842d]/20 to-[#d4b069]/10 border border-[#d4b069]/30 flex items-center justify-center mb-3">
-                    <span className="text-base font-extrabold text-[#e8c98a]">{i + 1}</span>
-                  </div>
-                  <h3 className="font-bold text-white text-base mb-2">
-                    {t(`home.howItWorks.cards.${key}.title`)}
-                  </h3>
-                  <p className="text-sm text-white/55 leading-relaxed">
-                    {t(`home.howItWorks.cards.${key}.desc`)}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Setup / Usage Guide */}
-            <div className="mt-8 mb-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] p-5 sm:p-6">
-              <div className="mb-4">
-                <h3 className="text-base font-bold text-white mb-1">
-                  {t('home.howItWorks.usage.title')}
-                </h3>
-                <p className="text-sm text-white/50">
-                  {t('home.howItWorks.usage.subtitle')}
-                </p>
-              </div>
-
-              {/* OS Toggle */}
-              <div className="flex justify-center mb-5">
-                <div
-                  className="inline-flex items-center gap-1 p-1 rounded-xl bg-black/30 border border-white/[0.08]"
-                  role="tablist"
-                >
-                {osOptions.map((os) => {
-                  const isActive = selectedOs === os;
-                  return (
-                    <button
-                      key={os}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => setSelectedOs(os)}
-                      className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                        isActive
-                          ? 'bg-gradient-to-br from-[#a8842d] via-[#d4b069] to-[#e8c98a] text-[#1a1306] shadow-md shadow-[#d4b069]/30'
-                          : 'text-white/60 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      {t(`home.howItWorks.usage.osLabels.${os}`)}
-                    </button>
-                  );
-                })}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {[0, 1, 2, 3].map((i) => {
-                  const code = t(`home.howItWorks.usage.steps.${i}.code.${selectedOs}`, { defaultValue: '' });
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-black/20 border border-white/[0.06]"
-                    >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#a8842d]/30 to-[#d4b069]/15 border border-[#d4b069]/30 flex items-center justify-center">
-                        <span className="text-sm font-extrabold text-[#e8c98a]">{i + 1}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white text-sm">
-                          {t(`home.howItWorks.usage.steps.${i}.title`)}
-                        </p>
-                        <p className="text-xs text-white/50 mt-1 leading-relaxed">
-                          {t(`home.howItWorks.usage.steps.${i}.desc`)}
-                        </p>
-                        {code && (
-                          <pre
-                            dir="ltr"
-                            className="mt-2 overflow-x-auto text-[11px] sm:text-xs font-mono text-[#e8c98a] bg-black/40 border border-[#d4b069]/20 rounded-lg px-3 py-2 select-all"
-                          >
-                            <code>{code}</code>
-                          </pre>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="rounded-xl p-4 bg-[#d4b069]/[0.06] border border-[#d4b069]/20">
-              <p className="text-sm text-center text-[#e8c98a]/90 leading-relaxed">
-                {t('home.howItWorks.note')}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <HowItWorks />
       </Section>
-
       <Divider />
 
       {/* Timeline Section */}

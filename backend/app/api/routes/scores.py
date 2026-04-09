@@ -10,7 +10,7 @@ from app.models import Team, Score, Judge
 
 router = APIRouter()
 
-VALID_CATEGORIES = {"ui_ux", "frontend", "backend", "innovation", "presentation"}
+VALID_CATEGORIES = {"ui_ux", "frontend", "backend", "innovation"}
 
 
 @router.put("/{team_id}/{category_id}", response_model=ScoreResponse)

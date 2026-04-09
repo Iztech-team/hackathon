@@ -50,7 +50,7 @@ async def _build_leaderboard_payload(db, category: Optional[str] = None):
 class FreezeRequest(BaseModel):
     frozen: bool
 
-VALID_CATEGORIES = {"ui_ux", "frontend", "backend", "innovation", "presentation"}
+VALID_CATEGORIES = {"ui_ux", "frontend", "backend", "innovation"}
 
 
 @router.get("")
