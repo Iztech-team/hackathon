@@ -109,9 +109,14 @@ async def delete_team(team_id: str, db: DbSession, current_admin: CurrentAdmin):
             detail="Team not found",
         )
 
-    # Delete user (cascades to team, members, scores)
+    # Delete team first (cascades to members & scores via ORM relationships),
+    # then the user row. Doing user-first makes SQLAlchemy try to NULL
+    # teams.user_id because the backref lacks passive_deletes.
     user = team.user
-    await db.delete(user)
+    await db.delete(team)
+    await db.flush()
+    if user is not None:
+        await db.delete(user)
     await db.commit()
 
     return {"message": "Team deleted"}
