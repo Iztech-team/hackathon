@@ -123,9 +123,13 @@ async def delete_judge(judge_id: str, db: DbSession, current_admin: CurrentAdmin
             detail="Judge not found",
         )
 
-    # Delete user (cascades to judge)
+    # Delete judge first, then user. Deleting user first makes SQLAlchemy
+    # try to NULL judges.user_id (NOT NULL) before the DB cascade fires.
     user = judge.user
-    await db.delete(user)
+    await db.delete(judge)
+    await db.flush()
+    if user is not None:
+        await db.delete(user)
     await db.commit()
 
     return {"message": "Judge deleted"}
