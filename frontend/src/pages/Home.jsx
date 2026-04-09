@@ -226,7 +226,7 @@ export default function Home() {
                     className="h-14 sm:h-16 w-auto max-w-full object-contain"
                     loading="lazy"
                   />
-                  <p className="text-xs sm:text-sm font-medium text-white/80 text-center">
+                  <p dir="ltr" className="text-xs sm:text-sm font-medium text-white/80 text-center">
                     {partner.name}
                   </p>
                 </motion.div>
