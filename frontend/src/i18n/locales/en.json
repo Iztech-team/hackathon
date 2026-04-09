@@ -52,7 +52,7 @@
   "home": {
     "liveBadge": "Reserve Your Seats",
     "liveNow": "Live Now",
-    "tagline": "Join the Hebron Coding Hackathon and help build smart solutions for the city of Hebron.",
+    "tagline": "Join the one-day AI-augmented coding hackathon. The theme stays sealed until the opening ceremony.",
     "registerYourTeam": "Register Your Team",
     "viewYourTeamProfile": "View Your Team Profile",
     "checkLeaderboard": "Check Leaderboard",
@@ -64,8 +64,9 @@
     },
     "theme": {
       "title": "Hackathon Theme",
-      "desc": "Build websites and applications that serve the city of Hebron and solve its everyday challenges. Your project could tackle electricity, water or trash issues, build a community reporting system, improve streets, or any other idea that serves the people of Hebron.",
-      "tags": ["Electricity", "Water", "Trash", "Community Reporting", "Streets", "Public Services"]
+      "lockedTitle": "The theme is sealed",
+      "lockedDesc": "To keep the playing field level, the challenge statement will only be revealed at the opening ceremony on hackathon day. Come rested, curious, and ready to build — no pre-work, no prepared projects.",
+      "lockedTag": "Revealed at the opening ceremony"
     },
     "timeline": {
       "title": "Day Schedule",
@@ -98,14 +99,14 @@
         },
         "innovation": {
           "name": "Innovation",
-          "desc": "Originality of the idea, creativity, and how well it addresses a real Hebron problem."
+          "desc": "Originality of the idea, creativity, and how well it addresses a real-world problem."
         }
       }
     },
     "howItWorks": {
       "title": "How It Works",
       "subtitle": "Build real projects with Claude as your pair programmer",
-      "intro": "This is an AI-augmented hackathon. Every team receives an API key that lets you use Claude — Anthropic's AI model — to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful for Hebron.",
+      "intro": "This is an AI-augmented hackathon. Every team receives an API key that lets you use Claude — Anthropic's AI model — to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful under the theme revealed on the day.",
       "cards": {
         "claude": {
           "title": "Claude",
@@ -197,6 +198,9 @@
     "subtitle": "Login or create a new team account",
     "loginTab": "Login",
     "registerTab": "Register",
+    "closed": "closed",
+    "registrationClosed": "Registration is currently closed",
+    "registrationClosedBanner": "Registration is closed. Existing teams and judges can still sign in.",
     "teamTab": "Team",
     "judgeTab": "Judge",
     "adminTab": "Admin",
@@ -319,6 +323,11 @@
     "hackathonLive": "Hackathon is LIVE",
     "hackathonEnded": "Hackathon ended",
     "hackathonAuto": "Auto (by schedule)",
+    "registrationOpen": "Registration Open",
+    "registrationClosed": "Registration Closed",
+    "registrationDesc": "Control whether new teams can sign up. Existing teams and judges can always log in.",
+    "closeRegistration": "Close Registration",
+    "openRegistration": "Open Registration",
     "freezeLeaderboard": "Freeze Leaderboard",
     "unfreezeLeaderboard": "Unfreeze Leaderboard",
     "leaderboardFrozen": "Leaderboard is frozen",

@@ -26,7 +26,16 @@ export default function AdminDashboard() {
       setDeletingTeamId(null);
     }
   };
-  const { state: hackathonState, override, leaderboardFrozen, refresh: refreshHackathon, setOverride, setFreeze } = useHackathonState();
+  const {
+    state: hackathonState,
+    override,
+    leaderboardFrozen,
+    registrationOpen,
+    refresh: refreshHackathon,
+    setOverride,
+    setFreeze,
+    setRegistrationOpen,
+  } = useHackathonState();
   const [keysStatus, setKeysStatus] = useState(null);
   const [keysBusy, setKeysBusy] = useState(false);
   const [keysMessage, setKeysMessage] = useState('');
@@ -408,6 +417,43 @@ export default function AdminDashboard() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" />
             </svg>
             {leaderboardFrozen ? t('admin.unfreezeLeaderboard') : t('admin.freezeLeaderboard')}
+          </Button>
+        </div>
+
+        {/* Registration open/closed toggle */}
+        <div className="pt-4 mt-2 border-t border-white/[0.06]">
+          <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wider font-semibold">
+                {registrationOpen ? t('admin.registrationOpen') : t('admin.registrationClosed')}
+              </p>
+              <p className="text-[11px] text-white/40 mt-1">{t('admin.registrationDesc')}</p>
+            </div>
+            <span
+              className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
+                registrationOpen
+                  ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/40'
+                  : 'bg-red-500/15 text-red-300 border border-red-500/40'
+              }`}
+            >
+              {registrationOpen ? 'open' : 'closed'}
+            </span>
+          </div>
+          <Button
+            onClick={() => setRegistrationOpen(!registrationOpen)}
+            className="w-full text-white"
+            style={{
+              background: registrationOpen
+                ? 'linear-gradient(to right, #b91c1c, #ef4444)'
+                : 'linear-gradient(to right, #047857, #10b981)',
+            }}
+          >
+            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={registrationOpen
+                ? "M12 15v2m0 4h.01M4.93 19h14.14a2 2 0 001.74-3l-7.07-12.25a2 2 0 00-3.48 0L3.2 16a2 2 0 001.73 3z"
+                : "M18 8h1a4 4 0 010 8h-1M5 20h10a2 2 0 002-2v-8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2zm5-6a2 2 0 100-4 2 2 0 000 4z"} />
+            </svg>
+            {registrationOpen ? t('admin.closeRegistration') : t('admin.openRegistration')}
           </Button>
         </div>
       </div>

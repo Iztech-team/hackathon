@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from sqlalchemy import select
 from app.api.deps import DbSession, CurrentUser
-from app.exceptions import ConflictError, NotFoundError, UnauthorizedError
+from app.exceptions import ConflictError, ForbiddenError, NotFoundError, UnauthorizedError
 from app.rate_limit import limiter
 from app.schemas.auth import Token, LoginRequest, TeamRegisterRequest, UserResponse
 from app.schemas.team import TeamResponse
@@ -50,6 +50,12 @@ async def login(request: Request, data: LoginRequest, db: DbSession):
 @router.post("/register/team", response_model=Token)
 @limiter.limit("5/minute")
 async def register_team_endpoint(request: Request, data: TeamRegisterRequest, db: DbSession):
+    # Admin kill-switch: if registration is closed, reject new team signups.
+    settings_row = (
+        await db.execute(select(HackathonSettings).where(HackathonSettings.id == 1))
+    ).scalar_one_or_none()
+    if settings_row is not None and not bool(getattr(settings_row, "registration_open", True)):
+        raise ForbiddenError("Registration is closed", code="REGISTRATION_CLOSED")
     try:
         team, token = await register_team(db, data)
         return Token(access_token=token)

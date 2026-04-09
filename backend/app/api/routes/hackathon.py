@@ -23,12 +23,14 @@ class HackathonStateResponse(BaseModel):
     # Derived state computed on the server: "upcoming" | "live" | "ended"
     state: str
     leaderboard_frozen: bool = False
+    registration_open: bool = True
 
 
 class HackathonStateUpdate(BaseModel):
     override: Optional[str] = Field(None, pattern="^(live|ended)$")
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
+    registration_open: Optional[bool] = None
 
 
 def _derive_state(settings: HackathonSettings) -> str:
@@ -75,6 +77,7 @@ async def get_state(db: DbSession):
         override=settings.override,
         state=_derive_state(settings),
         leaderboard_frozen=bool(settings.leaderboard_frozen),
+        registration_open=bool(getattr(settings, "registration_open", True)),
     )
 
 
@@ -90,6 +93,8 @@ async def update_state(data: HackathonStateUpdate, db: DbSession, current_admin:
         settings.start_at = _to_naive_jerusalem(update_fields["start_at"])
     if "end_at" in update_fields and update_fields["end_at"] is not None:
         settings.end_at = _to_naive_jerusalem(update_fields["end_at"])
+    if "registration_open" in update_fields and update_fields["registration_open"] is not None:
+        settings.registration_open = bool(update_fields["registration_open"])
 
     if settings.end_at <= settings.start_at:
         raise HTTPException(
@@ -106,4 +111,5 @@ async def update_state(data: HackathonStateUpdate, db: DbSession, current_admin:
         override=settings.override,
         state=_derive_state(settings),
         leaderboard_frozen=bool(settings.leaderboard_frozen),
+        registration_open=bool(getattr(settings, "registration_open", True)),
     )

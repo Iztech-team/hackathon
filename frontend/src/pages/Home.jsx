@@ -44,7 +44,7 @@ export default function Home() {
   const { isAuthenticated, role } = useAuth();
   const { teams } = useTeams();
   const { t } = useTranslation();
-  const { state: hackathonState } = useHackathonState();
+  const { state: hackathonState, registrationOpen } = useHackathonState();
 
   const totalTeams = teams.length;
   const totalParticipants = teams.reduce(
@@ -52,7 +52,6 @@ export default function Home() {
     0
   );
 
-  const themeTags = t('home.theme.tags', { returnObjects: true });
   const timelineEvents = t('home.timeline.events', { returnObjects: true });
   const partnersList = t('home.partners.list', { returnObjects: true });
   return (
@@ -88,6 +87,7 @@ export default function Home() {
 
         {!isAuthenticated && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {registrationOpen && (
             <Link to="/login?tab=register">
               <Button size="lg" glow className="w-full sm:w-auto gap-2">
                 <span>{t('home.registerYourTeam')}</span>
@@ -103,6 +103,7 @@ export default function Home() {
                 </motion.svg>
               </Button>
             </Link>
+            )}
             <a
               href="https://chat.whatsapp.com/DLLSZK1Gwg6Hv8p6D10nL8"
               target="_blank"
@@ -166,34 +167,39 @@ export default function Home() {
 
       <Divider />
 
-      {/* Theme Section */}
+      {/* Theme Section — sealed until the opening ceremony */}
       <Section>
-        <Card>
-          <CardContent className="py-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <Card className="relative overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none opacity-40"
+            style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.18), transparent 60%)' }}
+          />
+          <CardContent className="relative py-10">
+            <div className="flex flex-col items-center text-center">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+                className="w-16 h-16 rounded-2xl bg-[#3b82f6]/10 border border-[#3b82f6]/40 flex items-center justify-center mb-4"
+              >
+                <svg className="w-8 h-8 text-[#60a5fa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
+              </motion.div>
+              <p className="text-xs text-white/40 uppercase tracking-[0.2em] mb-2">
+                {t('home.theme.title')}
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+                {t('home.theme.lockedTitle')}
+              </h2>
+              <p className="text-white/60 max-w-2xl mx-auto leading-relaxed">
+                {t('home.theme.lockedDesc')}
+              </p>
+              <div className="mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-[#3b82f6]/10 border border-[#3b82f6]/30 text-[#60a5fa]">
+                <span>🔒</span>
+                {t('home.theme.lockedTag')}
               </div>
-              <h2 className="text-xl font-bold text-white">{t('home.theme.title')}</h2>
-            </div>
-            <p className="text-center text-white/60 max-w-2xl mx-auto leading-relaxed mb-6">
-              {t('home.theme.desc')}
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {Array.isArray(themeTags) && themeTags.map((tag, i) => (
-                <motion.span
-                  key={tag}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#3b82f6]/10 border border-[#3b82f6]/30 text-[#60a5fa]"
-                >
-                  {tag}
-                </motion.span>
-              ))}
             </div>
           </CardContent>
         </Card>

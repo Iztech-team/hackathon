@@ -8,6 +8,7 @@ const FALLBACK = {
   override: null,
   state: 'upcoming',
   leaderboard_frozen: false,
+  registration_open: true,
 };
 
 /**
@@ -25,6 +26,7 @@ export function useHackathonState() {
     endAt: new Date(FALLBACK.end_at),
     override: null,
     leaderboardFrozen: false,
+    registrationOpen: true,
     loading: true,
   }));
 
@@ -37,6 +39,7 @@ export function useHackathonState() {
         endAt: new Date(res.end_at),
         override: res.override,
         leaderboardFrozen: !!res.leaderboard_frozen,
+        registrationOpen: res.registration_open !== false,
         loading: false,
       });
     } catch (err) {
@@ -79,5 +82,13 @@ export function useHackathonState() {
     [fetchState]
   );
 
-  return { ...data, refresh: fetchState, setOverride, setFreeze };
+  const setRegistrationOpen = useCallback(
+    async (open) => {
+      await api.updateHackathonState({ registration_open: !!open });
+      await fetchState();
+    },
+    [fetchState]
+  );
+
+  return { ...data, refresh: fetchState, setOverride, setFreeze, setRegistrationOpen };
 }

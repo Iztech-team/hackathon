@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTeams } from '../context/TeamContext';
 import { useJudges } from '../context/JudgeContext';
+import { useHackathonState } from '../hooks/useHackathonState';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -25,9 +26,15 @@ export default function Login() {
   const justSubmittedRef = useRef(false);
   const { getTeamByCredentials, getTeamById, registerTeam } = useTeams();
   const { getJudgeByCredentials, getJudgeById } = useJudges();
+  const { registrationOpen } = useHackathonState();
 
   // Main tabs: login vs register
   const [mainTab, setMainTab] = useState(searchParams.get('tab') === 'register' ? 'register' : 'login');
+
+  // If admin closes registration while the user is on that tab, bump them back to login.
+  useEffect(() => {
+    if (!registrationOpen && mainTab === 'register') setMainTab('login');
+  }, [registrationOpen, mainTab]);
 
   useEffect(() => {
     if (searchParams.get('tab') === 'register') {
@@ -335,23 +342,41 @@ export default function Login() {
         <CardContent className="space-y-6">
           {/* Main Tabs: Login / Register */}
           <div className="flex rounded-xl bg-white/[0.03] p-1">
-            {['login', 'register'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setMainTab(tab);
-                  setError('');
-                }}
-                className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
-                  mainTab === tab
-                    ? 'bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                {tab === 'login' ? t('login.loginTab') : t('login.registerTab')}
-              </button>
-            ))}
+            {['login', 'register'].map((tab) => {
+              const isDisabled = tab === 'register' && !registrationOpen;
+              return (
+                <button
+                  key={tab}
+                  disabled={isDisabled}
+                  onClick={() => {
+                    if (isDisabled) return;
+                    setMainTab(tab);
+                    setError('');
+                  }}
+                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                    mainTab === tab
+                      ? 'bg-gradient-to-r from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-lg shadow-[#3b82f6]/30'
+                      : isDisabled
+                      ? 'text-white/25 cursor-not-allowed'
+                      : 'text-white/50 hover:text-white'
+                  }`}
+                  title={isDisabled ? t('login.registrationClosed') : undefined}
+                >
+                  {tab === 'login'
+                    ? t('login.loginTab')
+                    : isDisabled
+                      ? `${t('login.registerTab')} · ${t('login.closed')}`
+                      : t('login.registerTab')}
+                </button>
+              );
+            })}
           </div>
+
+          {!registrationOpen && mainTab === 'login' && (
+            <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/20">
+              <p className="text-sm text-red-300">{t('login.registrationClosedBanner')}</p>
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {mainTab === 'login' && (

@@ -18,6 +18,7 @@ class HackathonSettings(Base):
     end_at = Column(DateTime, nullable=False)
     override = Column(String(16), nullable=True)
     api_keys_revealed = Column(Boolean, nullable=False, default=False)
+    registration_open = Column(Boolean, nullable=False, default=True, server_default="1")
     leaderboard_frozen = Column(Boolean, nullable=False, default=False)
     leaderboard_snapshot = Column(Text, nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
