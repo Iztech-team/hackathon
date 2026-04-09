@@ -180,7 +180,9 @@
         { "name": "Izdehar Palestine", "logo": "/partners/izdehar.svg" },
         { "name": "Iztech Valley", "logo": "/partners/iztech.svg" },
         { "name": "Amazon Web Services", "logo": "/partners/aws.svg" },
-        { "name": "Claude", "logo": "/partners/claude.svg" }
+        { "name": "Claude", "logo": "/partners/claude.svg" },
+        { "name": "Code Academy", "logo": "/partners/code-academy.png" },
+        { "name": "Palestine Polytechnic University", "logo": "/partners/Palestine-Polytechnic-University.png" }
       ]
     }
   },

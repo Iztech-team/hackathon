@@ -177,10 +177,12 @@
       "title": "شركاؤنا",
       "subtitle": "بدعم من",
       "list": [
-        { "name": "Izdehar Palestine", "logo": "/partners/izdehar.svg" },
+        { "name": "ازدهار فلسطين", "logo": "/partners/izdehar.svg" },
         { "name": "Iztech Valley", "logo": "/partners/iztech.svg" },
         { "name": "Amazon Web Services", "logo": "/partners/aws.svg" },
-        { "name": "Claude", "logo": "/partners/claude.svg" }
+        { "name": "Claude", "logo": "/partners/claude.svg" },
+        { "name": "كود أكاديمي", "logo": "/partners/code-academy.png" },
+        { "name": "جامعة بوليتكنك فلسطين", "logo": "/partners/Palestine-Polytechnic-University.png" }
       ]
     }
   },
