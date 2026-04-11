@@ -589,7 +589,7 @@ export default function Login() {
                       className="space-y-4"
                     >
                       <FormField>
-                        <FormLabel>{t('login.username')}</FormLabel>
+                        <FormLabel>{t('common.username')}</FormLabel>
                         <Input
                           value={volunteerLoginForm.username}
                           onChange={(e) => setVolunteerLoginForm({ ...volunteerLoginForm, username: e.target.value })}
