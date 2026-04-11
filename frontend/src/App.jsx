@@ -46,6 +46,8 @@ import JudgeScan from './pages/JudgeScan';
 import JudgeProfile from './pages/JudgeProfile';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageJudges from './pages/ManageJudges';
+import ManageVolunteers from './pages/ManageVolunteers';
+import VolunteerCheckIn from './pages/VolunteerCheckIn';
 import ExportData from './pages/ExportData';
 
 function AnimatedRoutes() {
@@ -106,6 +108,25 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/volunteers"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageTransition><ManageVolunteers /></ManageTransition>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Volunteer routes */}
+        <Route
+          path="/volunteer"
+          element={
+            <ProtectedRoute allowedRoles={['volunteer']}>
+              <AdminTransition><VolunteerCheckIn /></AdminTransition>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/admin/export"
           element={

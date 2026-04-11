@@ -32,7 +32,7 @@ async def _build_leaderboard_payload(db, category: Optional[str] = None):
             "description": team.description,
             "logo_seed": team.logo_seed,
             "members": [
-                {"id": m.id, "name": m.name, "phone": m.phone, "avatar_seed": m.avatar_seed}
+                {"id": m.id, "name": m.name, "phone": m.phone, "email": m.email, "avatar_seed": m.avatar_seed}
                 for m in team.members
             ],
             "scores": scores_dict,

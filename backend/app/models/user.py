@@ -10,6 +10,7 @@ class UserRole(str, PyEnum):
     ADMIN = "admin"
     JUDGE = "judge"
     TEAM = "team"
+    VOLUNTEER = "volunteer"
 
 
 class User(Base):

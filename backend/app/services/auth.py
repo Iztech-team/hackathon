@@ -87,6 +87,7 @@ async def register_team(db: AsyncSession, data: TeamRegisterRequest) -> tuple[Te
             team_id=team.id,
             name=member_data.name,
             phone=member_data.phone,
+            email=getattr(member_data, 'email', None),
             avatar_seed=member_data.avatar_seed,
         )
         db.add(member)

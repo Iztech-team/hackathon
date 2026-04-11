@@ -26,12 +26,15 @@ def team_to_response(team: Team) -> dict:
                 "id": m.id,
                 "name": m.name,
                 "phone": m.phone,
+                "email": m.email,
                 "avatar_seed": m.avatar_seed,
             }
             for m in team.members
         ],
         "scores": scores_dict,
         "total_score": sum(scores_dict.values()),
+        "arrived": bool(team.arrived) if hasattr(team, 'arrived') else False,
+        "arrived_at": getattr(team, 'arrived_at', None),
         "hand_raised": bool(team.hand_raised),
         "hand_raised_at": team.hand_raised_at,
         "hand_raised_note": team.hand_raised_note,
@@ -233,6 +236,7 @@ async def add_team_member(team_id: str, data: TeamMemberCreate, db: DbSession, c
         team_id=team_id,
         name=data.name,
         phone=data.phone,
+        email=data.email,
         avatar_seed=data.avatar_seed,
     )
     db.add(member)
@@ -281,6 +285,8 @@ async def update_team_member(
         member.name = data.name
     if data.phone is not None:
         member.phone = data.phone
+    if data.email is not None:
+        member.email = data.email
     if data.avatar_seed is not None:
         member.avatar_seed = data.avatar_seed
 

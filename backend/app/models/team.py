@@ -16,6 +16,8 @@ class Team(Base):
     description = Column(Text, nullable=True)
     logo_seed = Column(String(100), nullable=True)
     api_key = Column(String(255), nullable=True)
+    arrived = Column(Boolean, nullable=False, default=False, server_default="0")
+    arrived_at = Column(DateTime, nullable=True)
     hand_raised = Column(Boolean, nullable=False, default=False, server_default="0")
     hand_raised_at = Column(DateTime, nullable=True)
     hand_raised_note = Column(Text, nullable=True)

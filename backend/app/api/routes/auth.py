@@ -15,7 +15,7 @@ from app.services.auth import (
 )
 from app.utils.security import create_access_token
 from app.models.user import UserRole
-from app.models import HackathonSettings
+from app.models import HackathonSettings, Volunteer
 
 router = APIRouter()
 
@@ -88,11 +88,14 @@ async def get_current_user_info(current_user: CurrentUser, db: DbSession):
         team = await get_team_by_user_id(db, user.id)
         if team:
             scores_dict = {s.category_id: s.points for s in team.scores}
-            # Only expose the team's api_key when admin has flipped the reveal switch
+            # Invite link: revealed when team arrived OR admin revealed to all
+            team_arrived = bool(getattr(team, 'arrived', False))
             settings_row = (
                 await db.execute(select(HackathonSettings).where(HackathonSettings.id == 1))
             ).scalar_one_or_none()
-            keys_revealed = bool(settings_row and settings_row.api_keys_revealed)
+            global_link = getattr(settings_row, 'invite_link', None) if settings_row else None
+            global_revealed = bool(getattr(settings_row, 'invite_link_revealed', False)) if settings_row else False
+            show_link = team_arrived or global_revealed
             response["team"] = {
                 "id": team.id,
                 "team_name": team.team_name,
@@ -105,15 +108,26 @@ async def get_current_user_info(current_user: CurrentUser, db: DbSession):
                         "id": m.id,
                         "name": m.name,
                         "phone": m.phone,
+                        "email": m.email,
                         "avatar_seed": m.avatar_seed,
                     }
                     for m in team.members
                 ],
                 "scores": scores_dict,
                 "total_score": sum(scores_dict.values()),
-                "api_key": team.api_key if keys_revealed else None,
-                "api_key_assigned": team.api_key is not None,
-                "api_keys_revealed": keys_revealed,
+                "invite_link": global_link if show_link else None,
+                "invite_link_set": bool(global_link),
+                "arrived": team_arrived,
+            }
+
+    elif user.role == UserRole.VOLUNTEER:
+        result = await db.execute(select(Volunteer).where(Volunteer.user_id == user.id))
+        volunteer = result.scalar_one_or_none()
+        if volunteer:
+            response["volunteer"] = {
+                "id": volunteer.id,
+                "name": volunteer.name,
+                "avatar_seed": volunteer.avatar_seed,
             }
 
     return response

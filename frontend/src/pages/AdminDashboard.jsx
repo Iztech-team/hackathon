@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useTeams } from '../context/TeamContext';
 import { useHackathonState } from '../hooks/useHackathonState';
@@ -7,6 +9,7 @@ import { api } from '../lib/api';
 import { useJudges } from '../context/JudgeContext';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 import { calculateTotalScore } from '../data/categories';
 import { config } from '../lib/config';
 
@@ -36,65 +39,43 @@ export default function AdminDashboard() {
     setFreeze,
     setRegistrationOpen,
   } = useHackathonState();
-  const [keysStatus, setKeysStatus] = useState(null);
-  const [keysBusy, setKeysBusy] = useState(false);
-  const [keysMessage, setKeysMessage] = useState('');
-  const [keysError, setKeysError] = useState('');
-
-  const refreshKeysStatus = async () => {
-    try {
-      const s = await api.getApiKeysStatus();
-      setKeysStatus(s);
-    } catch (err) {
-      // ignore (e.g. not admin yet)
-    }
-  };
+  // Invite link state
+  const [inviteLinkValue, setInviteLinkValue] = useState('');
+  const [inviteLinkRevealed, setInviteLinkRevealed] = useState(false);
+  const [inviteLinkBusy, setInviteLinkBusy] = useState(false);
+  const [inviteLinkMsg, setInviteLinkMsg] = useState('');
 
   useEffect(() => {
-    refreshKeysStatus();
+    api.getInviteLinkStatus().then((s) => {
+      setInviteLinkValue(s.invite_link || '');
+      setInviteLinkRevealed(!!s.revealed);
+    }).catch(() => {});
   }, []);
 
-  const handleKeysUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setKeysBusy(true);
-    setKeysError('');
-    setKeysMessage('');
+  const handleSaveInviteLink = async () => {
+    setInviteLinkBusy(true);
+    setInviteLinkMsg('');
     try {
-      const s = await api.uploadApiKeysCsv(file);
-      setKeysStatus(s);
-      setKeysMessage(t('admin.apiKeys.uploadSuccess'));
-      setTimeout(() => setKeysMessage(''), 3000);
+      const s = await api.setInviteLink(inviteLinkValue);
+      setInviteLinkValue(s.invite_link);
+      setInviteLinkMsg(t('admin.inviteLink.saved'));
+      setTimeout(() => setInviteLinkMsg(''), 3000);
     } catch (err) {
-      setKeysError(err.message || 'Upload failed');
+      setInviteLinkMsg(err.message || 'Failed');
     } finally {
-      setKeysBusy(false);
-      e.target.value = '';
+      setInviteLinkBusy(false);
     }
   };
 
-  const handleKeysReveal = async (revealed) => {
-    setKeysBusy(true);
+  const handleRevealInviteLink = async (revealed) => {
+    setInviteLinkBusy(true);
     try {
-      const s = await api.setApiKeysReveal(revealed);
-      setKeysStatus(s);
+      const s = await api.revealInviteLink(revealed);
+      setInviteLinkRevealed(s.revealed);
     } catch (err) {
-      setKeysError(err.message || 'Failed');
+      setInviteLinkMsg(err.message || 'Failed');
     } finally {
-      setKeysBusy(false);
-    }
-  };
-
-  const handleKeysClear = async () => {
-    if (!window.confirm(t('admin.apiKeys.confirmClear'))) return;
-    setKeysBusy(true);
-    try {
-      const s = await api.clearApiKeys();
-      setKeysStatus(s);
-    } catch (err) {
-      setKeysError(err.message || 'Failed');
-    } finally {
-      setKeysBusy(false);
+      setInviteLinkBusy(false);
     }
   };
   const PRESET_HOURS = [1, 3, 6, 8, 12, 24];
@@ -145,6 +126,54 @@ export default function AdminDashboard() {
   })();
   const { judges, resetToMockData: resetJudges, fetchJudges } = useJudges();
   const [stats, setStats] = useState(null);
+
+  // Password reset modal state
+  const [showPwReset, setShowPwReset] = useState(false);
+  const [pwSearchQuery, setPwSearchQuery] = useState('');
+  const [pwUsers, setPwUsers] = useState([]);
+  const [pwSelectedUser, setPwSelectedUser] = useState(null);
+  const [pwNewPassword, setPwNewPassword] = useState('');
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwMessage, setPwMessage] = useState('');
+
+  // Fetch users when modal opens or search query changes
+  const fetchPwUsers = async (q) => {
+    try {
+      const data = await api.searchUsers(q || '');
+      setPwUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('User search failed:', err);
+      setPwUsers([]);
+    }
+  };
+
+  // Load all users immediately when modal opens
+  useEffect(() => {
+    if (showPwReset) fetchPwUsers('');
+  }, [showPwReset]);
+
+  // Debounced search as user types
+  useEffect(() => {
+    if (!showPwReset) return;
+    const timer = setTimeout(() => fetchPwUsers(pwSearchQuery), 250);
+    return () => clearTimeout(timer);
+  }, [pwSearchQuery]);
+
+  const handleResetPassword = async () => {
+    if (!pwSelectedUser || !pwNewPassword || pwNewPassword.length < 4) return;
+    setPwLoading(true);
+    setPwMessage('');
+    try {
+      const res = await api.resetPassword(pwSelectedUser.id, pwNewPassword);
+      setPwMessage(res.message || 'Password reset!');
+      setPwNewPassword('');
+      setPwSelectedUser(null);
+    } catch (err) {
+      setPwMessage(err.message || 'Failed');
+    } finally {
+      setPwLoading(false);
+    }
+  };
 
   // Fetch data on mount in API mode
   useEffect(() => {
@@ -211,13 +240,21 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         <Link to="/admin/judges">
           <Button glow className="w-full h-auto py-4 flex-col gap-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span className="text-sm">{t('admin.judgesTab')}</span>
+          </Button>
+        </Link>
+        <Link to="/admin/volunteers">
+          <Button glow className="w-full h-auto py-4 flex-col gap-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span className="text-sm">{t('admin.volunteersTab')}</span>
           </Button>
         </Link>
         <Link to="/leaderboard">
@@ -236,6 +273,12 @@ export default function AdminDashboard() {
             <span className="text-sm">{t('admin.exportTab')}</span>
           </Button>
         </Link>
+        <Button glow onClick={() => { setShowPwReset(true); setPwMessage(''); setPwSelectedUser(null); setPwNewPassword(''); setPwSearchQuery(''); }} className="w-full h-auto py-4 flex-col gap-2">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+          <span className="text-sm">{t('admin.resetPassword')}</span>
+        </Button>
         <Button glow onClick={handleResetData} className="w-full h-auto py-4 flex-col gap-2">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -458,91 +501,72 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* API Keys Management */}
+      {/* Invite Link Management */}
       <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 space-y-4">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
             <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
-              {t('admin.apiKeys.title')}
+              {t('admin.inviteLink.title')}
             </h3>
-            <p className="text-xs text-white/40 mt-1">{t('admin.apiKeys.desc')}</p>
+            <p className="text-xs text-white/40 mt-1">{t('admin.inviteLink.desc')}</p>
           </div>
-          {keysStatus && (
-            <span
-              className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
-                keysStatus.revealed
-                  ? 'bg-[#3b82f6]/15 text-[#60a5fa] border border-[#3b82f6]/30'
-                  : 'bg-white/5 text-white/40 border border-white/10'
-              }`}
-            >
-              {keysStatus.revealed ? t('admin.apiKeys.revealed') : t('admin.apiKeys.hidden')}
-            </span>
-          )}
+          <span
+            className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full ${
+              inviteLinkRevealed
+                ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/40'
+                : 'bg-white/5 text-white/40 border border-white/10'
+            }`}
+          >
+            {inviteLinkRevealed ? t('admin.inviteLink.revealedToAll') : t('admin.inviteLink.arrivedOnly')}
+          </span>
         </div>
 
-        {keysStatus && (
-          <p className="text-sm text-white/60">
-            {t('admin.apiKeys.assigned', { assigned: keysStatus.assigned, total: keysStatus.total_teams })}
-          </p>
-        )}
-
-        {keysMessage && (
+        {inviteLinkMsg && (
           <div className="rounded-xl p-3 bg-[#3b82f6]/10 border border-[#3b82f6]/20">
-            <p className="text-[#60a5fa] text-sm font-medium">{keysMessage}</p>
-          </div>
-        )}
-        {keysError && (
-          <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/20">
-            <p className="text-red-400 text-sm">{keysError}</p>
+            <p className="text-[#60a5fa] text-sm font-medium">{inviteLinkMsg}</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <label className="relative">
-            <input
-              type="file"
-              accept=".csv,text/csv"
-              onChange={handleKeysUpload}
-              disabled={keysBusy}
-              className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
-            />
-            <Button glow className="w-full pointer-events-none">
-              <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.9 5 5 0 019.9-1A5.002 5.002 0 0117 16M9 19v-6m0 0l-3 3m3-3l3 3" />
-              </svg>
-              {t('admin.apiKeys.uploadCsv')}
-            </Button>
-          </label>
-
+        {/* Link input */}
+        <div className="flex gap-2">
+          <Input
+            value={inviteLinkValue}
+            onChange={(e) => setInviteLinkValue(e.target.value)}
+            placeholder={t('admin.inviteLink.placeholder')}
+            className="flex-1"
+          />
           <Button
-            variant={keysStatus?.revealed ? 'secondary' : 'default'}
-            glow={!keysStatus?.revealed}
-            onClick={() => handleKeysReveal(!keysStatus?.revealed)}
-            disabled={keysBusy || !keysStatus || keysStatus.assigned === 0}
-            className="w-full"
+            onClick={handleSaveInviteLink}
+            disabled={inviteLinkBusy || !inviteLinkValue.trim()}
+            size="sm"
           >
-            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {keysStatus?.revealed ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              )}
-            </svg>
-            {keysStatus?.revealed ? t('admin.apiKeys.hide') : t('admin.apiKeys.reveal')}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={handleKeysClear}
-            disabled={keysBusy || !keysStatus || keysStatus.assigned === 0}
-            className="w-full"
-          >
-            <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            {t('admin.apiKeys.clear')}
+            {t('common.save')}
           </Button>
         </div>
+
+        {/* Reveal toggle */}
+        <Button
+          onClick={() => handleRevealInviteLink(!inviteLinkRevealed)}
+          disabled={inviteLinkBusy || !inviteLinkValue.trim()}
+          className="w-full text-white"
+          style={{
+            background: inviteLinkRevealed
+              ? undefined
+              : 'linear-gradient(to right, #047857, #10b981)',
+          }}
+          variant={inviteLinkRevealed ? 'outline' : 'default'}
+        >
+          <svg className="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={
+              inviteLinkRevealed
+                ? "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                : "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            } />
+          </svg>
+          {inviteLinkRevealed ? t('admin.inviteLink.hideFromAll') : t('admin.inviteLink.revealToAll')}
+        </Button>
+
+        <p className="text-[11px] text-white/40">{t('admin.inviteLink.note')}</p>
       </div>
 
       {/* Manage Teams */}
@@ -588,6 +612,109 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+      {/* Password Reset Modal */}
+      {showPwReset && createPortal(
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setShowPwReset(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, y: 10 }}
+            animate={{ scale: 1, y: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-2xl border border-white/[0.1] bg-[#0a0a0a] p-6 space-y-4 shadow-2xl"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">{t('admin.pwReset.title')}</h3>
+                <p className="text-xs text-white/50">{t('admin.pwReset.desc')}</p>
+              </div>
+            </div>
+
+            {pwMessage && (
+              <div className="rounded-xl p-3 bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-sm text-[#60a5fa]">
+                {pwMessage}
+              </div>
+            )}
+
+            {/* User search */}
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-white/70 uppercase tracking-wider">
+                {t('admin.pwReset.searchUser')}
+              </label>
+              <Input
+                value={pwSearchQuery}
+                onChange={(e) => { setPwSearchQuery(e.target.value); setPwSelectedUser(null); }}
+                placeholder={t('admin.pwReset.searchPlaceholder')}
+              />
+              {pwUsers.length > 0 && !pwSelectedUser && (
+                <div className="max-h-40 overflow-y-auto rounded-xl border border-white/[0.08] bg-white/[0.02] divide-y divide-white/[0.06]">
+                  {pwUsers.map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => setPwSelectedUser(u)}
+                      className="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-white/[0.05] transition-colors"
+                    >
+                      <span className="text-sm text-white font-medium">{u.username}</span>
+                      <span className="text-[10px] uppercase tracking-widest text-white/40 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08]">
+                        {u.role}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {pwSelectedUser && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30">
+                  <span className="text-sm text-white font-medium flex-1">{pwSelectedUser.username}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-[#60a5fa]">{pwSelectedUser.role}</span>
+                  <button type="button" onClick={() => setPwSelectedUser(null)} className="text-white/40 hover:text-white">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* New password */}
+            {pwSelectedUser && (
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-white/70 uppercase tracking-wider">
+                  {t('admin.pwReset.newPassword')}
+                </label>
+                <Input
+                  type="text"
+                  value={pwNewPassword}
+                  onChange={(e) => setPwNewPassword(e.target.value)}
+                  placeholder={t('admin.pwReset.newPasswordPlaceholder')}
+                />
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-2">
+              <Button variant="ghost" onClick={() => setShowPwReset(false)} className="flex-1">
+                {t('common.cancel')}
+              </Button>
+              <Button
+                onClick={handleResetPassword}
+                disabled={!pwSelectedUser || !pwNewPassword || pwNewPassword.length < 4 || pwLoading}
+                className="flex-1"
+              >
+                {pwLoading ? '...' : t('admin.pwReset.submit')}
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>,
+        document.body
+      )}
     </div>
   );
 }

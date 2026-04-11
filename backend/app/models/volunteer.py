@@ -5,14 +5,12 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-class TeamMember(Base):
-    __tablename__ = "team_members"
+class Volunteer(Base):
+    __tablename__ = "volunteers"
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    team_id = Column(CHAR(36), ForeignKey("teams.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(CHAR(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
     name = Column(String(100), nullable=False)
-    phone = Column(String(20), nullable=True)
-    email = Column(String(255), nullable=True)
     avatar_seed = Column(String(100), nullable=True)
 
-    team = relationship("Team", back_populates="members")
+    user = relationship("User", backref="volunteer_profile", lazy="joined")

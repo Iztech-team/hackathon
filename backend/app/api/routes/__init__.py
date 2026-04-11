@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.routes import auth, teams, scores, leaderboard, judges, admin, hackathon
+from app.api.routes import auth, teams, scores, leaderboard, judges, admin, hackathon, volunteers
 
 api_router = APIRouter()
 
@@ -10,3 +10,4 @@ api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["lead
 api_router.include_router(judges.router, prefix="/judges", tags=["judges"])
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 api_router.include_router(hackathon.router, prefix="/hackathon", tags=["hackathon"])
+api_router.include_router(volunteers.router, prefix="/volunteers", tags=["volunteers"])

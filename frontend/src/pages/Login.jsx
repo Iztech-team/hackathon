@@ -14,6 +14,8 @@ import { FormField, FormLabel, FormMessage } from '../components/ui/FormField';
 import { Avatar, AvatarPicker, TeamLogo } from '../components/ui/Avatar';
 import { CategoryBadge } from '../components/ui/Badge';
 import { getCategoryById } from '../data/categories';
+import { api } from '../lib/api';
+import { validateBusinessEmail } from '../lib/emailValidation';
 import { config } from '../lib/config';
 import { mockTeams } from '../data/mockTeams';
 import { mockJudges, ADMIN_CREDENTIALS } from '../data/mockJudges';
@@ -22,7 +24,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const { loginAsTeam, loginAsTeamWithCredentials, loginAsJudge, loginAsJudgeWithCredentials, loginAsAdmin, isAuthenticated, role } = useAuth();
+  const { loginAsTeam, loginAsTeamWithCredentials, loginAsJudge, loginAsJudgeWithCredentials, loginAsAdmin, refreshUserData, isAuthenticated, role } = useAuth();
   const justSubmittedRef = useRef(false);
   const { getTeamByCredentials, getTeamById, registerTeam } = useTeams();
   const { getJudgeByCredentials, getJudgeById } = useJudges();
@@ -57,6 +59,15 @@ export default function Login() {
   // Admin login form
   const [adminLoginForm, setAdminLoginForm] = useState({ password: '' });
 
+  // Volunteer login form
+  const [volunteerLoginForm, setVolunteerLoginForm] = useState({ username: '', password: '' });
+
+  // Show/hide password toggle
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Skip email in registration
+  const [skipEmail, setSkipEmail] = useState(false);
+
   // Register form
   const [registerForm, setRegisterForm] = useState({
     teamName: '',
@@ -69,8 +80,8 @@ export default function Login() {
   const MIN_MEMBERS = 2;
   const MAX_MEMBERS = 4;
   const [members, setMembers] = useState([
-    { id: 1, name: '', phone: '', avatarSeed: 'member-1' },
-    { id: 2, name: '', phone: '', avatarSeed: 'member-2' },
+    { id: 1, name: '', phone: '', email: '', avatarSeed: 'member-1' },
+    { id: 2, name: '', phone: '', email: '', avatarSeed: 'member-2' },
   ]);
   const [registerErrors, setRegisterErrors] = useState({});
 
@@ -81,6 +92,7 @@ export default function Login() {
     if (role === 'admin') navigate('/admin', { replace: true });
     else if (role === 'judge') navigate('/scan', { replace: true });
     else if (role === 'participant') navigate('/team', { replace: true });
+    else if (role === 'volunteer') navigate('/volunteer', { replace: true });
     else navigate('/', { replace: true });
   }, [isAuthenticated, role, navigate]);
 
@@ -244,7 +256,7 @@ export default function Login() {
   const addMember = () => {
     if (members.length >= MAX_MEMBERS) return;
     const newId = Math.max(...members.map((m) => m.id)) + 1;
-    setMembers((prev) => [...prev, { id: newId, name: '', phone: '', avatarSeed: `member-${newId}` }]);
+    setMembers((prev) => [...prev, { id: newId, name: '', phone: '', email: '', avatarSeed: `member-${newId}` }]);
   };
 
   const removeMember = (id) => {
@@ -272,6 +284,22 @@ export default function Login() {
     else {
       const membersWithoutPhone = validMembers.filter((m) => !m.phone.trim());
       if (membersWithoutPhone.length > 0) newErrors.members = t('login.errors.memberPhoneRequired');
+      else if (!skipEmail) {
+        // Check emails — if provided, must be business/org emails
+        for (const m of validMembers) {
+          if (m.email && m.email.trim()) {
+            const emailErr = validateBusinessEmail(m.email);
+            if (emailErr === 'invalidFormat') {
+              newErrors.members = t('login.errors.emailInvalid');
+              break;
+            }
+            if (emailErr === 'personalEmail') {
+              newErrors.members = t('login.errors.emailPersonal');
+              break;
+            }
+          }
+        }
+      }
     }
 
     return newErrors;
@@ -326,9 +354,27 @@ export default function Login() {
     }
   };
 
+  const handleVolunteerLogin = async (e) => {
+    e.preventDefault();
+    justSubmittedRef.current = true;
+    setError('');
+    setLoading(true);
+    try {
+      await api.login(volunteerLoginForm.username.trim(), volunteerLoginForm.password);
+      await refreshUserData();
+      navigate('/volunteer');
+    } catch (err) {
+      setError(err.message || t('login.errors.invalidCredentials'));
+    } finally {
+      setLoading(false);
+      justSubmittedRef.current = false;
+    }
+  };
+
   const loginTabs = [
     { id: 'team', label: t('login.teamTab') },
     { id: 'judge', label: t('login.judgeTab') },
+    { id: 'volunteer', label: t('login.volunteerTab') },
     { id: 'admin', label: t('login.adminTab') },
   ];
 
@@ -377,6 +423,25 @@ export default function Login() {
               <p className="text-sm text-red-300">{t('login.registrationClosedBanner')}</p>
             </div>
           )}
+
+          {/* Show/hide password toggle */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors"
+          >
+            {showPassword ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            )}
+            {showPassword ? t('login.hidePassword') : t('login.showPassword')}
+          </button>
 
           <AnimatePresence mode="wait">
             {mainTab === 'login' && (
@@ -439,7 +504,7 @@ export default function Login() {
                       <FormField>
                         <FormLabel>{t('common.password')}</FormLabel>
                         <Input
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           value={teamLoginForm.password}
                           onChange={(e) => setTeamLoginForm({ ...teamLoginForm, password: e.target.value })}
                           placeholder={t('login.teamPasswordPlaceholder')}
@@ -474,7 +539,7 @@ export default function Login() {
                       <FormField>
                         <FormLabel>{t('common.password')}</FormLabel>
                         <Input
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           value={judgeLoginForm.password}
                           onChange={(e) => setJudgeLoginForm({ ...judgeLoginForm, password: e.target.value })}
                           placeholder={t('login.judgePasswordPlaceholder')}
@@ -500,7 +565,7 @@ export default function Login() {
                       <FormField>
                         <FormLabel>{t('login.adminPassword')}</FormLabel>
                         <Input
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           value={adminLoginForm.password}
                           onChange={(e) => setAdminLoginForm({ ...adminLoginForm, password: e.target.value })}
                           placeholder={t('login.adminPasswordPlaceholder')}
@@ -509,6 +574,41 @@ export default function Login() {
                       </FormField>
                       <Button type="submit" className="w-full" glow disabled={loading}>
                         {loading ? t('login.loggingIn') : t('login.loginAsAdmin')}
+                      </Button>
+                    </motion.form>
+                  )}
+
+                  {loginTab === 'volunteer' && (
+                    <motion.form
+                      key="volunteer-form"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      onSubmit={handleVolunteerLogin}
+                      className="space-y-4"
+                    >
+                      <FormField>
+                        <FormLabel>{t('login.username')}</FormLabel>
+                        <Input
+                          value={volunteerLoginForm.username}
+                          onChange={(e) => setVolunteerLoginForm({ ...volunteerLoginForm, username: e.target.value })}
+                          placeholder={t('login.volunteerUsernamePlaceholder')}
+                          required
+                        />
+                      </FormField>
+                      <FormField>
+                        <FormLabel>{t('common.password')}</FormLabel>
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          value={volunteerLoginForm.password}
+                          onChange={(e) => setVolunteerLoginForm({ ...volunteerLoginForm, password: e.target.value })}
+                          placeholder="••••••"
+                          required
+                        />
+                      </FormField>
+                      <Button type="submit" className="w-full" glow disabled={loading}>
+                        {loading ? t('login.loggingIn') : t('login.loginAsVolunteer')}
                       </Button>
                     </motion.form>
                   )}
@@ -546,7 +646,7 @@ export default function Login() {
                     <FormLabel required>{t('common.password')}</FormLabel>
                     <Input
                       name="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       value={registerForm.password}
                       onChange={handleRegisterChange}
                       placeholder={t('login.passwordPlaceholder')}
@@ -557,7 +657,7 @@ export default function Login() {
                     <FormLabel required>{t('common.confirmPassword')}</FormLabel>
                     <Input
                       name="confirmPassword"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       value={registerForm.confirmPassword}
                       onChange={handleRegisterChange}
                       placeholder={t('login.confirmPasswordPlaceholder')}
@@ -580,6 +680,22 @@ export default function Login() {
                       )}
                     </div>
 
+                    {/* Email info + skip toggle */}
+                    <div className="rounded-xl p-3 bg-[#3b82f6]/5 border border-[#3b82f6]/20 space-y-2">
+                      <p className="text-xs text-white/60">
+                        {t('login.emailHint')}
+                      </p>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={skipEmail}
+                          onChange={(e) => setSkipEmail(e.target.checked)}
+                          className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#3b82f6] focus:ring-[#3b82f6]/50 cursor-pointer"
+                        />
+                        <span className="text-xs text-white/50">{t('login.skipEmail')}</span>
+                      </label>
+                    </div>
+
                     {members.map((member, index) => (
                       <div
                         key={member.id}
@@ -589,19 +705,29 @@ export default function Login() {
                           value={member.avatarSeed}
                           onChange={(seed) => handleMemberChange(member.id, 'avatarSeed', seed)}
                         />
-                        <div className="flex-1 flex gap-2">
-                          <Input
-                            value={member.name}
-                            onChange={(e) => handleMemberChange(member.id, 'name', e.target.value)}
-                            placeholder={t('login.namePlaceholder')}
-                            className="flex-1"
-                          />
-                          <Input
-                            value={member.phone}
-                            onChange={(e) => handleMemberChange(member.id, 'phone', e.target.value)}
-                            placeholder={t('login.phonePlaceholder')}
-                            className="flex-1"
-                          />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex gap-2">
+                            <Input
+                              value={member.name}
+                              onChange={(e) => handleMemberChange(member.id, 'name', e.target.value)}
+                              placeholder={t('login.namePlaceholder')}
+                              className="flex-1"
+                            />
+                            <Input
+                              value={member.phone}
+                              onChange={(e) => handleMemberChange(member.id, 'phone', e.target.value)}
+                              placeholder={t('login.phonePlaceholder')}
+                              className="flex-1"
+                            />
+                          </div>
+                          {!skipEmail && (
+                            <Input
+                              type="email"
+                              value={member.email}
+                              onChange={(e) => handleMemberChange(member.id, 'email', e.target.value)}
+                              placeholder={t('login.emailPlaceholder')}
+                            />
+                          )}
                         </div>
                         {members.length > MIN_MEMBERS && (
                           <button

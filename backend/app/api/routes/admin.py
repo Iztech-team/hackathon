@@ -5,8 +5,11 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
+from typing import Optional
 from app.api.deps import DbSession, CurrentAdmin
 from app.models import Team, Judge, TeamMember, Score, HackathonSettings
+from app.models.user import User
+from app.utils.security import get_password_hash
 from app.services.export import export_teams_to_csv, export_judges_to_csv, export_rankings_to_csv
 
 router = APIRouter()
@@ -284,3 +287,77 @@ async def clear_api_keys(db: DbSession, current_admin: CurrentAdmin):
         assigned=0,
         revealed=False,
     )
+
+
+# ---- Password reset (admin) ----
+
+class PasswordResetRequest(BaseModel):
+    user_id: str
+    new_password: str
+
+
+@router.get("/users")
+async def search_users(db: DbSession, current_admin: CurrentAdmin, q: Optional[str] = None):
+    """Search all users by username. Returns id, username, role."""
+    query = select(User)
+    if q:
+        query = query.where(User.username.ilike(f"%{q}%"))
+    query = query.order_by(User.username).limit(50)
+    result = await db.execute(query)
+    users = result.scalars().all()
+    return [{"id": u.id, "username": u.username, "role": u.role.value} for u in users]
+
+
+@router.put("/reset-password")
+async def reset_password(data: PasswordResetRequest, db: DbSession, current_admin: CurrentAdmin):
+    """Admin resets any user's password."""
+    result = await db.execute(select(User).where(User.id == data.user_id))
+    user = result.scalar_one_or_none()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    if len(data.new_password) < 4:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password too short")
+    user.password_hash = get_password_hash(data.new_password)
+    await db.commit()
+    return {"message": f"Password reset for {user.username}"}
+
+
+# ---- Invite link management ----
+
+class InviteLinkUpdate(BaseModel):
+    invite_link: str
+
+
+class InviteLinkReveal(BaseModel):
+    revealed: bool
+
+
+@router.get("/invite-link")
+async def get_invite_link_status(db: DbSession, current_admin: CurrentAdmin):
+    settings = await _get_settings(db)
+    return {
+        "invite_link": settings.invite_link or "",
+        "revealed": bool(getattr(settings, "invite_link_revealed", False)),
+    }
+
+
+@router.put("/invite-link")
+async def set_invite_link(data: InviteLinkUpdate, db: DbSession, current_admin: CurrentAdmin):
+    settings = await _get_settings(db)
+    settings.invite_link = data.invite_link.strip()
+    await db.commit()
+    return {
+        "invite_link": settings.invite_link,
+        "revealed": bool(getattr(settings, "invite_link_revealed", False)),
+    }
+
+
+@router.put("/invite-link/reveal")
+async def reveal_invite_link(data: InviteLinkReveal, db: DbSession, current_admin: CurrentAdmin):
+    settings = await _get_settings(db)
+    settings.invite_link_revealed = data.revealed
+    await db.commit()
+    return {
+        "invite_link": settings.invite_link or "",
+        "revealed": bool(settings.invite_link_revealed),
+    }

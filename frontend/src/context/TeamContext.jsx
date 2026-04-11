@@ -51,10 +51,13 @@ const normalizeTeam = (team) => ({
     id: m.id,
     name: m.name,
     phone: m.phone,
+    email: m.email || '',
     avatarSeed: m.avatar_seed,
   })),
   scores: team.scores || {},
   totalScore: team.total_score || 0,
+  arrived: !!team.arrived,
+  arrivedAt: team.arrived_at || null,
   handRaised: !!team.hand_raised,
   handRaisedAt: team.hand_raised_at || null,
   handRaisedNote: team.hand_raised_note || null,
@@ -139,6 +142,7 @@ export function TeamProvider({ children }) {
         members: teamData.members.map(m => ({
           name: m.name,
           phone: m.phone,
+          email: m.email || '',
           avatar_seed: m.avatarSeed,
         })),
       });
@@ -309,6 +313,7 @@ export function TeamProvider({ children }) {
       await api.updateTeamMember(teamId, memberId, {
         name: updates.name,
         phone: updates.phone,
+        email: updates.email || '',
         avatar_seed: updates.avatarSeed,
       });
       await fetchTeams();
@@ -339,6 +344,7 @@ export function TeamProvider({ children }) {
       const member = await api.addTeamMember(teamId, {
         name: memberData.name,
         phone: memberData.phone,
+        email: memberData.email || '',
         avatar_seed: memberData.avatarSeed,
       });
       await fetchTeams();

@@ -21,7 +21,8 @@
     "judge": "التحكيم",
     "admin": "المسؤول",
     "login": "تسجيل الدخول",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "checkIn": "تسجيل الحضور"
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -38,6 +39,7 @@
     "search": "بحث",
     "name": "الاسم",
     "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
@@ -178,6 +180,7 @@
       "title": "شركاؤنا",
       "subtitle": "بدعم من",
       "list": [
+        { "name": "رجل الاعمال رفيق ابو منشار", "logo": "/partners/rafeeq.webp" },
         { "name": "Izdehar Palestine", "logo": "/partners/izdehar.svg" },
         { "name": "Iztech Valley", "logo": "/partners/iztech.svg" },
         { "name": "Amazon Web Services", "logo": "/partners/aws.svg" },
@@ -203,7 +206,12 @@
     "registrationClosedBanner": "التسجيل مغلق. لا تزال الفرق والمحكمون الحاليون قادرين على الدخول.",
     "teamTab": "فريق",
     "judgeTab": "محكّم",
+    "volunteerTab": "متطوع",
     "adminTab": "مسؤول",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
+    "loginAsVolunteer": "دخول كمتطوع",
+    "volunteerUsernamePlaceholder": "اسم المستخدم للمتطوع",
     "teamName": "اسم الفريق",
     "teamNamePlaceholder": "أدخل اسم فريقك",
     "teamPasswordPlaceholder": "أدخل كلمة مرور الفريق",
@@ -220,6 +228,9 @@
     "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
     "namePlaceholder": "الاسم",
     "phonePlaceholder": "الهاتف",
+    "emailPlaceholder": "بريد الجامعة أو المؤسسة",
+    "emailHint": "يرجى إدخال بريدك الجامعي أو المؤسسي (مثل name@university.edu). البريد الشخصي مثل Gmail وYahoo وHotmail غير مقبول.",
+    "skipEmail": "تخطي إضافة البريد الإلكتروني حالياً",
     "teamMembers": "أعضاء الفريق",
     "addMember": "+ إضافة",
     "randomize": "عشوائي",
@@ -241,7 +252,9 @@
       "memberRequired": "يجب إضافة عضو واحد على الأقل",
       "memberMinTwo": "يجب أن يحتوي الفريق على عضوين على الأقل",
       "memberMaxFour": "لا يمكن أن يحتوي الفريق على أكثر من 4 أعضاء",
-      "memberPhoneRequired": "يجب أن يكون لكل عضو رقم هاتف"
+      "memberPhoneRequired": "يجب أن يكون لكل عضو رقم هاتف",
+      "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+      "emailPersonal": "البريد الشخصي (Gmail, Yahoo, إلخ) غير مسموح. يرجى استخدام بريد الجامعة أو المؤسسة."
     }
   },
   "team": {
@@ -266,12 +279,13 @@
     "viewLeaderboard": "عرض المتصدرين",
     "joinWhatsapp": "انضم لمجموعة واتساب الهاكاثون",
     "addMemberBtn": "إضافة عضو",
-    "apiKey": {
-      "title": "مفتاح API",
-      "hidden": "سيتم الكشف عن مفتاحك قريباً من قبل الإدارة",
-      "notAssigned": "لم يتم تعيين مفتاح API لفريقك بعد",
+    "inviteLink": {
+      "title": "دعوة منظمة Claude",
+      "notArrived": "سيظهر رابط الدعوة بعد تأكيد حضوركم من قبل أحد المتطوعين في الموقع",
+      "notAssigned": "لم يتم تعيين رابط دعوة لفريقك بعد",
       "copy": "نسخ",
-      "copied": "تم النسخ!"
+      "copied": "تم النسخ!",
+      "open": "فتح رابط الدعوة"
     },
     "raiseHand": {
       "title": "تحتاج مساعدة؟",
@@ -313,6 +327,17 @@
     "judges": "المحكّمون",
     "totalPoints": "إجمالي النقاط",
     "judgesTab": "المحكّمون",
+    "volunteersTab": "المتطوعون",
+    "volunteers": {
+      "title": "إدارة المتطوعين",
+      "desc": "إنشاء حسابات لمتطوعي تسجيل الحضور يوم الهاكاثون",
+      "namePlaceholder": "مثال: أحمد",
+      "usernamePlaceholder": "مثال: volunteer1",
+      "create": "إنشاء متطوع",
+      "created": "تم إنشاء المتطوع!",
+      "confirmDelete": "حذف المتطوع {{name}}؟",
+      "empty": "لا يوجد متطوعون بعد — أنشئ أول متطوع للبدء"
+    },
     "leaderboardTab": "المتصدرون",
     "exportTab": "تصدير",
     "resetData": "إعادة ضبط البيانات",
@@ -328,6 +353,16 @@
     "registrationDesc": "التحكم في قبول تسجيل فرق جديدة. الفرق والمحكمون الحاليون يمكنهم الدخول دائماً.",
     "closeRegistration": "إغلاق التسجيل",
     "openRegistration": "فتح التسجيل",
+    "resetPassword": "تغيير كلمة المرور",
+    "pwReset": {
+      "title": "تغيير كلمة المرور",
+      "desc": "ابحث عن مستخدم وعيّن كلمة مرور جديدة",
+      "searchUser": "اختر المستخدم",
+      "searchPlaceholder": "ابحث باسم المستخدم...",
+      "newPassword": "كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة (4 أحرف على الأقل)",
+      "submit": "تغيير كلمة المرور"
+    },
     "freezeLeaderboard": "تجميد المتصدرين",
     "unfreezeLeaderboard": "إلغاء التجميد",
     "leaderboardFrozen": "المتصدرون مجمّدون",
@@ -336,9 +371,20 @@
     "manageTeams": "إدارة الفرق",
     "manageTeamsDesc": "حذف الفرق من الهاكاثون",
     "confirmDeleteTeam": "هل أنت متأكد من حذف فريق \"{{name}}\"؟ سيتم حذف جميع الأعضاء والنقاط.",
+    "inviteLink": {
+      "title": "رابط الدعوة",
+      "desc": "عيّن رابط دعوة منظمة Claude. الفرق تراه بعد تسجيل الحضور أو عند الكشف للجميع.",
+      "placeholder": "https://console.anthropic.com/invite/...",
+      "saved": "تم حفظ رابط الدعوة!",
+      "revealToAll": "كشف للجميع",
+      "hideFromAll": "إخفاء عن الجميع",
+      "revealedToAll": "مرئي للجميع",
+      "arrivedOnly": "الحاضرون فقط",
+      "note": "الفرق التي سجّل المتطوعون حضورها ترى الرابط دائماً. هذا الزر يتحكم بالرؤية للفرق التي لم يُسجَّل حضورها بعد."
+    },
     "apiKeys": {
-      "title": "مفاتيح API",
-      "desc": "ارفع ملف CSV يحتوي على قائمة المفاتيح — كل فريق يحصل على مفتاح واحد",
+      "title": "روابط الدعوة",
+      "desc": "ارفع ملف CSV يحتوي على روابط الدعوة — كل فريق يحصل على رابط. تظهر الروابط لكل فريق بعد تأكيد حضوره.",
       "uploadCsv": "رفع ملف CSV",
       "reveal": "كشف المفاتيح",
       "hide": "إخفاء المفاتيح",
@@ -429,5 +475,23 @@
       "minutesAgo": "قبل {{count}} دقيقة",
       "hoursAgo": "قبل {{count}} ساعة"
     }
+  },
+  "volunteer": {
+    "title": "تسجيل حضور الفرق",
+    "welcome": "مرحباً، {{name}}",
+    "arrived": "حضروا",
+    "remaining": "متبقون",
+    "checkInTeams": "تسجيل الحضور",
+    "searchDesc": "ابحث عن فريق وسجّل حضوره",
+    "searchPlaceholder": "ابحث باسم الفريق أو العضو...",
+    "noResults": "لم يتم العثور على فرق",
+    "checkIn": "تسجيل",
+    "undo": "تراجع",
+    "here": "حاضر",
+    "confirmTitle": "تأكيد حضور الفريق",
+    "membersEmails": "أعضاء الفريق وبريدهم الإلكتروني",
+    "noMembers": "لا يوجد أعضاء مسجلون",
+    "noEmail": "لا يوجد بريد",
+    "confirmArrival": "تأكيد الحضور"
   }
 }

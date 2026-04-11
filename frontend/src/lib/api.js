@@ -182,6 +182,61 @@ class ApiClient {
     });
   }
 
+  // Volunteer endpoints (admin)
+  async getVolunteers() {
+    return this.request('/volunteers');
+  }
+
+  async createVolunteer(data) {
+    return this.request('/volunteers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteVolunteer(volunteerId) {
+    return this.request(`/volunteers/${volunteerId}`, { method: 'DELETE' });
+  }
+
+  async checkInTeam(teamId) {
+    return this.request(`/volunteers/check-in/${teamId}`, { method: 'POST' });
+  }
+
+  async undoCheckIn(teamId) {
+    return this.request(`/volunteers/check-in/${teamId}`, { method: 'DELETE' });
+  }
+
+  // Invite link (admin)
+  async getInviteLinkStatus() {
+    return this.request('/admin/invite-link');
+  }
+
+  async setInviteLink(link) {
+    return this.request('/admin/invite-link', {
+      method: 'PUT',
+      body: JSON.stringify({ invite_link: link }),
+    });
+  }
+
+  async revealInviteLink(revealed) {
+    return this.request('/admin/invite-link/reveal', {
+      method: 'PUT',
+      body: JSON.stringify({ revealed }),
+    });
+  }
+
+  // Admin: user search + password reset
+  async searchUsers(q) {
+    return this.request(`/admin/users${q ? `?q=${encodeURIComponent(q)}` : ''}`);
+  }
+
+  async resetPassword(userId, newPassword) {
+    return this.request('/admin/reset-password', {
+      method: 'PUT',
+      body: JSON.stringify({ user_id: userId, new_password: newPassword }),
+    });
+  }
+
   // Admin endpoints
   async getStats() {
     return this.request('/admin/stats');

@@ -10,6 +10,7 @@ export const USER_ROLES = {
   PARTICIPANT: 'participant',
   JUDGE: 'judge',
   ADMIN: 'admin',
+  VOLUNTEER: 'volunteer',
 };
 
 export function useAuth() {
@@ -83,6 +84,17 @@ export function AuthProvider({ children }) {
             name: data.username,
           },
           role: USER_ROLES.ADMIN,
+        });
+      } else if (data.role === 'volunteer' && data.volunteer) {
+        setAuthState({
+          isAuthenticated: true,
+          user: {
+            type: 'volunteer',
+            id: data.volunteer.id,
+            userId: data.id,
+            name: data.volunteer.name,
+          },
+          role: USER_ROLES.VOLUNTEER,
         });
       }
     } catch (error) {
@@ -270,6 +282,7 @@ export function AuthProvider({ children }) {
   const isParticipant = () => authState.role === USER_ROLES.PARTICIPANT;
   const isJudge = () => authState.role === USER_ROLES.JUDGE;
   const isAdmin = () => authState.role === USER_ROLES.ADMIN;
+  const isVolunteer = () => authState.role === USER_ROLES.VOLUNTEER;
 
   const getCurrentTeamId = () => {
     if (authState.role === USER_ROLES.PARTICIPANT && authState.user) {
@@ -302,6 +315,7 @@ export function AuthProvider({ children }) {
         isParticipant,
         isJudge,
         isAdmin,
+        isVolunteer,
         getCurrentTeamId,
         getCurrentJudge,
       }}

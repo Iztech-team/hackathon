@@ -21,7 +21,8 @@
     "judge": "Judge",
     "admin": "Admin",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "checkIn": "Check-in"
   },
   "common": {
     "loading": "Loading...",
@@ -38,6 +39,7 @@
     "search": "Search",
     "name": "Name",
     "phone": "Phone",
+    "email": "Email",
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -178,6 +180,7 @@
       "title": "Our Partners",
       "subtitle": "Supported by",
       "list": [
+        { "name": "رجل الاعمال رفيق ابو منشار", "logo": "/partners/rafeeq.webp" },
         { "name": "Izdehar Palestine", "logo": "/partners/izdehar.svg" },
         { "name": "Iztech Valley", "logo": "/partners/iztech.svg" },
         { "name": "Amazon Web Services", "logo": "/partners/aws.svg" },
@@ -203,7 +206,12 @@
     "registrationClosedBanner": "Registration is closed. Existing teams and judges can still sign in.",
     "teamTab": "Team",
     "judgeTab": "Judge",
+    "volunteerTab": "Volunteer",
     "adminTab": "Admin",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "loginAsVolunteer": "Login as Volunteer",
+    "volunteerUsernamePlaceholder": "Volunteer username",
     "teamName": "Team Name",
     "teamNamePlaceholder": "Enter your team name",
     "teamPasswordPlaceholder": "Enter team password",
@@ -220,6 +228,9 @@
     "confirmPasswordPlaceholder": "Confirm password",
     "namePlaceholder": "Name",
     "phonePlaceholder": "Phone",
+    "emailPlaceholder": "University or business email",
+    "emailHint": "Please enter your university or organization email (e.g. name@university.edu). Personal emails like Gmail, Yahoo, and Hotmail are not accepted.",
+    "skipEmail": "Skip adding emails for now",
     "teamMembers": "Team Members",
     "addMember": "+ Add",
     "randomize": "Randomize",
@@ -241,7 +252,9 @@
       "memberRequired": "At least one team member is required",
       "memberMinTwo": "At least 2 team members are required",
       "memberMaxFour": "A team can have at most 4 members",
-      "memberPhoneRequired": "All members must have a phone number"
+      "memberPhoneRequired": "All members must have a phone number",
+      "emailInvalid": "Invalid email format",
+      "emailPersonal": "Personal emails (Gmail, Yahoo, etc.) are not allowed. Please use your university or organization email."
     }
   },
   "team": {
@@ -266,12 +279,13 @@
     "viewLeaderboard": "View Leaderboard",
     "joinWhatsapp": "Join Hackathon WhatsApp Group",
     "addMemberBtn": "Add Member",
-    "apiKey": {
-      "title": "Your Team API Key",
-      "hidden": "Your key will be revealed by the admin soon",
-      "notAssigned": "No API key has been assigned to your team yet",
+    "inviteLink": {
+      "title": "Claude Organisation Invite",
+      "notArrived": "Your invite link will be revealed once a volunteer confirms your arrival at the venue",
+      "notAssigned": "No invite link has been assigned to your team yet",
       "copy": "Copy",
-      "copied": "Copied!"
+      "copied": "Copied!",
+      "open": "Open Invite Link"
     },
     "raiseHand": {
       "title": "Need help?",
@@ -313,6 +327,17 @@
     "judges": "Judges",
     "totalPoints": "Total Points",
     "judgesTab": "Judges",
+    "volunteersTab": "Volunteers",
+    "volunteers": {
+      "title": "Manage Volunteers",
+      "desc": "Create accounts for hackathon-day check-in volunteers",
+      "namePlaceholder": "e.g. Ahmad",
+      "usernamePlaceholder": "e.g. volunteer1",
+      "create": "Create Volunteer",
+      "created": "Volunteer created!",
+      "confirmDelete": "Delete volunteer {{name}}?",
+      "empty": "No volunteers yet — create one to get started"
+    },
     "leaderboardTab": "Leaderboard",
     "exportTab": "Export",
     "resetData": "Reset Data",
@@ -328,6 +353,16 @@
     "registrationDesc": "Control whether new teams can sign up. Existing teams and judges can always log in.",
     "closeRegistration": "Close Registration",
     "openRegistration": "Open Registration",
+    "resetPassword": "Reset Password",
+    "pwReset": {
+      "title": "Reset Password",
+      "desc": "Search for a user and set a new password",
+      "searchUser": "Select user",
+      "searchPlaceholder": "Search by username...",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "Enter new password (min 4 chars)",
+      "submit": "Reset Password"
+    },
     "freezeLeaderboard": "Freeze Leaderboard",
     "unfreezeLeaderboard": "Unfreeze Leaderboard",
     "leaderboardFrozen": "Leaderboard is frozen",
@@ -336,9 +371,20 @@
     "manageTeams": "Manage Teams",
     "manageTeamsDesc": "Delete teams from the hackathon",
     "confirmDeleteTeam": "Are you sure you want to delete team \"{{name}}\"? This will remove all its members and scores.",
+    "inviteLink": {
+      "title": "Invite Link",
+      "desc": "Set the Claude organisation invite link. Teams see it after check-in or when you reveal to all.",
+      "placeholder": "https://console.anthropic.com/invite/...",
+      "saved": "Invite link saved!",
+      "revealToAll": "Reveal to All Teams",
+      "hideFromAll": "Hide from All Teams",
+      "revealedToAll": "visible to all",
+      "arrivedOnly": "arrived only",
+      "note": "Teams that a volunteer has checked in can always see the link. This button controls visibility for teams that haven't been checked in yet."
+    },
     "apiKeys": {
-      "title": "API Keys",
-      "desc": "Upload a CSV file with the list of API keys — each team gets one key",
+      "title": "Invite Links",
+      "desc": "Upload a CSV file with invite links — each team gets one link. Links are revealed per-team when a volunteer confirms their arrival.",
       "uploadCsv": "Upload CSV",
       "reveal": "Reveal Keys",
       "hide": "Hide Keys",
@@ -429,5 +475,23 @@
       "minutesAgo": "{{count}}m ago",
       "hoursAgo": "{{count}}h ago"
     }
+  },
+  "volunteer": {
+    "title": "Team Check-in",
+    "welcome": "Welcome, {{name}}",
+    "arrived": "Arrived",
+    "remaining": "Remaining",
+    "checkInTeams": "Check-in Teams",
+    "searchDesc": "Search for a team and mark them as arrived",
+    "searchPlaceholder": "Search by team name or member...",
+    "noResults": "No teams found",
+    "checkIn": "Check in",
+    "undo": "Undo",
+    "here": "here",
+    "confirmTitle": "Confirm Team Arrival",
+    "membersEmails": "Team members & emails",
+    "noMembers": "No members registered",
+    "noEmail": "No email",
+    "confirmArrival": "Confirm Arrival"
   }
 }

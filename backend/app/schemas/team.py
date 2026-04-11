@@ -6,12 +6,14 @@ from datetime import datetime
 class TeamMemberCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
+    email: Optional[str] = Field(None, max_length=255)
     avatar_seed: Optional[str] = None
 
 
 class TeamMemberUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
+    email: Optional[str] = Field(None, max_length=255)
     avatar_seed: Optional[str] = None
 
 
@@ -19,6 +21,7 @@ class TeamMemberResponse(BaseModel):
     id: str
     name: str
     phone: Optional[str]
+    email: Optional[str]
     avatar_seed: Optional[str]
 
     class Config:

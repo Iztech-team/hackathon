@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { api } from '../lib/api';
+import { validateBusinessEmail } from '../lib/emailValidation';
 import { useAuth } from '../context/AuthContext';
 import { useTeams } from '../context/TeamContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
@@ -19,7 +20,7 @@ export default function TeamProfile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, refreshUserData } = useAuth();
-  const { getTeamById, getSortedTeams, updateTeam, addTeamMember } = useTeams();
+  const { getTeamById, getSortedTeams, updateTeam, updateTeamMember, addTeamMember } = useTeams();
 
   // Poll the backend so API key reveal state updates within ~15s of admin action
   useEffect(() => {
@@ -28,17 +29,17 @@ export default function TeamProfile() {
     return () => clearInterval(id);
   }, [refreshUserData]);
 
-  // API key state is on user.team (from /auth/me response)
+  // Invite link state (from /auth/me response — revealed only after arrival)
   const authTeam = user?.team || {};
-  const apiKey = authTeam.api_key || null;
-  const apiKeyAssigned = !!authTeam.api_key_assigned;
-  const apiKeysRevealed = !!authTeam.api_keys_revealed;
+  const inviteLink = authTeam.invite_link || null;
+  const inviteLinkSet = !!authTeam.invite_link_set;
+  const teamArrived = !!authTeam.arrived;
 
   const [copied, setCopied] = useState(false);
-  const handleCopyApiKey = async () => {
-    if (!apiKey) return;
+  const handleCopyLink = async () => {
+    if (!inviteLink) return;
     try {
-      await navigator.clipboard.writeText(apiKey);
+      await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -53,7 +54,6 @@ export default function TeamProfile() {
     try {
       await refreshUserData();
     } finally {
-      // Keep the spin animation visible for at least ~400ms so it feels responsive
       setTimeout(() => setRefreshingKey(false), 400);
     }
   };
@@ -64,11 +64,12 @@ export default function TeamProfile() {
   const totalScore = team ? calculateTotalScore(team.scores) : 0;
 
   const [editingMember, setEditingMember] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', phone: '', avatarSeed: '' });
+  const [editForm, setEditForm] = useState({ name: '', phone: '', email: '', avatarSeed: '' });
   const [editingProject, setEditingProject] = useState(false);
   const [projectForm, setProjectForm] = useState({ projectName: '', description: '' });
   const [addingMember, setAddingMember] = useState(false);
-  const [newMemberForm, setNewMemberForm] = useState({ name: '', phone: '', avatarSeed: `member-${Date.now()}` });
+  const [newMemberForm, setNewMemberForm] = useState({ name: '', phone: '', email: '', avatarSeed: `member-${Date.now()}` });
+  const [emailError, setEmailError] = useState('');
 
   // Raise-hand (help request) state — backed by POST/DELETE /teams/me/raise-hand
   const [handRaised, setHandRaised] = useState(!!team?.handRaised);
@@ -137,19 +138,30 @@ export default function TeamProfile() {
     setEditForm({
       name: member.name,
       phone: member.phone,
+      email: member.email || '',
       avatarSeed: member.avatarSeed,
     });
   };
 
-  const handleSaveMember = (idx) => {
-    const updatedMembers = [...team.members];
-    updatedMembers[idx] = {
-      ...updatedMembers[idx],
-      name: editForm.name,
-      phone: editForm.phone,
-      avatarSeed: editForm.avatarSeed,
-    };
-    updateTeam(team.id, { members: updatedMembers });
+  const handleSaveMember = async (idx) => {
+    // Validate email if provided
+    if (editForm.email && editForm.email.trim()) {
+      const err = validateBusinessEmail(editForm.email);
+      if (err === 'invalidFormat') { setEmailError(t('login.errors.emailInvalid')); return; }
+      if (err === 'personalEmail') { setEmailError(t('login.errors.emailPersonal')); return; }
+    }
+    setEmailError('');
+    const member = team.members[idx];
+    try {
+      await updateTeamMember(team.id, member.id, {
+        name: editForm.name,
+        phone: editForm.phone,
+        email: editForm.email,
+        avatarSeed: editForm.avatarSeed,
+      });
+    } catch (err) {
+      console.error('Failed to update member:', err);
+    }
     setEditingMember(null);
   };
 
@@ -182,19 +194,28 @@ export default function TeamProfile() {
   const handleAddMember = async () => {
     if (!newMemberForm.name.trim() || !newMemberForm.phone.trim()) return;
 
+    // Validate email if provided
+    if (newMemberForm.email && newMemberForm.email.trim()) {
+      const err = validateBusinessEmail(newMemberForm.email);
+      if (err === 'invalidFormat') { setEmailError(t('login.errors.emailInvalid')); return; }
+      if (err === 'personalEmail') { setEmailError(t('login.errors.emailPersonal')); return; }
+    }
+    setEmailError('');
+
     await addTeamMember(team.id, {
       name: newMemberForm.name,
       phone: newMemberForm.phone,
+      email: newMemberForm.email,
       avatarSeed: newMemberForm.avatarSeed,
     });
 
     setAddingMember(false);
-    setNewMemberForm({ name: '', phone: '', avatarSeed: `member-${Date.now()}` });
+    setNewMemberForm({ name: '', phone: '', email: '', avatarSeed: `member-${Date.now()}` });
   };
 
   const handleCancelAddMember = () => {
     setAddingMember(false);
-    setNewMemberForm({ name: '', phone: '', avatarSeed: `member-${Date.now()}` });
+    setNewMemberForm({ name: '', phone: '', email: '', avatarSeed: `member-${Date.now()}` });
   };
 
   return (
@@ -428,6 +449,15 @@ export default function TeamProfile() {
                           onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                           placeholder={t('common.phone')}
                         />
+                        <Input
+                          type="email"
+                          value={editForm.email}
+                          onChange={(e) => { setEditForm({ ...editForm, email: e.target.value }); setEmailError(''); }}
+                          placeholder={t('common.email')}
+                        />
+                        {emailError && (
+                          <p className="text-xs text-red-400">{emailError}</p>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -492,6 +522,15 @@ export default function TeamProfile() {
                       onChange={(e) => setNewMemberForm({ ...newMemberForm, phone: e.target.value })}
                       placeholder="Phone"
                     />
+                    <Input
+                      type="email"
+                      value={newMemberForm.email}
+                      onChange={(e) => { setNewMemberForm({ ...newMemberForm, email: e.target.value }); setEmailError(''); }}
+                      placeholder="Email"
+                    />
+                    {emailError && (
+                      <p className="text-xs text-red-400">{emailError}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -583,17 +622,17 @@ export default function TeamProfile() {
         </CardContent>
       </Card>
 
-      {/* API Key */}
+      {/* Invite Link — revealed only after volunteer confirms arrival */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
               </div>
-              <CardTitle>{t('team.apiKey.title')}</CardTitle>
+              <CardTitle>{t('team.inviteLink.title')}</CardTitle>
             </div>
             <button
               type="button"
@@ -615,26 +654,41 @@ export default function TeamProfile() {
         </CardHeader>
         <CardContent>
           <AnimatePresence mode="wait">
-            {apiKey && apiKeysRevealed ? (
+            {inviteLink && teamArrived ? (
               <motion.div
                 key="revealed"
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2"
+                className="space-y-3"
               >
-                <code
-                  dir="ltr"
-                  className="flex-1 min-w-0 truncate px-4 py-3 rounded-xl bg-black/40 border border-[#3b82f6]/30 text-[#60a5fa] font-mono text-sm tracking-tight select-all"
+                <div className="flex items-center gap-2">
+                  <code
+                    dir="ltr"
+                    className="flex-1 min-w-0 truncate px-4 py-3 rounded-xl bg-black/40 border border-[#3b82f6]/30 text-[#60a5fa] font-mono text-sm tracking-tight select-all"
+                  >
+                    {inviteLink}
+                  </code>
+                  <Button size="sm" onClick={handleCopyLink} glow>
+                    {copied ? t('team.inviteLink.copied') : t('team.inviteLink.copy')}
+                  </Button>
+                </div>
+                <a
+                  href={inviteLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
                 >
-                  {apiKey}
-                </code>
-                <Button size="sm" onClick={handleCopyApiKey} glow>
-                  {copied ? t('team.apiKey.copied') : t('team.apiKey.copy')}
-                </Button>
+                  <Button variant="outline" className="w-full gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    {t('team.inviteLink.open')}
+                  </Button>
+                </a>
               </motion.div>
-            ) : apiKeyAssigned ? (
+            ) : !teamArrived ? (
               <motion.div
-                key="hidden"
+                key="not-arrived"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-3 px-4 py-4 rounded-xl bg-black/30 border border-white/[0.08]"
@@ -642,7 +696,7 @@ export default function TeamProfile() {
                 <svg className="w-5 h-5 text-white/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <p className="text-sm text-white/60">{t('team.apiKey.hidden')}</p>
+                <p className="text-sm text-white/60">{t('team.inviteLink.notArrived')}</p>
               </motion.div>
             ) : (
               <motion.div
@@ -651,7 +705,7 @@ export default function TeamProfile() {
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-3 px-4 py-4 rounded-xl bg-white/[0.02] border border-white/[0.06]"
               >
-                <p className="text-sm text-white/40">{t('team.apiKey.notAssigned')}</p>
+                <p className="text-sm text-white/40">{t('team.inviteLink.notAssigned')}</p>
               </motion.div>
             )}
           </AnimatePresence>
