@@ -77,6 +77,7 @@ export default function Home() {
             {t('home.liveBadge')}
           </div>
         ) : null}
+        <p className="text-xl md:text-2xl text-white/60 mb-3 font-medium">ضمن حملة رفيق، رفيق الشباب</p>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           {t('app.title')}
           <span className="text-[#3b82f6] ms-3">{t('app.subtitle')}</span>
