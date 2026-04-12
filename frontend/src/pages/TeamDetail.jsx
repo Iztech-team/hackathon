@@ -218,9 +218,6 @@ export default function TeamDetail() {
                     </div>
                     <div className="text-center min-w-0 w-full">
                       <p className="font-bold text-white truncate text-base">{member.name}</p>
-                      {member.phone && (
-                        <p className="text-xs text-white/40 mt-1 tabular-nums truncate" dir="ltr">{member.phone}</p>
-                      )}
                     </div>
                   </div>
                 </motion.div>

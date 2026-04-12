@@ -20,6 +20,35 @@ import { config } from '../lib/config';
 import { mockTeams } from '../data/mockTeams';
 import { mockJudges, ADMIN_CREDENTIALS } from '../data/mockJudges';
 
+function PasswordInput({ showPassword, setShowPassword, className, ...props }) {
+  return (
+    <div className="relative">
+      <Input
+        type={showPassword ? 'text' : 'password'}
+        className={`pe-11 ${className || ''}`}
+        {...props}
+      />
+      <button
+        type="button"
+        tabIndex={-1}
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute top-1/2 -translate-y-1/2 end-3 text-white/30 hover:text-white/60 transition-colors"
+      >
+        {showPassword ? (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -424,24 +453,6 @@ export default function Login() {
             </div>
           )}
 
-          {/* Show/hide password toggle */}
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors"
-          >
-            {showPassword ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            )}
-            {showPassword ? t('login.hidePassword') : t('login.showPassword')}
-          </button>
 
           <AnimatePresence mode="wait">
             {mainTab === 'login' && (
@@ -503,8 +514,9 @@ export default function Login() {
                       </FormField>
                       <FormField>
                         <FormLabel>{t('common.password')}</FormLabel>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
+                        <PasswordInput
+                          showPassword={showPassword}
+                          setShowPassword={setShowPassword}
                           value={teamLoginForm.password}
                           onChange={(e) => setTeamLoginForm({ ...teamLoginForm, password: e.target.value })}
                           placeholder={t('login.teamPasswordPlaceholder')}
@@ -538,8 +550,9 @@ export default function Login() {
                       </FormField>
                       <FormField>
                         <FormLabel>{t('common.password')}</FormLabel>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
+                        <PasswordInput
+                          showPassword={showPassword}
+                          setShowPassword={setShowPassword}
                           value={judgeLoginForm.password}
                           onChange={(e) => setJudgeLoginForm({ ...judgeLoginForm, password: e.target.value })}
                           placeholder={t('login.judgePasswordPlaceholder')}
@@ -564,8 +577,9 @@ export default function Login() {
                     >
                       <FormField>
                         <FormLabel>{t('login.adminPassword')}</FormLabel>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
+                        <PasswordInput
+                          showPassword={showPassword}
+                          setShowPassword={setShowPassword}
                           value={adminLoginForm.password}
                           onChange={(e) => setAdminLoginForm({ ...adminLoginForm, password: e.target.value })}
                           placeholder={t('login.adminPasswordPlaceholder')}
@@ -599,8 +613,9 @@ export default function Login() {
                       </FormField>
                       <FormField>
                         <FormLabel>{t('common.password')}</FormLabel>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
+                        <PasswordInput
+                          showPassword={showPassword}
+                          setShowPassword={setShowPassword}
                           value={volunteerLoginForm.password}
                           onChange={(e) => setVolunteerLoginForm({ ...volunteerLoginForm, password: e.target.value })}
                           placeholder="••••••"
@@ -644,9 +659,10 @@ export default function Login() {
 
                   <FormField>
                     <FormLabel required>{t('common.password')}</FormLabel>
-                    <Input
+                    <PasswordInput
+                      showPassword={showPassword}
+                      setShowPassword={setShowPassword}
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
                       value={registerForm.password}
                       onChange={handleRegisterChange}
                       placeholder={t('login.passwordPlaceholder')}
@@ -655,9 +671,10 @@ export default function Login() {
                   </FormField>
                   <FormField>
                     <FormLabel required>{t('common.confirmPassword')}</FormLabel>
-                    <Input
+                    <PasswordInput
+                      showPassword={showPassword}
+                      setShowPassword={setShowPassword}
                       name="confirmPassword"
-                      type={showPassword ? 'text' : 'password'}
                       value={registerForm.confirmPassword}
                       onChange={handleRegisterChange}
                       placeholder={t('login.confirmPasswordPlaceholder')}
