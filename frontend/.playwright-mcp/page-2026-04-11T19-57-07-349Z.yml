@@ -1,0 +1,53 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+            - generic [ref=e279]:
+              - generic [ref=e280]: العد التنازلي للهاكاثون
+              - generic [ref=e281]: 2d 10h 2m
+      - button "EN" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e289] [cursor=pointer]:
+        - /url: /
+        - img [ref=e293]
+      - link [ref=e23] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e27]
+      - link "تسجيل الدخول" [ref=e295] [cursor=pointer]:
+        - /url: /login
+        - generic [ref=e296]:
+          - img [ref=e299]
+          - generic [ref=e302]: تسجيل الدخول
+  - main [ref=e50]:
+    - generic [ref=e305]:
+      - generic [ref=e306]:
+        - heading "أهلاً بك" [level=3] [ref=e307]
+        - paragraph [ref=e308]: سجّل الدخول أو أنشئ حساب فريق جديد
+      - generic [ref=e309]:
+        - generic [ref=e310]:
+          - button "دخول" [ref=e311] [cursor=pointer]
+          - button "تسجيل" [ref=e312] [cursor=pointer]
+        - button "إظهار كلمة المرور" [ref=e313] [cursor=pointer]:
+          - img [ref=e314]
+          - text: إظهار كلمة المرور
+        - generic [ref=e317]:
+          - generic [ref=e318]:
+            - button "فريق" [ref=e319] [cursor=pointer]
+            - button "محكّم" [ref=e320] [cursor=pointer]
+            - button "متطوع" [ref=e321] [cursor=pointer]
+            - button "مسؤول" [ref=e322] [cursor=pointer]
+          - generic [ref=e323]:
+            - generic [ref=e324]:
+              - text: اسم الفريق
+              - textbox "أدخل اسم فريقك" [ref=e325]
+            - generic [ref=e326]:
+              - text: كلمة المرور
+              - textbox "أدخل كلمة مرور الفريق" [ref=e327]
+            - button "دخول" [ref=e328] [cursor=pointer]

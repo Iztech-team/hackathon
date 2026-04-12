@@ -135,6 +135,10 @@ class ApiClient {
     return this.request('/teams/raised-hands');
   }
 
+  async adminLowerHand(teamId) {
+    return this.request(`/admin/teams/${teamId}/raise-hand`, { method: 'DELETE' });
+  }
+
   // Scores endpoints
   async setScore(teamId, categoryId, points) {
     return this.request(`/scores/${teamId}/${categoryId}`, {

@@ -110,18 +110,18 @@
       "subtitle": "ما الذي ينتظركم",
       "first": {
         "place": "المركز الأول",
-        "prize": "3 أجهزة لابتوب",
-        "desc": "جهاز لابتوب لكل عضو في الفريق"
+        "prize": "3 لابتوبات + $1,000 دولار",
+        "desc": "لابتوب لكل عضو بالإضافة إلى جائزة نقدية"
       },
       "second": {
         "place": "المركز الثاني",
-        "prize": "$300 دولار",
-        "desc": "جائزة نقدية للفريق"
+        "prize": "$1,000 رصيد AWS",
+        "desc": "رصيد Amazon Web Services للفريق"
       },
       "third": {
         "place": "المركز الثالث",
-        "prize": "$150 دولار",
-        "desc": "جائزة نقدية للفريق"
+        "prize": "$1,000 رصيد AWS",
+        "desc": "رصيد Amazon Web Services للفريق"
       },
       "special": {
         "title": "مشاريع مميزة",
@@ -468,7 +468,8 @@
       "oldestFirst": "الطلبات الأقدم أولاً",
       "justNow": "للتو",
       "minutesAgo": "قبل {{count}} دقيقة",
-      "hoursAgo": "قبل {{count}} ساعة"
+      "hoursAgo": "قبل {{count}} ساعة",
+      "dismiss": "رفض"
     }
   },
   "volunteer": {

@@ -1,0 +1,45 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+      - button "EN" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e17] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e21]
+      - link [ref=e23] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e27]
+      - link "المحكّمون" [ref=e29] [cursor=pointer]:
+        - /url: /admin/judges
+        - generic [ref=e30]:
+          - img [ref=e33]
+          - generic [ref=e36]: المحكّمون
+      - link [ref=e37] [cursor=pointer]:
+        - /url: /admin/export
+        - img [ref=e41]
+      - button [ref=e43] [cursor=pointer]:
+        - img [ref=e44]
+  - main [ref=e46]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - heading "المحكّمون" [level=1] [ref=e50]
+        - button "إضافة محكّم" [ref=e51] [cursor=pointer]:
+          - img [ref=e52]
+          - generic [ref=e54]: إضافة محكّم
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - heading "كل المحكّمين" [level=2] [ref=e57]
+          - generic [ref=e58]: 0 مسجّل
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: لم يتم إنشاء محكّمين بعد
+          - button "أنشئ أول محكّم" [ref=e61] [cursor=pointer]:
+            - img [ref=e62]
+            - generic [ref=e64]: أنشئ أول محكّم

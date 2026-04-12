@@ -1,0 +1,30 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+      - button "EN" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e17] [cursor=pointer]:
+        - /url: /
+        - img [ref=e21]
+      - link "المتصدرون" [ref=e23] [cursor=pointer]:
+        - /url: /leaderboard
+        - generic [ref=e24]:
+          - img [ref=e27]
+          - generic [ref=e30]: المتصدرون
+      - link [ref=e31] [cursor=pointer]:
+        - /url: /scan
+        - img [ref=e35]
+      - link [ref=e37] [cursor=pointer]:
+        - /url: /judge/profile
+        - img [ref=e41]
+      - button [ref=e43] [cursor=pointer]:
+        - img [ref=e44]
+  - main [ref=e46]

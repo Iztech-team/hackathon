@@ -1,0 +1,246 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "Hebron Coding Hackathon" [level=1] [ref=e293]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+            - generic [ref=e286]:
+              - generic [ref=e287]: Hackathon Countdown
+              - generic [ref=e288]: 4d 21h 33m
+      - button "ع" [active] [ref=e294] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link "Reserve Your Seats" [ref=e295] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e18]:
+          - img [ref=e297]
+          - generic [ref=e299]: Reserve Your Seats
+      - link [ref=e25] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e29]
+      - link [ref=e31] [cursor=pointer]:
+        - /url: /login
+        - img [ref=e35]
+  - main [ref=e37]:
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: Reserve Your Seats
+        - heading "Hebron Coding Hackathon2026" [level=1] [ref=e300]
+        - paragraph [ref=e44]: Join the Hebron Coding Hackathon and help build smart solutions for the city of Hebron.
+        - generic [ref=e45]:
+          - link "Register Your Team" [ref=e301] [cursor=pointer]:
+            - /url: /login?tab=register
+            - button "Register Your Team" [ref=e302]:
+              - generic [ref=e48]: Register Your Team
+              - img [ref=e49]
+          - link "Login" [ref=e303] [cursor=pointer]:
+            - /url: /login
+            - button "Login" [ref=e304]
+          - link "Join WhatsApp Group" [ref=e305] [cursor=pointer]:
+            - /url: https://chat.whatsapp.com/DLLSZK1Gwg6Hv8p6D10nL8
+            - button "Join WhatsApp Group" [ref=e306]:
+              - img [ref=e55]
+              - text: Join WhatsApp Group
+      - generic [ref=e58]:
+        - paragraph [ref=e60]: Hackathon Countdown
+        - generic [ref=e61]:
+          - generic [ref=e307]:
+            - generic [ref=e309]: "04"
+            - generic [ref=e310]: Days
+          - generic [ref=e311]:
+            - generic [ref=e313]: "21"
+            - generic [ref=e314]: Hours
+          - generic [ref=e315]:
+            - generic [ref=e317]: "33"
+            - generic [ref=e318]: Minutes
+          - generic [ref=e319]:
+            - generic [ref=e321]: "19"
+            - generic [ref=e322]: Seconds
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - img [ref=e84]
+          - heading "Hackathon Theme" [level=2] [ref=e323]
+        - paragraph [ref=e87]: Build websites and applications that serve the city of Hebron and solve its everyday challenges. Your project could tackle electricity, water or trash issues, build a community reporting system, improve streets, or any other idea that serves the people of Hebron.
+        - generic [ref=e88]:
+          - generic [ref=e324]: Electricity
+          - generic [ref=e325]: Water
+          - generic [ref=e326]: Trash
+          - generic [ref=e327]: Community Reporting
+          - generic [ref=e328]: Streets
+          - generic [ref=e329]: Public Services
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - paragraph [ref=e100]: Supported by
+          - heading "Our Partners" [level=2] [ref=e330]
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - img "Izdehar Palestine" [ref=e104]
+            - paragraph [ref=e105]: Izdehar Palestine
+          - generic [ref=e106]:
+            - img "Iztech Valley" [ref=e107]
+            - paragraph [ref=e108]: Iztech Valley
+          - generic [ref=e109]:
+            - img "Amazon Web Services" [ref=e110]
+            - paragraph [ref=e111]: Amazon Web Services
+          - generic [ref=e112]:
+            - img "Claude" [ref=e113]
+            - paragraph [ref=e114]: Claude
+          - generic [ref=e115]:
+            - img "Code Academy" [ref=e116]
+            - paragraph [ref=e117]: Code Academy
+          - generic [ref=e118]:
+            - img "Palestine Polytechnic University" [ref=e119]
+            - paragraph [ref=e120]: Palestine Polytechnic University
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - img [ref=e127]
+          - heading "How It Works" [level=2] [ref=e331]
+        - paragraph [ref=e130]: Build real projects with Claude as your pair programmer
+        - paragraph [ref=e131]: This is an AI-augmented hackathon. Every team receives an API key that lets you use Claude — Anthropic's AI model — to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful for Hebron.
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e135]: "1"
+            - heading "Claude" [level=3] [ref=e332]
+            - paragraph [ref=e137]: Claude is an AI assistant you can chat with, ask to write code, debug issues, explain unfamiliar tech, and review your work.
+          - generic [ref=e138]:
+            - generic [ref=e140]: "2"
+            - heading "Your API Key" [level=3] [ref=e333]
+            - paragraph [ref=e142]: When the admin reveals keys, you'll find yours in the Team tab. Copy it and use it with Claude Code or any API client to make Claude requests.
+          - generic [ref=e143]:
+            - generic [ref=e145]: "3"
+            - heading "Claude Code" [level=3] [ref=e146]
+            - paragraph [ref=e147]: A CLI tool that plugs Claude directly into your terminal and editor. It reads your project, edits files, runs commands, and ships features while you guide it.
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - heading "How to use your API key" [level=3] [ref=e334]
+            - paragraph [ref=e151]: Quick setup — pick your operating system
+          - tablist [ref=e153]:
+            - tab "Windows" [selected] [ref=e154] [cursor=pointer]
+            - tab "macOS" [ref=e155] [cursor=pointer]
+            - tab "Linux" [ref=e156] [cursor=pointer]
+          - generic [ref=e157]:
+            - generic [ref=e158]:
+              - generic [ref=e160]: "1"
+              - generic [ref=e161]:
+                - paragraph [ref=e162]: Copy your key from the Team tab
+                - paragraph [ref=e163]: Once the admin reveals keys, open the Team tab on this site. You'll see your team's API key in a gold card. Tap the copy button.
+            - generic [ref=e164]:
+              - generic [ref=e166]: "2"
+              - generic [ref=e167]:
+                - paragraph [ref=e168]: Install Claude Code globally
+                - paragraph [ref=e169]: "Claude Code is a CLI that plugs Claude into your terminal and editor. It needs Node.js 18 or higher. Open a terminal and run:"
+                - code [ref=e171]: npm install -g @anthropic-ai/claude-code
+            - generic [ref=e172]:
+              - generic [ref=e174]: "3"
+              - generic [ref=e175]:
+                - paragraph [ref=e176]: Set your API key as an environment variable
+                - paragraph [ref=e177]: Paste your key after the equals sign. This exposes the key to Claude Code so it can authenticate with Anthropic.
+                - code [ref=e179]: setx ANTHROPIC_API_KEY "sk-ant-your-key-here"
+            - generic [ref=e180]:
+              - generic [ref=e182]: "4"
+              - generic [ref=e183]:
+                - paragraph [ref=e184]: Open your project and launch Claude
+                - paragraph [ref=e185]: In the terminal, cd into your project folder (or open it in VS Code / Cursor) and run 'claude'. Describe what you want — Claude will read your files, edit them and run commands for you.
+                - code [ref=e187]: cd my-project && claude
+        - paragraph [ref=e189]: You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours.
+        - generic [ref=e190]:
+          - generic [ref=e191]:
+            - 'heading "Watch: Install Claude Code in VS Code" [level=3] [ref=e335]'
+            - paragraph [ref=e193]: A quick walkthrough — set it up before hackathon day
+          - iframe [ref=e195]:
+            - generic [active] [ref=f3e1]:
+              - generic "YouTube Video Player" [ref=f3e3]
+              - generic [ref=f3e5]:
+                - generic:
+                  - generic:
+                    - button "Play video" [ref=f3e10] [cursor=pointer]
+                    - button "Hide player controls" [ref=f3e12] [cursor=pointer]
+                    - generic [ref=f3e14]:
+                      - generic [ref=f3e19]:
+                        - generic [ref=f3e20]:
+                          - link "How To Install Claude Code In VS Code - Visual Studio Code" [ref=f3e21] [cursor=pointer]:
+                            - /url: https://www.youtube.com/watch?v=pdRpuy8F7Kw
+                          - link "GuideRealm" [ref=f3e22] [cursor=pointer]:
+                            - /url: /channel/UCWdCOEFAsnzUJQgQOw3vu5Q
+                            - generic [ref=f3e23]: GuideRealm
+                        - generic [ref=f3e24]:
+                          - button [ref=f3e25] [cursor=pointer]
+                          - generic [ref=f3e27]:
+                            - generic: GuideRealm
+                            - generic: 1.85M subscribers
+                      - generic [ref=f3e28]:
+                        - button "Share" [ref=f3e31] [cursor=pointer]:
+                          - generic [ref=f3e35]:
+                            - img
+                        - link "Watch on YouTube" [ref=f3e42] [cursor=pointer]:
+                          - /url: https://www.youtube.com/watch?v=pdRpuy8F7Kw
+                          - generic [ref=f3e45]:
+                            - text: Watch on
+                            - img [ref=f3e47]:
+                              - generic [ref=f3e49]:
+                                - img
+      - generic [ref=e199]:
+        - generic [ref=e200]:
+          - heading "Day Schedule" [level=2] [ref=e336]
+          - paragraph [ref=e202]: Full hackathon day program
+        - generic [ref=e203]:
+          - generic [ref=e204]:
+            - generic [ref=e205]: 9:00
+            - paragraph [ref=e206]: Opening Ceremony
+            - generic [ref=e207]: "01"
+          - generic [ref=e208]:
+            - generic [ref=e209]: 9:30
+            - paragraph [ref=e210]: Hackathon Starts
+            - generic [ref=e211]: "02"
+          - generic [ref=e212]:
+            - generic [ref=e213]: 12:00
+            - paragraph [ref=e214]: Break
+            - generic [ref=e215]: "03"
+          - generic [ref=e216]:
+            - generic [ref=e217]: 2:00
+            - paragraph [ref=e218]: Break
+            - generic [ref=e219]: "04"
+          - generic [ref=e220]:
+            - generic [ref=e221]: 4:00
+            - paragraph [ref=e222]: Hackathon Ends
+            - generic [ref=e223]: "05"
+          - generic [ref=e224]:
+            - generic [ref=e225]: 4:30
+            - paragraph [ref=e226]: Prize Distribution & Closing
+            - generic [ref=e227]: "06"
+      - generic [ref=e231]:
+        - generic [ref=e232]:
+          - img [ref=e234]
+          - heading "Judging Criteria" [level=2] [ref=e337]
+        - paragraph [ref=e237]: Judges score each team from 0 to 15 in every category
+        - generic [ref=e238]:
+          - generic [ref=e239]:
+            - generic [ref=e243]: Max 15 pts
+            - heading "UI/UX" [level=3] [ref=e338]
+            - paragraph [ref=e245]: Visual design, clarity, layout, accessibility and overall user experience.
+          - generic [ref=e246]:
+            - generic [ref=e250]: Max 15 pts
+            - heading "Frontend" [level=3] [ref=e339]
+            - paragraph [ref=e252]: Code quality, responsiveness across devices, performance and interactivity.
+          - generic [ref=e253]:
+            - generic [ref=e257]: Max 15 pts
+            - heading "Backend" [level=3] [ref=e340]
+            - paragraph [ref=e259]: Architecture, API design, data handling, security and reliability.
+          - generic [ref=e260]:
+            - generic [ref=e264]: Max 15 pts
+            - heading "Innovation" [level=3] [ref=e341]
+            - paragraph [ref=e266]: Originality of the idea, creativity, and how well it addresses a real Hebron problem.
+      - generic [ref=e269]:
+        - generic [ref=e271]:
+          - generic [ref=e272]: "4"
+          - generic [ref=e273]: Teams Registered
+        - generic [ref=e275]:
+          - generic [ref=e276]: "7"
+          - generic [ref=e277]: Participants
+        - generic [ref=e279]:
+          - generic [ref=e280]: "4"
+          - generic [ref=e281]: Judging Categories

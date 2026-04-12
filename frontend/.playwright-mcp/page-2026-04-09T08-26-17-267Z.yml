@@ -1,0 +1,49 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+            - generic [ref=e282]:
+              - generic [ref=e283]: العد التنازلي للهاكاثون
+              - generic [ref=e284]: 4d 21h 33m
+      - button "EN" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e295] [cursor=pointer]:
+        - /url: /
+        - img [ref=e297]
+      - link [ref=e25] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e29]
+      - link "تسجيل الدخول" [ref=e299] [cursor=pointer]:
+        - /url: /login
+        - generic [ref=e300]:
+          - img [ref=e303]
+          - generic [ref=e306]: تسجيل الدخول
+  - main [ref=e46]:
+    - generic [ref=e309]:
+      - generic [ref=e310]:
+        - heading "أهلاً بك" [level=3] [ref=e311]
+        - paragraph [ref=e312]: سجّل الدخول أو أنشئ حساب فريق جديد
+      - generic [ref=e313]:
+        - generic [ref=e314]:
+          - button "دخول" [ref=e315] [cursor=pointer]
+          - button "تسجيل" [ref=e316] [cursor=pointer]
+        - generic [ref=e317]:
+          - generic [ref=e318]:
+            - button "فريق" [ref=e319] [cursor=pointer]
+            - button "محكّم" [ref=e320] [cursor=pointer]
+            - button "مسؤول" [ref=e321] [cursor=pointer]
+          - generic [ref=e322]:
+            - generic [ref=e323]:
+              - text: اسم الفريق
+              - textbox "أدخل اسم فريقك" [ref=e324]
+            - generic [ref=e325]:
+              - text: كلمة المرور
+              - textbox "أدخل كلمة مرور الفريق" [ref=e326]
+            - button "دخول" [ref=e327] [cursor=pointer]

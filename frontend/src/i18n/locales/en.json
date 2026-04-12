@@ -110,18 +110,18 @@
       "subtitle": "What's at stake",
       "first": {
         "place": "1st Place",
-        "prize": "3 Laptops",
-        "desc": "One laptop for each team member"
+        "prize": "3 Laptops + $1,000 USD",
+        "desc": "One laptop per member plus cash prize"
       },
       "second": {
         "place": "2nd Place",
-        "prize": "$300 USD",
-        "desc": "Cash prize for the team"
+        "prize": "$1,000 AWS Credits",
+        "desc": "Amazon Web Services credits for the team"
       },
       "third": {
         "place": "3rd Place",
-        "prize": "$150 USD",
-        "desc": "Cash prize for the team"
+        "prize": "$1,000 AWS Credits",
+        "desc": "Amazon Web Services credits for the team"
       },
       "special": {
         "title": "Special Projects",
@@ -468,7 +468,8 @@
       "oldestFirst": "Oldest requests first",
       "justNow": "just now",
       "minutesAgo": "{{count}}m ago",
-      "hoursAgo": "{{count}}h ago"
+      "hoursAgo": "{{count}}h ago",
+      "dismiss": "Dismiss"
     }
   },
   "volunteer": {

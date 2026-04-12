@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>معايير التحكيم — هاكاثون الخليل للذكاء الاصطناعي</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      .category-card { break-inside: avoid; }
+      body { font-size: 11pt; }
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 28px 60px;
+    }
+
+    /* ---------- Header ---------- */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+      padding-bottom: 28px;
+      border-bottom: 3px solid #1d4ed8;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .header-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      background: #f8fafc;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 2px;
+    }
+    .header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1d4ed8;
+      margin-bottom: 12px;
+    }
+    .header .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ---------- Instructions ---------- */
+    .instructions {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      font-size: 0.88rem;
+      color: #444;
+    }
+    .instructions strong { color: #111; }
+    .instructions ul { padding-right: 20px; margin-top: 8px; }
+    .instructions li { margin-bottom: 4px; }
+
+    /* ---------- Team info ---------- */
+    .team-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .team-field {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .team-field label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .team-field .field-line {
+      border-bottom: 1.5px solid #d1d5db;
+      height: 22px;
+    }
+
+    /* ---------- Category ---------- */
+    .category-card {
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .category-header {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f1f5f9;
+      border-bottom: 1px solid #d1d5db;
+    }
+    .category-header .right { display: flex; align-items: center; gap: 12px; }
+    .category-number {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: #1d4ed8;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .category-name { font-size: 1.15rem; font-weight: 700; color: #111; }
+    .category-desc { font-size: 0.78rem; color: #666; margin-top: 1px; }
+    .max-badge {
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: #1d4ed8;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ---------- Checklist ---------- */
+    .checklist { padding: 6px 24px 22px; }
+    .checklist-group-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #999;
+      margin: 16px 0 8px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checkbox {
+      width: 18px; height: 18px;
+      border: 2px solid #94a3b8;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .checklist-text { font-size: 0.88rem; color: #333; }
+    .checklist-text strong { font-weight: 700; color: #111; }
+
+    /* ---------- Score ---------- */
+    .score-section {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 16px 24px;
+      border-top: 1px solid #d1d5db;
+      background: #fafbfc;
+    }
+    .score-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #666;
+    }
+    .score-box {
+      width: 64px; height: 40px;
+      border: 2px solid #1d4ed8;
+      border-radius: 8px;
+      background: white;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #111;
+      font-family: 'Cairo', sans-serif;
+    }
+    .score-max { font-size: 0.85rem; color: #888; font-weight: 600; }
+
+    /* ---------- Total ---------- */
+    .total-card {
+      border: 2px solid #1d4ed8;
+      border-radius: 12px;
+      background: #f0f4ff;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+    .total-label { font-size: 1.15rem; font-weight: 800; color: #111; }
+    .total-right { display: flex; align-items: center; gap: 10px; }
+    .total-right .score-box {
+      width: 76px; height: 46px;
+      font-size: 1.4rem;
+      border-width: 2.5px;
+    }
+    .total-right .score-max { font-size: 1rem; }
+
+    /* ---------- Notes ---------- */
+    .notes-section {
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 28px;
+    }
+    .notes-section h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .note-line {
+      border-bottom: 1px solid #e5e7eb;
+      height: 30px;
+    }
+
+    /* ---------- Print button ---------- */
+    .print-bar { text-align: center; margin-bottom: 28px; }
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 26px;
+      border: none;
+      border-radius: 8px;
+      background: #1d4ed8;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .print-btn:hover { background: #1e40af; }
+
+    /* ---------- Footer ---------- */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #e5e7eb;
+      font-size: 0.78rem;
+      color: #999;
+    }
+
+    /* ---------- Signatures ---------- */
+    .signatures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .sig-box {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .sig-box label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 30px;
+    }
+    .sig-line {
+      border-bottom: 1.5px solid #94a3b8;
+      width: 70%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>هاكاثون الخليل للذكاء الاصطناعي</h1>
+      <h2>نموذج التحكيم والتقييم الرسمي</h2>
+      <div class="meta">
+        <div class="meta-item">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          14 نيسان 2026
+        </div>
+        <div class="meta-item">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          جامعة بوليتكنك فلسطين
+        </div>
+      </div>
+    </div>
+
+    <!-- Print -->
+    <div class="print-bar no-print">
+      <button class="print-btn" onclick="window.print()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        طباعة / تصدير PDF
+      </button>
+    </div>
+
+    <!-- Team info -->
+    <div class="team-info">
+      <div class="team-field">
+        <label>اسم الفريق</label>
+        <div class="field-line"></div>
+      </div>
+      <div class="team-field">
+        <label>اسم المحكّم</label>
+        <div class="field-line"></div>
+      </div>
+      <div class="team-field">
+        <label>عنوان المشروع</label>
+        <div class="field-line"></div>
+      </div>
+      <div class="team-field">
+        <label>التاريخ والوقت</label>
+        <div class="field-line"></div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <strong>تعليمات للمحكّمين:</strong>
+      <ul>
+        <li>يتم تقييم كل فريق من <strong>0 إلى 15</strong> نقطة في كل فئة (4 فئات، المجموع 60 نقطة).</li>
+        <li>ضع علامة ✓ على كل معيار يحققه الفريق لضمان تقييم شامل وعادل.</li>
+        <li>القائمة أداة إرشادية — استخدم حكمك المهني لتحديد الدرجة النهائية لكل فئة.</li>
+        <li>يستخدم كل فريق <strong>Claude AI</strong> كمساعد برمجي. قيّم <strong>ما تم تسليمه</strong> وليس ما إذا كتبوا كل سطر بأنفسهم.</li>
+      </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  الفئة 1: واجهة المستخدم وتجربة الاستخدام                      -->
+    <!-- ============================================================ -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="right">
+          <div class="category-number">1</div>
+          <div>
+            <div class="category-name">واجهة المستخدم وتجربة الاستخدام (UI/UX)</div>
+            <div class="category-desc">التصميم البصري، الوضوح، التخطيط، سهولة الوصول، وتجربة المستخدم الشاملة</div>
+          </div>
+        </div>
+        <div class="max-badge">15 نقطة كحد أقصى</div>
+      </div>
+      <div class="checklist">
+        <div class="checklist-group-title">التصميم البصري</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>تناسق الألوان والخطوط</strong> — لوحة ألوان موحدة، خطوط واضحة، تدرج بصري صحيح</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>تخطيط نظيف ومنظم</strong> — العناصر متراصفة، المساحات البيضاء مستخدمة بشكل فعال، لا فوضى</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>جودة احترافية</strong> — الأيقونات والصور والهوية البصرية متناسقة ومقصودة</div></div>
+
+        <div class="checklist-group-title">تجربة المستخدم</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>تنقل بديهي</strong> — يمكن للمستخدم إيجاد الميزات بسهولة؛ أزرار الإجراء واضحة</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>حالات التغذية الراجعة</strong> — مؤشرات تحميل، رسائل خطأ، حالات فارغة، تأكيدات نجاح</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>سلاسة إتمام المهام</strong> — رحلة المستخدم الأساسية سلسة من البداية إلى النهاية</div></div>
+
+        <div class="checklist-group-title">سهولة الوصول والاستجابة</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>متوافق مع الجوال</strong> — يعمل على الشاشات الصغيرة، مساحات اللمس كافية</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>وضوح وتباين</strong> — النصوص مقروءة، تباين الألوان كافٍ لجميع المستخدمين</div></div>
+      </div>
+      <div class="score-section">
+        <span class="score-label">الدرجة</span>
+        <input type="text" class="score-box" maxlength="2" />
+        <span class="score-max">/ 15</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  الفئة 2: الواجهة الأمامية                                     -->
+    <!-- ============================================================ -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="right">
+          <div class="category-number">2</div>
+          <div>
+            <div class="category-name">الواجهة الأمامية (Frontend)</div>
+            <div class="category-desc">جودة الكود، الاستجابة عبر الأجهزة، الأداء والتفاعلية</div>
+          </div>
+        </div>
+        <div class="max-badge">15 نقطة كحد أقصى</div>
+      </div>
+      <div class="checklist">
+        <div class="checklist-group-title">جودة الكود</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>كود نظيف ومنظم</strong> — هيكل مقروء، تقسيم منطقي للمكونات، لا تعقيد غير مبرر</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>مكونات قابلة لإعادة الاستخدام</strong> — تجريد مناسب، مبدأ عدم التكرار مطبق بشكل معقول</div></div>
+
+        <div class="checklist-group-title">الأداء والاستجابة</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>سرعة التحميل والتفاعل</strong> — لا تأخير ملحوظ، عرض فعال، الملفات محسّنة</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>توافق عبر الأجهزة</strong> — يعمل على الحاسوب والجهاز اللوحي والجوال بدون مشاكل</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>حركات وانتقالات سلسة</strong> — تعزز تجربة المستخدم دون تشتيت أو تقطع</div></div>
+
+        <div class="checklist-group-title">التفاعلية والميزات</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>العناصر التفاعلية تعمل بشكل صحيح</strong> — النماذج تتحقق، الأزرار تستجيب، النوافذ تفتح وتغلق</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>إدارة الحالة</strong> — البيانات تتدفق بشكل صحيح، الواجهة متزامنة مع حالة التطبيق</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>معالجة الأخطاء في الواجهة</strong> — بدائل مناسبة، لا شاشات فارغة أو أعطال غير معالجة</div></div>
+      </div>
+      <div class="score-section">
+        <span class="score-label">الدرجة</span>
+        <input type="text" class="score-box" maxlength="2" />
+        <span class="score-max">/ 15</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  الفئة 3: الخلفية                                              -->
+    <!-- ============================================================ -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="right">
+          <div class="category-number">3</div>
+          <div>
+            <div class="category-name">الواجهة الخلفية (Backend)</div>
+            <div class="category-desc">البنية، تصميم الـ API، معالجة البيانات، الأمان والموثوقية</div>
+          </div>
+        </div>
+        <div class="max-badge">15 نقطة كحد أقصى</div>
+      </div>
+      <div class="checklist">
+        <div class="checklist-group-title">البنية وتصميم الـ API</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>هيكلة واضحة للمشروع</strong> — تنظيم منطقي للملفات، فصل المسؤوليات، تصميم معياري</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>API مصمم بشكل جيد</strong> — نقاط وصول متسقة، طرق HTTP صحيحة، استجابات ذات معنى</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>تصميم قاعدة البيانات</strong> — مخطط مناسب، علاقات صحيحة، نمذجة بيانات ملائمة</div></div>
+
+        <div class="checklist-group-title">الأمان والموثوقية</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>المصادقة والتفويض</strong> — الوصول محكوم ومؤمّن بشكل صحيح</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>التحقق من المدخلات وتطهيرها</strong> — حماية ضد الحقن، XSS، والبيانات المشوهة</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>معالجة الأخطاء</strong> — رموز خطأ مناسبة، لا تسريب لتفاصيل تقنية للعميل</div></div>
+
+        <div class="checklist-group-title">البيانات والتكامل</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>حفظ البيانات يعمل</strong> — عمليات CRUD تعمل بشكل صحيح، البيانات تبقى بعد إعادة التشغيل</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>تكامل مع خدمات خارجية</strong> — Claude API أو خدمات أخرى مدمجة بشكل نظيف وموثوق</div></div>
+      </div>
+      <div class="score-section">
+        <span class="score-label">الدرجة</span>
+        <input type="text" class="score-box" maxlength="2" />
+        <span class="score-max">/ 15</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  الفئة 4: الابتكار                                             -->
+    <!-- ============================================================ -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="right">
+          <div class="category-number">4</div>
+          <div>
+            <div class="category-name">الابتكار (Innovation)</div>
+            <div class="category-desc">أصالة الفكرة، الإبداع، ومدى معالجتها لمشكلة حقيقية</div>
+          </div>
+        </div>
+        <div class="max-badge">15 نقطة كحد أقصى</div>
+      </div>
+      <div class="checklist">
+        <div class="checklist-group-title">المشكلة والصلة</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>يعالج مشكلة حقيقية</strong> — يحل حاجة فعلية لمدينة الخليل أو مجتمعها</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>وصف واضح للمشكلة</strong> — الفريق يستطيع توضيح من يستفيد ولماذا هذا مهم</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>ملاءمة لموضوع الهاكاثون</strong> — يتوافق مع الموضوع المعلن يوم الحدث</div></div>
+
+        <div class="checklist-group-title">الإبداع والأصالة</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>نهج مبتكر</strong> — ليس نسخة من حلول موجودة؛ يقدم زاوية جديدة</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>استخدام إبداعي للذكاء الاصطناعي</strong> — يستفيد من Claude بطريقة مميزة أو غير متوقعة</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>الطموح والنطاق</strong> — يهدف عاليًا بالنظر للوقت المتاح؛ يُظهر مبادرة</div></div>
+
+        <div class="checklist-group-title">الأثر والجدوى</div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>الأثر المحتمل</strong> — يمكن أن يحدث فرقًا حقيقيًا إذا تم تطويره أكثر</div></div>
+        <div class="checklist-item"><div class="checkbox"></div><div class="checklist-text"><strong>الجدوى</strong> — النهج واقعي ويعرض نموذجًا أوليًا عمليًا</div></div>
+      </div>
+      <div class="score-section">
+        <span class="score-label">الدرجة</span>
+        <input type="text" class="score-box" maxlength="2" />
+        <span class="score-max">/ 15</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  المجموع الكلي                                                 -->
+    <!-- ============================================================ -->
+    <div class="total-card">
+      <div class="total-label">المجموع الكلي</div>
+      <div class="total-right">
+        <input type="text" class="score-box" maxlength="2" />
+        <span class="score-max">/ 60</span>
+      </div>
+    </div>
+
+    <!-- ملاحظات -->
+    <div class="notes-section">
+      <h3>ملاحظات وتعليقات المحكّم</h3>
+      <div class="notes-lines">
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+        <div class="note-line"></div>
+      </div>
+    </div>
+
+    <!-- التوقيعات -->
+    <div class="signatures">
+      <div class="sig-box">
+        <label>توقيع المحكّم</label>
+        <div class="sig-line"></div>
+      </div>
+      <div class="sig-box">
+        <label>توقيع مسؤول التحكيم</label>
+        <div class="sig-line"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      هاكاثون الخليل للذكاء الاصطناعي 2026 &bull; جامعة بوليتكنك فلسطين &bull; بتنظيم من وادي إزتك
+    </div>
+
+  </div>
+</body>
+</html>

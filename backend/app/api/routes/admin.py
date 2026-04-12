@@ -322,6 +322,22 @@ async def reset_password(data: PasswordResetRequest, db: DbSession, current_admi
     return {"message": f"Password reset for {user.username}"}
 
 
+# ---- Raise-hand management ----
+
+@router.delete("/teams/{team_id}/raise-hand")
+async def admin_lower_hand(team_id: str, db: DbSession, current_admin: CurrentAdmin):
+    """Admin clears a team's help request."""
+    result = await db.execute(select(Team).where(Team.id == team_id))
+    team = result.scalar_one_or_none()
+    if team is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Team not found")
+    team.hand_raised = False
+    team.hand_raised_at = None
+    team.hand_raised_note = None
+    await db.commit()
+    return {"message": "Hand lowered"}
+
+
 # ---- Invite link management ----
 
 class InviteLinkUpdate(BaseModel):

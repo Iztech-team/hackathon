@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useTeams } from '../context/TeamContext';
+import { useAuth } from '../context/AuthContext';
 import { useHackathonState } from '../hooks/useHackathonState';
 import { api } from '../lib/api';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
@@ -34,6 +35,7 @@ export default function Leaderboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { teams: liveTeams } = useTeams();
+  const { role } = useAuth();
   const { leaderboardFrozen, loading: hackathonLoading } = useHackathonState();
   const [snapshotTeams, setSnapshotTeams] = useState([]);
   const [snapshotLoaded, setSnapshotLoaded] = useState(false);
@@ -45,14 +47,13 @@ export default function Leaderboard() {
   const [raisedHands, setRaisedHands] = useState([]);
   const [raisedHandsLoading, setRaisedHandsLoading] = useState(false);
 
-  // Fetch raised hands whenever the Needs Help tab is active (public).
+  // Fetch raised hands always (to show indicator on tab).
   // Poll every 15s so new requests show up quickly.
   useEffect(() => {
-    if (viewMode !== 'needsHelp') return;
     let cancelled = false;
     const load = async () => {
       try {
-        setRaisedHandsLoading(true);
+        if (viewMode === 'needsHelp') setRaisedHandsLoading(true);
         const data = await api.getRaisedHands();
         if (!cancelled) setRaisedHands(Array.isArray(data) ? data : []);
       } catch (e) {
@@ -290,6 +291,63 @@ export default function Leaderboard() {
         </motion.div>
       )}
 
+      {/* Top-level view mode tabs */}
+      <div className="mb-5 flex justify-center">
+        <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+          <button
+            onClick={() => setViewMode('ranking')}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+              viewMode === 'ranking'
+                ? 'bg-[#3b82f6] text-white shadow-md shadow-[#3b82f6]/30'
+                : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+            }`}
+          >
+            {t('leaderboard.tabRanking')}
+          </button>
+          <button
+            onClick={() => setViewMode('needsHelp')}
+            className={`relative px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
+              viewMode === 'needsHelp'
+                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+            }`}
+          >
+            <span>✋</span>
+            {t('leaderboard.tabNeedsHelp')}
+            {raisedHands.length > 0 && viewMode !== 'needsHelp' && (
+              <span className="absolute -top-1.5 -end-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold tabular-nums bg-red-500 text-white ring-2 ring-black animate-pulse">
+                {raisedHands.length}
+              </span>
+            )}
+            {raisedHands.length > 0 && viewMode === 'needsHelp' && (
+              <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold tabular-nums bg-white/20 text-white">
+                {raisedHands.length}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Needs Help panel — public */}
+      {viewMode === 'needsHelp' && (
+        <Card>
+          <CardContent className="py-6">
+            <NeedsHelpPanel
+              teams={raisedHands}
+              loading={raisedHandsLoading}
+              onOpenTeam={(id) => navigate(`/teams/${id}`)}
+              isAdmin={role === 'admin'}
+              onDismiss={async (teamId) => {
+                await api.adminLowerHand(teamId);
+                setRaisedHands((prev) => prev.filter((t) => t.id !== teamId));
+              }}
+              t={t}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {viewMode === 'ranking' && (
       <Card className={leaderboardFrozen ? 'ring-1 ring-sky-400/20' : ''}>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -346,49 +404,6 @@ export default function Leaderboard() {
             )}
           </div>
 
-          {/* View mode tabs — everyone can switch to the Needs Help sub-tab */}
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={() => setViewMode('ranking')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                viewMode === 'ranking'
-                  ? 'bg-[#3b82f6] text-white shadow-lg shadow-[#3b82f6]/30'
-                  : 'bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white'
-              }`}
-            >
-              {t('leaderboard.tabRanking')}
-            </button>
-            <button
-              onClick={() => setViewMode('needsHelp')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 text-white ${
-                viewMode === 'needsHelp' ? 'shadow-lg shadow-red-500/30' : 'bg-white/[0.04] hover:bg-white/[0.08]'
-              }`}
-              style={viewMode === 'needsHelp' ? { background: 'linear-gradient(to right, #b91c1c, #ef4444)' } : undefined}
-            >
-              <span>✋</span>
-              {t('leaderboard.tabNeedsHelp')}
-              {raisedHands.length > 0 && (
-                <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold tabular-nums ${
-                  viewMode === 'needsHelp' ? 'bg-black/30 text-white' : 'bg-red-500/20 text-red-300'
-                }`}>
-                  {raisedHands.length}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Needs Help panel — public */}
-          {viewMode === 'needsHelp' && (
-            <NeedsHelpPanel
-              teams={raisedHands}
-              loading={raisedHandsLoading}
-              onOpenTeam={(id) => navigate(`/teams/${id}`)}
-              t={t}
-            />
-          )}
-
-          {viewMode === 'ranking' && (
-          <>
           {/* Category Filters */}
           <div className="mb-6 pb-6 border-b border-white/[0.06] -mx-4 sm:mx-0 px-4 sm:px-0">
             <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 sm:flex-wrap scrollbar-hide">
@@ -691,10 +706,9 @@ export default function Leaderboard() {
               <span className="font-semibold text-white">{sortedTeams.length}</span>
             </div>
           </div>
-          </>
-          )}
         </CardContent>
       </Card>
+      )}
     </motion.div>
   );
 }
@@ -711,7 +725,7 @@ function formatElapsed(iso, t) {
   return t('leaderboard.needsHelp.hoursAgo', { count: hours });
 }
 
-function NeedsHelpPanel({ teams, loading, onOpenTeam, t }) {
+function NeedsHelpPanel({ teams, loading, onOpenTeam, isAdmin, onDismiss, t }) {
   if (loading && teams.length === 0) {
     return (
       <div className="py-12 text-center text-white/40 text-sm">
@@ -771,6 +785,18 @@ function NeedsHelpPanel({ teams, loading, onOpenTeam, t }) {
               </p>
             )}
           </div>
+          {isAdmin && onDismiss && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onDismiss(team.id); }}
+              className="flex-shrink-0 self-center px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-xs font-semibold transition-all"
+              title={t('leaderboard.needsHelp.dismiss')}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       ))}
     </div>

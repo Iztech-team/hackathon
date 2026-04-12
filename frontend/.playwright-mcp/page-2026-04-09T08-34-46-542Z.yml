@@ -1,0 +1,52 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "هاكاثون الخليل للبرمجة" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+      - button "EN" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e17] [cursor=pointer]:
+        - /url: /
+        - img [ref=e21]
+      - link [ref=e23] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e27]
+      - link "التحكيم" [ref=e29] [cursor=pointer]:
+        - /url: /scan
+        - generic [ref=e30]:
+          - img [ref=e33]
+          - generic:
+            - generic: التحكيم
+      - link [ref=e35] [cursor=pointer]:
+        - /url: /judge/profile
+        - img [ref=e39]
+      - button [ref=e41] [cursor=pointer]:
+        - img [ref=e42]
+  - main [ref=e44]:
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - heading "أهلاً بك" [level=3] [ref=e49]
+        - paragraph [ref=e50]: سجّل الدخول أو أنشئ حساب فريق جديد
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - button "دخول" [ref=e53] [cursor=pointer]
+          - button "تسجيل" [ref=e54] [cursor=pointer]
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - button "فريق" [ref=e57] [cursor=pointer]
+            - button "محكّم" [ref=e58] [cursor=pointer]
+            - button "مسؤول" [ref=e59] [cursor=pointer]
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - text: اسم الفريق
+              - textbox "أدخل اسم فريقك" [ref=e62]
+            - generic [ref=e63]:
+              - text: كلمة المرور
+              - textbox "أدخل كلمة مرور الفريق" [ref=e64]
+            - button "دخول" [ref=e65] [cursor=pointer]

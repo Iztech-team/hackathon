@@ -1,0 +1,64 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e8]: CH
+        - generic [ref=e9]:
+          - heading "Hebron Coding Hackathon" [level=1] [ref=e10]
+          - generic [ref=e11]:
+            - paragraph [ref=e12]: "2026"
+            - generic [ref=e13]: •
+      - button "ع" [ref=e14] [cursor=pointer]
+  - navigation [ref=e15]:
+    - generic [ref=e16]:
+      - link [ref=e17] [cursor=pointer]:
+        - /url: /
+        - img [ref=e21]
+      - link [ref=e23] [cursor=pointer]:
+        - /url: /leaderboard
+        - img [ref=e27]
+      - link "Login" [ref=e29] [cursor=pointer]:
+        - /url: /login
+        - generic [ref=e30]:
+          - img [ref=e33]
+          - generic [ref=e36]: Login
+  - main [ref=e37]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - heading "Welcome" [level=3] [ref=e42]
+        - paragraph [ref=e43]: Login or create a new team account
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - button "Login" [ref=e46] [cursor=pointer]
+          - button "Register" [ref=e47] [cursor=pointer]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]: Team Name*
+            - textbox "Enter your team name" [ref=e52]
+          - generic [ref=e53]:
+            - generic [ref=e54]: Password*
+            - textbox "Create password" [ref=e55]
+          - generic [ref=e56]:
+            - generic [ref=e57]: Confirm Password*
+            - textbox "Confirm password" [ref=e58]
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - generic [ref=e61]: Team Members*
+              - button "+ Add" [ref=e62] [cursor=pointer]
+            - generic [ref=e63]:
+              - button "Avatar" [ref=e65] [cursor=pointer]:
+                - img "Avatar" [ref=e66]
+                - img [ref=e67]
+              - generic [ref=e69]:
+                - textbox "Name" [ref=e70]
+                - textbox "Phone" [ref=e71]
+            - generic [ref=e72]:
+              - button "Avatar" [ref=e74] [cursor=pointer]:
+                - img "Avatar" [ref=e75]
+                - img [ref=e76]
+              - generic [ref=e78]:
+                - textbox "Name" [ref=e79]
+                - textbox "Phone" [ref=e80]
+          - button "Register Team" [ref=e81] [cursor=pointer]:
+            - generic [ref=e82]: Register Team
+            - img [ref=e83]
