@@ -74,8 +74,8 @@
       "title": "Day Schedule",
       "subtitle": "Full hackathon day program",
       "events": [
-        { "time": "9:00", "title": "Opening Ceremony" },
-        { "time": "9:30", "title": "Hackathon Starts" },
+        { "time": "8:30", "title": "Opening Ceremony" },
+        { "time": "9:00", "title": "Hackathon Starts" },
         { "time": "12:00", "title": "Break" },
         { "time": "2:00", "title": "Break" },
         { "time": "4:00", "title": "Hackathon Ends" },
@@ -105,73 +105,68 @@
         }
       }
     },
+    "prizes": {
+      "title": "Prizes",
+      "subtitle": "What's at stake",
+      "first": {
+        "place": "1st Place",
+        "prize": "3 Laptops",
+        "desc": "One laptop for each team member"
+      },
+      "second": {
+        "place": "2nd Place",
+        "prize": "$300 USD",
+        "desc": "Cash prize for the team"
+      },
+      "third": {
+        "place": "3rd Place",
+        "prize": "$150 USD",
+        "desc": "Cash prize for the team"
+      },
+      "special": {
+        "title": "Special Projects",
+        "prize": "AWS Credits & Support",
+        "desc": "3 outstanding projects will receive Amazon Web Services credits and ongoing support to continue building after the hackathon. These may or may not overlap with the top 3 winners."
+      }
+    },
     "howItWorks": {
       "title": "How It Works",
       "subtitle": "Build real projects with Claude as your pair programmer",
-      "intro": "This is an AI-augmented hackathon. Every team receives an API key that lets you use Claude — Anthropic's AI model — to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful under the theme revealed on the day.",
+      "intro": "This is an AI-augmented hackathon. Each team uses Claude — Anthropic's AI model — through Claude Desktop to help you build. You will be judged on what you ship, not on writing every line yourself. The goal is to combine your technical skills with Claude to create something useful under the theme revealed on the day.",
       "cards": {
         "claude": {
           "title": "Claude",
           "desc": "Claude is an AI assistant you can chat with, ask to write code, debug issues, explain unfamiliar tech, and review your work."
         },
-        "apiKey": {
-          "title": "Your API Key",
-          "desc": "When the admin reveals keys, you'll find yours in the Team tab. Copy it and use it with Claude Code or any API client to make Claude requests."
+        "joinOrg": {
+          "title": "Join the Organisation",
+          "desc": "During the hackathon, you'll receive an invite link. Use it to join the Claude organisation with a non-generic email domain (e.g. your university email)."
         },
-        "claudeCode": {
-          "title": "Claude Code",
-          "desc": "A CLI tool that plugs Claude directly into your terminal and editor. It reads your project, edits files, runs commands, and ships features while you guide it."
+        "claudeDesktop": {
+          "title": "Claude Desktop",
+          "desc": "Download Claude Desktop, sign in with the email you used to join the organisation, and use Claude Code inside it to build your project."
         }
       },
       "video": {
-        "title": "Watch: Install Claude Code in VS Code",
+        "title": "Watch: Getting Started with Claude Desktop",
         "subtitle": "A quick walkthrough — set it up before hackathon day"
       },
       "note": "You don't need to be an AI expert. Describe what you want, show Claude the code, let it help — then iterate. Your technical skills + Claude's speed = a working project in a few hours.",
       "usage": {
-        "title": "How to use your API key",
-        "subtitle": "Quick setup — pick your operating system",
-        "osLabels": {
-          "windows": "Windows",
-          "macos": "macOS",
-          "linux": "Linux"
-        },
+        "title": "Getting started",
+        "subtitle": "Three simple steps to start building",
         "steps": [
           {
-            "title": "Copy your key from the Team tab",
-            "desc": "Once the admin reveals keys, open the Team tab on this site. You'll see your team's API key in a gold card. Tap the copy button.",
-            "code": {
-              "windows": "",
-              "macos": "",
-              "linux": ""
-            }
+            "title": "Download Claude Desktop",
+            "desc": "Go to claude.ai/download and install Claude Desktop on your machine. This is where you'll access Claude Code to build your project."
           },
           {
-            "title": "Install Claude Code globally",
-            "desc": "Claude Code is a CLI that plugs Claude into your terminal and editor. It needs Node.js 18 or higher. Open a terminal and run:",
-            "code": {
-              "windows": "npm install -g @anthropic-ai/claude-code",
-              "macos": "npm install -g @anthropic-ai/claude-code",
-              "linux": "npm install -g @anthropic-ai/claude-code"
-            }
+            "title": "Join the organisation via invite link",
+            "desc": "During the hackathon, you'll receive an invite link. Click it and sign up using a non-generic email domain (e.g. your university email, not Gmail/Hotmail). This gives you access to Claude through the hackathon organisation."
           },
           {
-            "title": "Set your API key as an environment variable",
-            "desc": "Paste your key after the equals sign. This exposes the key to Claude Code so it can authenticate with Anthropic.",
-            "code": {
-              "windows": "setx ANTHROPIC_API_KEY \"sk-ant-your-key-here\"",
-              "macos": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\"",
-              "linux": "export ANTHROPIC_API_KEY=\"sk-ant-your-key-here\""
-            }
-          },
-          {
-            "title": "Open your project and launch Claude",
-            "desc": "In the terminal, cd into your project folder (or open it in VS Code / Cursor) and run 'claude'. Describe what you want — Claude will read your files, edit them and run commands for you.",
-            "code": {
-              "windows": "cd my-project && claude",
-              "macos": "cd my-project && claude",
-              "linux": "cd my-project && claude"
-            }
+            "title": "Sign in and start building",
+            "desc": "Open Claude Desktop, sign in with the email you used to join the organisation, and open Claude Code. Describe what you want to build — Claude will help you write code, debug, and ship your project."
           }
         ]
       }

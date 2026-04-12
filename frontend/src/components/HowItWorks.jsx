@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/Card';
 
-const HOW_IT_WORKS_CARDS = ['claude', 'apiKey', 'claudeCode'];
-const OS_OPTIONS = ['windows', 'macos', 'linux'];
+const HOW_IT_WORKS_CARDS = ['claude', 'joinOrg', 'claudeDesktop'];
 
 export default function HowItWorks() {
   const { t } = useTranslation();
-  const [selectedOs, setSelectedOs] = useState('windows');
 
   return (
     <Card>
@@ -60,64 +57,25 @@ export default function HowItWorks() {
             </p>
           </div>
 
-          {/* OS Toggle */}
-          <div className="flex justify-center mb-5">
-            <div
-              className="inline-flex items-center gap-1 p-1 rounded-xl bg-black/30 border border-white/[0.08]"
-              role="tablist"
-            >
-              {OS_OPTIONS.map((os) => {
-                const isActive = selectedOs === os;
-                return (
-                  <button
-                    key={os}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => setSelectedOs(os)}
-                    className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                      isActive
-                        ? 'bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#60a5fa] text-[#ffffff] shadow-md shadow-[#3b82f6]/30'
-                        : 'text-white/60 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {t(`home.howItWorks.usage.osLabels.${os}`)}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <div className="space-y-3">
-            {[0, 1, 2, 3].map((i) => {
-              const code = t(`home.howItWorks.usage.steps.${i}.code.${selectedOs}`, { defaultValue: '' });
-              return (
-                <div
-                  key={i}
-                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-black/20 border border-white/[0.06]"
-                >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#1d4ed8]/30 to-[#3b82f6]/15 border border-[#3b82f6]/30 flex items-center justify-center">
-                    <span className="text-sm font-extrabold text-[#60a5fa]">{i + 1}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white text-sm">
-                      {t(`home.howItWorks.usage.steps.${i}.title`)}
-                    </p>
-                    <p className="text-xs text-white/50 mt-1 leading-relaxed">
-                      {t(`home.howItWorks.usage.steps.${i}.desc`)}
-                    </p>
-                    {code && (
-                      <pre
-                        dir="ltr"
-                        className="mt-2 overflow-x-auto text-[11px] sm:text-xs font-mono text-[#60a5fa] bg-black/40 border border-[#3b82f6]/20 rounded-lg px-3 py-2 select-all"
-                      >
-                        <code>{code}</code>
-                      </pre>
-                    )}
-                  </div>
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-black/20 border border-white/[0.06]"
+              >
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#1d4ed8]/30 to-[#3b82f6]/15 border border-[#3b82f6]/30 flex items-center justify-center">
+                  <span className="text-sm font-extrabold text-[#60a5fa]">{i + 1}</span>
                 </div>
-              );
-            })}
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white text-sm">
+                    {t(`home.howItWorks.usage.steps.${i}.title`)}
+                  </p>
+                  <p className="text-xs text-white/50 mt-1 leading-relaxed">
+                    {t(`home.howItWorks.usage.steps.${i}.desc`)}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -127,28 +85,6 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        {/* Video tutorial */}
-        <div className="mt-6">
-          <div className="text-center mb-3">
-            <h3 className="text-base font-semibold text-white">
-              {t('home.howItWorks.video.title')}
-            </h3>
-            <p className="text-xs text-white/40 mt-1">
-              {t('home.howItWorks.video.subtitle')}
-            </p>
-          </div>
-          <div className="relative w-full overflow-hidden rounded-xl border border-white/[0.08] bg-black" style={{ paddingBottom: '56.25%' }}>
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/pdRpuy8F7Kw"
-              title={t('home.howItWorks.video.title')}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

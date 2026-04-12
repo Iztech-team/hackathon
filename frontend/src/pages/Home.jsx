@@ -245,6 +245,77 @@ export default function Home() {
 
       <Divider />
 
+      {/* Prizes */}
+      <Section>
+        <Card>
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/30 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white">{t('home.prizes.title')}</h2>
+            </div>
+            <p className="text-sm text-center text-white/40 mb-8">{t('home.prizes.subtitle')}</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {['first', 'second', 'third'].map((place, i) => {
+                const medals = ['🥇', '🥈', '🥉'];
+                const isFirst = i === 0;
+                return (
+                  <motion.div
+                    key={place}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.45 }}
+                    className={`relative rounded-2xl p-5 text-center transition-all border ${
+                      isFirst
+                        ? 'bg-[#3b82f6]/[0.08] border-[#3b82f6]/30'
+                        : 'bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.05] hover:border-[#3b82f6]/30'
+                    }`}
+                  >
+                    <div className="text-4xl mb-3">{medals[i]}</div>
+                    <h3 className="font-bold text-white text-base mb-1">
+                      {t(`home.prizes.${place}.place`)}
+                    </h3>
+                    <p className={`text-lg font-extrabold mb-1 ${isFirst ? 'text-[#60a5fa]' : 'text-white/90'}`}>
+                      {t(`home.prizes.${place}.prize`)}
+                    </p>
+                    <p className="text-xs text-white/50">
+                      {t(`home.prizes.${place}.desc`)}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Special Projects */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.45 }}
+              className="rounded-2xl p-5 bg-gradient-to-r from-[#1d4ed8]/10 to-[#3b82f6]/5 border border-[#3b82f6]/20"
+            >
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <svg className="w-5 h-5 text-[#60a5fa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h3 className="font-bold text-white text-base">{t('home.prizes.special.title')}</h3>
+              </div>
+              <p className="text-sm font-semibold text-[#60a5fa] mb-1 text-center">{t('home.prizes.special.prize')}</p>
+              <p className="text-xs text-white/55 leading-relaxed text-center max-w-xl mx-auto">
+                {t('home.prizes.special.desc')}
+              </p>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </Section>
+
+      <Divider />
+
       {/* How It Works (Claude explainer) */}
       <Section>
         <HowItWorks />
