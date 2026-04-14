@@ -30,7 +30,7 @@ import { Input } from '../components/ui/Input';
 import { FormField, FormLabel } from '../components/ui/FormField';
 import { Avatar, TeamLogo } from '../components/ui/Avatar';
 import { CategoryBadge } from '../components/ui/Badge';
-import { getCategoryById, calculateTotalScore } from '../data/categories';
+import { getCategoryById, calculateTotalScore, CATEGORIES } from '../data/categories';
 import { config } from '../lib/config';
 
 export default function JudgeScan() {
@@ -39,14 +39,27 @@ export default function JudgeScan() {
   const { user } = useAuth();
   const [scanning, setScanning] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [points, setPoints] = useState(10);
+  const [points, setPoints] = useState(15);
+  const [criteriaScores, setCriteriaScores] = useState({});
+  const [scoringReadiness, setScoringReadiness] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
 
-  const category = getCategoryById(user?.categoryId);
+  const assignedCategory = getCategoryById(user?.categoryId);
+  const readinessCategory = CATEGORIES.READINESS;
+  const category = scoringReadiness ? readinessCategory : assignedCategory;
+
+  // Initialize sub-criteria scores for current category
+  const initCriteriaScores = (cat) => {
+    if (!cat) return {};
+    return cat.criteria.reduce((acc, c) => { acc[c.id] = 0; return acc; }, {});
+  };
+
+  // Compute total from sub-criteria
+  const criteriaTotal = Object.values(criteriaScores).reduce((s, v) => s + v, 0);
 
   // Compute rank for each team based on overall total score
   const teamsWithRank = teams
@@ -130,6 +143,7 @@ export default function JudgeScan() {
 
         if (team) {
           setSelectedTeam(team);
+          setCriteriaScores(initCriteriaScores(category));
           setError('');
         } else {
           setError('Team not found. Please ensure the team is registered.');
@@ -148,8 +162,9 @@ export default function JudgeScan() {
   const [awarding, setAwarding] = useState(false);
 
   const handleAwardPoints = async () => {
-    const numericPoints = typeof points === 'number' ? points : parseInt(points, 10);
-    if (selectedTeam && Number.isFinite(numericPoints) && numericPoints >= 0 && numericPoints <= 15 && category) {
+    const numericPoints = category?.criteria.length > 0 ? criteriaTotal : points;
+    const maxPts = category?.maxPoints || 15;
+    if (selectedTeam && numericPoints >= 0 && numericPoints <= maxPts && category) {
       setAwarding(true);
       setError('');
       try {
@@ -191,6 +206,31 @@ export default function JudgeScan() {
                 <CategoryBadge category={category} size="md" />
               </div>
             )}
+          </div>
+          {/* Category / Readiness toggle */}
+          <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
+            <button
+              onClick={() => { setScoringReadiness(false); setPoints(assignedCategory?.maxPoints || 15); setCriteriaScores(initCriteriaScores(assignedCategory)); }}
+              className={`flex-1 text-xs font-semibold py-2 px-3 rounded-lg transition-all ${
+                !scoringReadiness
+                  ? 'bg-white/10 text-white border border-white/20'
+                  : 'text-white/40 hover:text-white/60'
+              }`}
+            >
+              {assignedCategory ? t(`categories.${assignedCategory.id}`) : ''}
+              <span className="text-white/30 ms-1">({assignedCategory?.maxPoints}pts)</span>
+            </button>
+            <button
+              onClick={() => { setScoringReadiness(true); setPoints(readinessCategory.maxPoints); setCriteriaScores(initCriteriaScores(readinessCategory)); }}
+              className={`flex-1 text-xs font-semibold py-2 px-3 rounded-lg transition-all ${
+                scoringReadiness
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  : 'text-white/40 hover:text-white/60'
+              }`}
+            >
+              {t('categories.readiness')}
+              <span className="text-white/30 ms-1">({readinessCategory.maxPoints}pts)</span>
+            </button>
           </div>
         </CardContent>
       </Card>
@@ -261,27 +301,84 @@ export default function JudgeScan() {
                   </div>
                 </motion.div>
 
+                {/* Scoring input — sub-criteria for specialized categories, simple input for readiness */}
                 <motion.div
+                  className="space-y-3"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <FormField>
-                    <FormLabel>{t('judge.pointsToAward', { category: category ? t(`categories.${category.id}`) : '' })}</FormLabel>
-                    <Input
-                      type="number"
-                      min="0"
-                      max="15"
-                      value={points}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        if (v === '') { setPoints(''); return; }
-                        const n = parseInt(v, 10);
-                        if (Number.isNaN(n)) return;
-                        setPoints(Math.max(0, Math.min(15, n)));
-                      }}
-                    />
-                  </FormField>
+                  {category?.criteria.length > 0 ? (
+                    <>
+                      <p className="text-xs uppercase tracking-widest text-white/40 font-semibold">
+                        {t('judge.criteriaBreakdown')}
+                      </p>
+                      {category.criteria.map((criterion) => (
+                        <div
+                          key={criterion.id}
+                          className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-white/80">
+                              {t(`judge.criteria.${criterion.id}`)}
+                            </span>
+                            <span className="text-xs font-mono text-white/40">
+                              {criteriaScores[criterion.id] || 0} / {criterion.weight}
+                            </span>
+                          </div>
+                          <div className="flex gap-1.5">
+                            {Array.from({ length: criterion.weight + 1 }, (_, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => setCriteriaScores(prev => ({ ...prev, [criterion.id]: i }))}
+                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                                  criteriaScores[criterion.id] === i
+                                    ? 'text-white shadow-lg'
+                                    : 'bg-white/[0.04] text-white/40 hover:bg-white/[0.08] hover:text-white/60'
+                                }`}
+                                style={criteriaScores[criterion.id] === i ? { backgroundColor: category.color, boxShadow: `0 4px 12px ${category.color}40` } : {}}
+                              >
+                                {i}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Total */}
+                      <div className="flex items-center justify-between p-3 rounded-xl border border-white/[0.1] bg-white/[0.03]">
+                        <span className="text-sm font-semibold text-white">{t('judge.total')}</span>
+                        <span className="text-xl font-bold" style={{ color: category?.color }}>
+                          {criteriaTotal} / {category?.maxPoints}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    /* Readiness — simple point buttons */
+                    <>
+                      <p className="text-xs uppercase tracking-widest text-white/40 font-semibold">
+                        {t('judge.pointsToAward', { category: t(`categories.${category?.id}`) })}
+                      </p>
+                      <div className="flex gap-1.5 flex-wrap">
+                        {Array.from({ length: (category?.maxPoints || 10) + 1 }, (_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setPoints(i)}
+                            className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
+                              points === i
+                                ? 'text-white shadow-lg'
+                                : 'bg-white/[0.04] text-white/40 hover:bg-white/[0.08] hover:text-white/60'
+                            }`}
+                            style={points === i ? { backgroundColor: category?.color, boxShadow: `0 4px 12px ${category?.color}40` } : {}}
+                          >
+                            {i}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </motion.div>
 
                 <motion.div
@@ -376,7 +473,7 @@ export default function JudgeScan() {
                   onClick={() => {
                     setSelectedTeam(team);
                     setSearchQuery('');
-                    setPoints('');
+                    setCriteriaScores(initCriteriaScores(category));
                   }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] transition-colors text-start"
                 >

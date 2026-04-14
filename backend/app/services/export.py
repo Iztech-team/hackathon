@@ -11,7 +11,7 @@ def export_teams_to_csv(teams: List[Team]) -> str:
     # Header
     writer.writerow([
         "Team ID", "Team Name", "Project Name", "Description",
-        "Members", "UI/UX", "Frontend", "Backend", "Innovation",
+        "Members", "Innovation", "Visual Design", "Architecture", "Readiness",
         "Total Score", "Created At"
     ])
 
@@ -27,10 +27,10 @@ def export_teams_to_csv(teams: List[Team]) -> str:
             team.project_name,
             team.description or "",
             members,
-            scores.get("ui_ux", 0),
-            scores.get("frontend", 0),
-            scores.get("backend", 0),
             scores.get("innovation", 0),
+            scores.get("visual_design", 0),
+            scores.get("architecture", 0),
+            scores.get("readiness", 0),
             total,
             team.created_at.isoformat() if team.created_at else "",
         ])
@@ -63,7 +63,7 @@ def export_rankings_to_csv(teams: List[Team]) -> str:
     # Header
     writer.writerow([
         "Rank", "Team Name", "Project Name",
-        "UI/UX", "Frontend", "Backend", "Innovation", "Total"
+        "Innovation", "Visual Design", "Architecture", "Readiness", "Total"
     ])
 
     # Sort by total score
@@ -80,10 +80,10 @@ def export_rankings_to_csv(teams: List[Team]) -> str:
             rank,
             team.team_name,
             team.project_name,
-            scores.get("ui_ux", 0),
-            scores.get("frontend", 0),
-            scores.get("backend", 0),
             scores.get("innovation", 0),
+            scores.get("visual_design", 0),
+            scores.get("architecture", 0),
+            scores.get("readiness", 0),
             total,
         ])
 

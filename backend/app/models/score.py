@@ -11,7 +11,7 @@ class Score(Base):
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     team_id = Column(CHAR(36), ForeignKey("teams.id", ondelete="CASCADE"), nullable=False)
-    category_id = Column(String(50), nullable=False)  # ui_ux, frontend, backend, innovation, presentation
+    category_id = Column(String(50), nullable=False)  # innovation, visual_design, architecture, readiness
     points = Column(Integer, default=0, nullable=False)
     judge_id = Column(CHAR(36), ForeignKey("judges.id", ondelete="SET NULL"), nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

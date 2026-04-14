@@ -10,7 +10,8 @@ from app.models import Team, Score, Judge
 
 router = APIRouter()
 
-VALID_CATEGORIES = {"ui_ux", "frontend", "backend", "innovation"}
+VALID_CATEGORIES = {"innovation", "visual_design", "architecture", "readiness"}
+MAX_POINTS = {"innovation": 15, "visual_design": 15, "architecture": 15, "readiness": 10}
 
 
 @router.put("/{team_id}/{category_id}", response_model=ScoreResponse)
@@ -28,11 +29,19 @@ async def set_score(
             detail=f"Invalid category. Must be one of: {', '.join(VALID_CATEGORIES)}",
         )
 
-    # Check judge can only score their assigned category
-    if current_judge.category_id != category_id:
+    # Readiness can be scored by any judge; other categories require assignment
+    if category_id != "readiness" and current_judge.category_id != category_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"You can only score the '{current_judge.category_id}' category",
+        )
+
+    # Enforce per-category max points
+    max_pts = MAX_POINTS.get(category_id, 15)
+    if data.points > max_pts:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Max points for '{category_id}' is {max_pts}",
         )
 
     # Check team exists

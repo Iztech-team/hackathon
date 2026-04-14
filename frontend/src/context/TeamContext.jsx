@@ -25,11 +25,10 @@ const migrateTeamData = (teams) => {
       ...team,
       password: team.password || team.teamName.toLowerCase().replace(/\s/g, ''),
       scores: {
-        ui_ux: 0,
-        frontend: 0,
-        backend: 0,
-        innovation: Math.floor(oldScore / 2),
-        presentation: Math.ceil(oldScore / 2),
+        innovation: 0,
+        visual_design: 0,
+        architecture: Math.floor(oldScore / 2),
+        readiness: Math.ceil(oldScore / 2),
       },
       members: (team.members || []).map((member, idx) => ({
         ...member,

@@ -75,33 +75,35 @@
       "subtitle": "Full hackathon day program",
       "events": [
         { "time": "8:30", "title": "Opening Ceremony" },
-        { "time": "9:00", "title": "Hackathon Starts" },
+        { "time": "9:00", "title": "Hackathon Starts — Problems Revealed" },
         { "time": "12:00", "title": "Break (15 min)" },
+        { "time": "12:15", "title": "First Judging Round" },
         { "time": "2:00", "title": "Break (15 min)" },
-        { "time": "4:00", "title": "Hackathon Ends" },
+        { "time": "4:00", "title": "Hackathon Ends — Project Submission" },
+        { "time": "4:00", "title": "Second Judging Round" },
         { "time": "5:00", "title": "Prize Distribution & Closing" }
       ]
     },
     "criteria": {
       "title": "Judging Criteria",
-      "subtitle": "Judges score each team from 0 to 15 in every category",
+      "subtitle": "Each team is scored by specialist judges per category",
       "maxPoints": "Max {{points}} pts",
       "items": {
-        "ui_ux": {
-          "name": "UI/UX",
-          "desc": "Visual design, clarity, layout, accessibility and overall user experience."
-        },
-        "frontend": {
-          "name": "Frontend",
-          "desc": "Code quality, responsiveness across devices, performance and interactivity."
-        },
-        "backend": {
-          "name": "Backend",
-          "desc": "Architecture, API design, data handling, security and reliability."
-        },
         "innovation": {
           "name": "Innovation",
-          "desc": "Originality of the idea, creativity, and how well it addresses a real-world problem."
+          "desc": "Problem-Solution Fit, novelty of the idea, and scalability potential."
+        },
+        "visual_design": {
+          "name": "Visual Design",
+          "desc": "Design clarity, onboarding experience, and responsiveness."
+        },
+        "architecture": {
+          "name": "Architecture",
+          "desc": "Tech stack choices, scalability of the architecture, and code structure."
+        },
+        "readiness": {
+          "name": "Readiness",
+          "desc": "Project readiness for demo and real-world usage. Scored by all judges."
         }
       }
     },
@@ -186,10 +188,10 @@
     }
   },
   "categories": {
-    "ui_ux": "UI/UX",
-    "frontend": "Frontend",
-    "backend": "Backend",
-    "innovation": "Innovation"
+    "innovation": "Innovation",
+    "visual_design": "Visual Design",
+    "architecture": "Architecture",
+    "readiness": "Readiness"
   },
   "login": {
     "welcome": "Welcome",
@@ -199,6 +201,7 @@
     "closed": "closed",
     "registrationClosed": "Registration is currently closed",
     "registrationClosedBanner": "Registration is closed. Existing teams and judges can still sign in.",
+    "contactWhatsapp": "Contact us on WhatsApp to register",
     "teamTab": "Team",
     "judgeTab": "Judge",
     "volunteerTab": "Volunteer",
@@ -312,7 +315,23 @@
     "pointsToAward": "Points to Award ({{category}})",
     "award": "Award",
     "scoreUpdated": "Successfully set {{points}} {{category}} points to {{team}}",
-    "tooHigh": "Points must be 15 or less"
+    "tooHigh": "Points must be 15 or less",
+    "criteriaBreakdown": "Score Breakdown",
+    "total": "Total",
+    "criteria": {
+      "ps_fit": "Problem-Solution Fit",
+      "novelty": "Novelty",
+      "scalability": "Scalability",
+      "judge_opinion": "Judge's Opinion",
+      "design_clarity": "Visual Design Clarity",
+      "onboarding": "Onboarding Clarity",
+      "responsiveness": "Responsiveness",
+      "tech_stack": "Tech Stack",
+      "arch_scalability": "Scalability",
+      "structure": "Structure",
+      "demo_ready": "Demo Readiness",
+      "completeness": "Completeness"
+    }
   },
   "admin": {
     "dashboard": "Dashboard",
