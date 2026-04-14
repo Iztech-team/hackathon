@@ -333,7 +333,7 @@ export default function Home() {
 
             <div className="space-y-3 max-w-2xl mx-auto">
               {Array.isArray(timelineEvents) && timelineEvents.map((event, i) => {
-                const isHighlight = i === 0 || i === timelineEvents.length - 1;
+                const isHighlight = i === 0 || i === 3 || i === 6 || i === 7;
                 return (
                   <motion.div
                     key={i}
@@ -407,7 +407,7 @@ export default function Home() {
                       <div className="w-4 h-4 rounded" style={{ backgroundColor: category.color }} />
                     </div>
                     <span className="text-[10px] font-bold text-[#60a5fa] bg-[#3b82f6]/10 border border-[#3b82f6]/30 px-2 py-1 rounded-full uppercase tracking-wider">
-                      {t('home.criteria.maxPoints', { points: 15 })}
+                      {t('home.criteria.maxPoints', { points: category.maxPoints })}
                     </span>
                   </div>
                   <h3 className="font-bold text-white text-base mb-2">
